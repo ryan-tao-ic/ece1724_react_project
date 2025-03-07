@@ -34,3 +34,15 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+## ENV
+a .env.local are expected for saving GCS bucket credential. Something like
+
+**/.env.local**
+```
+GCS_PROJECT_ID=your-google-cloud-project-id
+GCS_BUCKET_NAME=your-bucket-name
+GCS_CLIENT_EMAIL=your-service-account-email
+GCS_PRIVATE_KEY="your-private-key"
+```
