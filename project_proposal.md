@@ -86,24 +86,24 @@ model User {
 ### **Event User Registration Model**
 ```prisma
 model EventUserRegistration {
-  event_id                   Int
-  user_email                 String
+  eventId                   Int
+  userEmail                 String
   status                     String
-  registration_time          DateTime
-  check_in_time              DateTime  @db.Timestamptz
-  check_out_time             DateTime  @db.Timestamptz
-  qr_code                    String
-  waitlist_position          Int
-  customized_question_answer Json?
+  registrationTime          DateTime
+  checkInTime              DateTime  @db.Timestamptz
+  checkOutTime             DateTime  @db.Timestamptz
+  qrCode                    String
+  waitlistPosition          Int
+  customizedQuestionAnswer Json?
 
-  event                      Event     @relation(fields: [event_id], references: [id])
-  user                       User      @relation(fields: [user_email], references: [email])
+  event                      Event     @relation(fields: [eventId], references: [id])
+  user                       User      @relation(fields: [userEmail], references: [email])
 
-  @@id([event_id, user_email])
+  @@id([eventId, userEmail])
   @@index([status])
-  @@index([registration_time])
-  @@index([qr_code])
-  @@map("event_user_registration")
+  @@index([registrationTime])
+  @@index([qrCode])
+  @@map("eventUserRegistration")
 }
 ```
 
@@ -140,23 +140,23 @@ model Event {
   id                   Int      @id @default(autoincrement())
   name                 String
   description          String?
-  created_at           DateTime @default(now())
-  updated_at           DateTime @updatedAt
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
   location             String
-  event_start_time     DateTime
-  event_end_time       DateTime
-  available_seats      Int
-  ticket_sale_required Boolean
-  category_id          Int
+  eventStartTime     DateTime
+  eventEndTime       DateTime
+  availableSeats      Int
+  ticketSaleRequired Boolean
+  categoryId          Int
   status              String
-  is_archived         Boolean
-  waitlist_capacity   Int
-  review_comment      String?
-  reviewed_by         String?
-  customized_question Json
+  isArchived         Boolean
+  waitlistCapacity   Int
+  reviewComment      String?
+  reviewedBy         String?
+  customizedQuestion Json
 
-  category            EventCategory @relation(fields: [category_id], references: [id])
-  reviewedByUser      User?         @relation(fields: [reviewed_by], references: [email])
+  category            EventCategory @relation(fields: [categoryId], references: [id])
+  reviewedByUser      User?         @relation(fields: [reviewedBy], references: [email])
 }
 ```
 
@@ -164,11 +164,11 @@ model Event {
 ```prisma
 model EventLecturers {
   id              Int    @id @default(autoincrement())
-  event_id        Int
-  lecturer_email  String
+  eventId        Int
+  lecturerEmail  String
 
-  event           Event  @relation(fields: [event_id], references: [id])
-  user            User   @relation(fields: [lecturer_email], references: [email])
+  event           Event  @relation(fields: [eventId], references: [id])
+  user            User   @relation(fields: [lecturerEmail], references: [email])
 }
 ```
 
@@ -184,15 +184,15 @@ model EventCategory {
 ```prisma
 model EventMaterials {
   id           Int      @id @default(autoincrement())
-  event_id     Int
-  file_path    String
-  file_name    String
-  file_type    String
-  uploaded_by  String
-  uploaded_at  DateTime
+  eventId     Int
+  filePath    String
+  fileName    String
+  fileType    String
+  uploadedBy  String
+  uploadedAt  DateTime
 
-  event        Event  @relation(fields: [event_id], references: [id])
-  user         User   @relation(fields: [uploaded_by], references: [email])
+  event        Event  @relation(fields: [eventId], references: [id])
+  user         User   @relation(fields: [uploadedBy], references: [email])
 }
 ```
 
