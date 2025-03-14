@@ -46,29 +46,23 @@ We will implement a comprehensive technology stack that meets all course require
 
 ## Core Feature Implementation
 ### User Registration and Login
-- Secure account creation with email verification.
-- Role-based access for staff and lecturers.
-- Password reset functionality.
+The User Registration and Login feature enables users to create an account, verify their email, and securely log in. Users sign up with their name, email, and password, receiving a verification email to activate their account within 24 hours. Staff users follow the same process but can invite others to gain staff privileges. Staff members can also assign lecturers to events. The login system verifies user credentials, allowing access if correct. If a user forgets their password, they can reset it via an email link. This feature ensures a smooth and secure authentication process for all types of users.
 
 ### User Dashboard & Profile Editing
-- Centralized dashboard for event management.
-- Personalized user roles and event tracking.
+The User Dashboard conveniently enables users to manage their event engagement from a single page. Here, they can review upcoming and past events, cancel registrations if they can no longer attend, and download event materials when available. Each event listing also includes links to add it to a personal calendar or join the event lounge. Lecturers and staff gain additional privileges, such as editing event details and viewing event records. This centralized dashboard ensures a streamlined experience for every user role.
 
 ### Event Browsing
-- Event discovery with filtering and search functionality.
-- Detailed event pages with descriptions and schedules.
+The Event Browsing feature allows users to discover and explore events on our platform quickly. Users can easily find events that match their interests by filtering and searching based on date, category, lecturer, and keywords. Detailed event pages display essential information like name, description, schedule, lecturer, and capacity. Once they find an event they like, users can click the “Register” button to open the standard registration form—if the event is full, they’ll be placed on a waitlist and notified by email when a spot opens up.
 
 ### Event Management
-- Role-based event creation and approval workflows.
-- Cancellation workflows with automated notifications.
+The Event Management feature enables users to create and manage events through a structured permission system. Regular Users can apply to become Lecturers who can submit activity requests with detailed information, which Staff must review and approve. Once approved, the Staff finalizes all event details, including scheduling, location, registration settings, and ticketing configuration before publishing events for user registration. After publication, Lecturers can only upload supporting materials while the Staff maintains full editing capabilities. The system also includes a cancellation workflow requiring Staff approval, with automatic notifications sent to all registered participants upon cancellation. 
 
 ### Event Registration
-- Easy registration and waitlist management.
-- Automatic ticket generation with QR codes.
+The Event Registration feature allows users to easily sign up for events on our platform. Users can find the “Register” button when browsing events and click it to open a registration form. This form will ask for details like full name, email address, and role in the event (e.g., Undergraduate Student, Graduate Student, Faculty/Staff, General Public). A phone number and affiliation can also be provided, and event organizers can add custom questions to the form. After submitting the form, users will be told if they are registered or on the waitlist if the event is full. Registered users get a confirmation email with a QR code for check-in and a link to add the event to their Google Calendar. If a spot opens up, users on the waitlist are notified by email.
 
 ### Virtual Lounge and Attendance Monitoring
-- Real-time attendance tracking.
-- Interactive Q&A sessions via WebSockets.
+The Virtual Lounge and Attendance Monitoring feature allows staff and lecturers to oversee real-time attendance and Q&A sessions. Before an event starts, it appears on staff and registered users’ dashboards, enabling any participant to open the lounge and initiate a WebSocket connection. Staff can join via their events page and scan QR codes on user tickets to grant access. Once inside, users’ names appear on staff and lecturer screens, allowing them to participate in Q&A sessions. Users can leave anytime, with all join and leave actions tracked in real time. Q&A messages are logged for reference, and the lounge closes manually or automatically two hours after the event.
+
 
 ---
 
