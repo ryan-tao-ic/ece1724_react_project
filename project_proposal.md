@@ -1,7 +1,6 @@
 # ECE1724 Project Proposal
-## Academic Event Ticketing and QR Code Check-in System
+## Academic Event Ticketing and Check-in System
 
----
 
 ## Motivation
 Organizing academic events such as Master’s and PhD defenses, conferences, seminars, and guest lectures often involves cumbersome manual processes. Event organizers rely on generic forms or email registrations, which lack real-time attendance tracking and efficient management tools. This leads to increased administrative workload, inefficiencies in handling attendee information, and a fragmented experience for organizers and participants.
@@ -14,7 +13,6 @@ Academic event organizers are the target users, such as staff members and lectur
 
 Existing solutions, such as generic form builders and email-based registrations, provide basic functionality but lack integration and efficiency for comprehensive event management. Our platform overcomes these limitations by offering features such as user authentication, role-based access control, event creation and management tools, automated ticketing, QR code check-ins, and records archive, positioning it as a valuable tool for enhancing academic event management.
 
----
 
 ## Objective and Key Features
 ### Objective
@@ -27,7 +25,6 @@ Our project aims to develop a web-based platform specifically designed to stream
 
 These objectives address the critical pain points identified in our motivation section while leveraging modern web technologies to create a cohesive solution for academic event management and ticket processing.
 
----
 
 ## Technical Implementation Approach
 We will implement a comprehensive technology stack that meets all course requirements:
@@ -42,7 +39,6 @@ We will implement a comprehensive technology stack that meets all course require
 - **Real-time Functionality:** Socket.io integrated with Next.js for WebSocket-based interactions.
 - **External Integration:** Google Calendar API for calendar synchronization.
 
----
 
 ## Core Feature Implementation
 ### User Registration and Login
@@ -64,7 +60,6 @@ The Event Registration feature allows users to easily sign up for events on our 
 The Virtual Lounge and Attendance Monitoring feature allows staff and lecturers to oversee real-time attendance and Q&A sessions. Before an event starts, it appears on staff and registered users’ dashboards, enabling any participant to open the lounge and initiate a WebSocket connection. Staff can join via their events page and scan QR codes on user tickets to grant access. Once inside, users’ names appear on staff and lecturer screens, allowing them to participate in Q&A sessions. Users can leave anytime, with all join and leave actions tracked in real time. Q&A messages are logged for reference, and the lounge closes manually or automatically two hours after the event.
 
 
----
 
 ## Database Schema
 We will use Prisma ORM to interface with our PostgreSQL database, ensuring type-safe queries and efficient data management.
@@ -139,7 +134,6 @@ model QAMessages {
 }
 ```
 
-
 ### **Event Table**
 ```prisma
 model Event {
@@ -202,12 +196,10 @@ model EventMaterials {
 }
 ```
 
----
 
 ## Project Scope and Feasibility
 With four team members and a 1-2 month timeframe, we have carefully scoped the project to prioritize core functionality. Our implementation will focus first on essential features (user management, event management, and QR code check-in) before progressing to advanced capabilities.
 
----
 
 
 ## Tentative Plan
