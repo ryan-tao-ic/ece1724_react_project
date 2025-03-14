@@ -145,31 +145,6 @@ model QAMessages {
 }
 ```
 
-### **QAMessages Model**
-```prisma
-model Event {
-  id                   Int      @id @default(autoincrement())
-  name                 String
-  description          String?
-  created_at           DateTime @default(now())
-  updated_at           DateTime @updatedAt
-  location             String
-  event_start_time     DateTime
-  event_end_time       DateTime
-  available_seats      Int
-  ticket_sale_required Boolean
-  category_id          Int
-  status              String
-  is_archived         Boolean
-  waitlist_capacity   Int
-  review_comment      String?
-  reviewed_by         String?
-  customized_question Json
-
-  category            EventCategory @relation(fields: [category_id], references: [id])
-  reviewedByUser      User?         @relation(fields: [reviewed_by], references: [email])
-}
-```
 
 ### **Event Table**
 ```prisma
