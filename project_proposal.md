@@ -93,7 +93,7 @@ model EventUserRegistration {
   checkInTime              DateTime  @db.Timestamptz
   checkOutTime             DateTime  @db.Timestamptz
   qrCode                    String
-  waitlistPosition          Int
+  waitlistPosition          Int?
   customizedQuestionAnswer Json?
 
   event                      Event     @relation(fields: [eventId], references: [id])
@@ -130,11 +130,11 @@ model QAMessages {
   timestamp DateTime @default(now())
 
   event     Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user      User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User  @relation(fields: [userId], references: [email], onDelete: Cascade)
 }
 ```
 
-### **Event Table**
+### **Event Model**
 ```prisma
 model Event {
   id                   Int      @id @default(autoincrement())
@@ -160,7 +160,7 @@ model Event {
 }
 ```
 
-### **Event Lecturers Table**
+### **Event Lecturers Model**
 ```prisma
 model EventLecturers {
   id              Int    @id @default(autoincrement())
@@ -172,7 +172,7 @@ model EventLecturers {
 }
 ```
 
-### **Event Category Table**
+### **Event Category Model**
 ```prisma
 model EventCategory {
   id    Int    @id @default(autoincrement())
@@ -180,7 +180,7 @@ model EventCategory {
 }
 ```
 
-### **Event Materials Table**
+### **Event Materials Model**
 ```prisma
 model EventMaterials {
   id           Int      @id @default(autoincrement())
