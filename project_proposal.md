@@ -125,12 +125,12 @@ model Lounge {
 model QAMessages {
   id        Int      @id @default(autoincrement())
   eventId   Int
-  userId    Int
+  userEmail String
   content   String
   timestamp DateTime @default(now())
 
   event     Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user      User  @relation(fields: [userId], references: [email], onDelete: Cascade)
+  user      User  @relation(fields: [userEmail], references: [email], onDelete: Cascade)
 }
 ```
 
