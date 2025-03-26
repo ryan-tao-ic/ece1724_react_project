@@ -4,19 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "dev:local": "next dev --env-file=.env.local",
     "build": "next build",
     "build:docker": "NEXT_IGNORE_ESLINT=1 next build",
-    "build:prod": "NEXT_IGNORE_ESLINT=1 next build --env-file=.env.production",
     "start": "next start",
-    "start:prod": "next start --env-file=.env.production",
     "lint": "next lint",
     "format": "prettier --write .",
     "prisma:studio": "prisma studio",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:push": "prisma db push",
-    "prisma:migrate:prod": "prisma migrate deploy"
+    "prisma:push": "prisma db push"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
