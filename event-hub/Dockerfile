@@ -19,6 +19,8 @@ RUN npx next build --no-lint
 # Production image
 FROM base AS runner
 ENV NODE_ENV=production
+# Set PORT environment variable for Cloud Run
+ENV PORT=8080
 
 # Create a non-root user and set proper permissions
 RUN addgroup --system --gid 1001 nodejs
@@ -31,6 +33,8 @@ COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/docker-entrypoint.sh ./
+# Copy custom server.js file
+COPY --from=builder /app/server.js ./
 
 # Make entrypoint script executable
 RUN chmod +x ./docker-entrypoint.sh
@@ -40,7 +44,7 @@ RUN chown -R nextjs:nodejs .
 USER nextjs
 
 # Expose the port
-EXPOSE 3000
+EXPOSE 8080
 
 # Set the entrypoint
 ENTRYPOINT ["./docker-entrypoint.sh"]

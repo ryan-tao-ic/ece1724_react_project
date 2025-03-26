@@ -13,7 +13,7 @@ steps:
     args:
       - 'run'
       - 'deploy'
-      - 'eventhub'
+      - 'ece1724-react-project'
       - '--image'
       - 'gcr.io/$PROJECT_ID/eventhub:$COMMIT_SHA'
       - '--region'
@@ -24,7 +24,9 @@ steps:
       - '--add-cloudsql-instances'
       - '$PROJECT_ID:us-central1:eventhub-dev'
       - '--set-env-vars'
-      - 'DATABASE_URL=postgresql://postgres:ece1724@/eventhub?host=/cloudsql/$PROJECT_ID:us-central1:eventhub-dev'
+      - 'DATABASE_URL=postgresql://postgres:ece1724@/eventhub?host=/cloudsql/$PROJECT_ID:us-central1:eventhub-dev,PORT=8080,NEXT_PUBLIC_APP_URL=https://ece1724-react-project-$PROJECT_ID.a.run.app'
+      - '--port'
+      - '8080'
 
   # Apply database migrations
   - name: 'gcr.io/cloud-builders/npm'
