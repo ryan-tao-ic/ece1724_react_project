@@ -10,15 +10,29 @@ RUN npm ci
 
 # Build the application
 FROM base AS builder
+# Copy necessary files
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Set production environment during build
+ENV NODE_ENV production
+
+# Generate Prisma client
 RUN npx prisma generate
-# Skip ESLint during build
-RUN npx next build --no-lint
+
+# Use production build script
+RUN npm run build:prod
 
 # Production image
 FROM base AS runner
-ENV NODE_ENV=production
+WORKDIR /app
+
+ENV NODE_ENV production
+# Use the PORT environment variable (Cloud Run sets this to 8080)
+ENV PORT 8080
+
+# Uncomment the following line for glibc support in Alpine
+# RUN apk --no-cache add ca-certificates
 
 # Create a non-root user and set proper permissions
 RUN addgroup --system --gid 1001 nodejs
@@ -26,11 +40,13 @@ RUN adduser --system --uid 1001 nextjs
 
 # Copy build output and necessary files
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/.env.production ./.env.production
+
+# Set the correct permission for prerender cache
+RUN mkdir .next
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/docker-entrypoint.sh ./
 
 # Make entrypoint script executable
 RUN chmod +x ./docker-entrypoint.sh
@@ -40,7 +56,7 @@ RUN chown -R nextjs:nodejs .
 USER nextjs
 
 # Expose the port
-EXPOSE 3000
+EXPOSE 8080
 
 # Set the entrypoint
 ENTRYPOINT ["./docker-entrypoint.sh"]
