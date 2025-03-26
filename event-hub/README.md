@@ -18,6 +18,7 @@ EventHub is a comprehensive web application for managing academic events such as
 - **Database**: PostgreSQL with Prisma ORM
 - **Real-time Communication**: Socket.io
 - **Authentication**: Custom auth system
+- **Deployment**: Docker, Google Cloud Run, Google Cloud SQL
 - **File Storage**: Google Cloud Storage (planned)
 
 ## Prerequisites
@@ -25,13 +26,15 @@ EventHub is a comprehensive web application for managing academic events such as
 - Node.js 18.0.0 or later
 - PostgreSQL 13 or later
 - npm or yarn package manager
+- Docker and Docker Compose (optional, for containerized deployment)
+- Google Cloud account (optional, for cloud deployment)
 
 ## Getting Started
 
 1. Clone the repository:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/ryan-tao-ic/ece1724_react_project.git
 cd event-hub
 ```
 
@@ -45,7 +48,7 @@ yarn install
 
 3. Set up environment variables:
 
-Create a `.env` file in the root directory and add the following variables:
+Create a `.env.local` file in the root directory and add the following variables:
 
 ```
 # Database
@@ -53,6 +56,10 @@ DATABASE_URL="postgresql://<username>:<password>@localhost:5432/eventhub?schema=
 
 # App
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
+PORT=8080
+
+# File Storage
+STORAGE_BUCKET_NAME="local-bucket-name"
 ```
 
 4. Initialize the database:
@@ -98,7 +105,10 @@ event-hub/
 │   └── en/                   # English translations
 ├── prisma/                   # Prisma ORM schema and migrations
 │   └── schema.prisma         # Database schema
-└── public/                   # Static assets
+├── public/                   # Static assets
+├── Dockerfile                # Docker configuration
+├── docker-compose.yml        # Docker Compose configuration
+└── cloudbuild.yaml           # Google Cloud Build configuration
 ```
 
 ## Development Guidelines
@@ -312,7 +322,9 @@ In a real implementation, this would be replaced with a more robust authenticati
 
 ## Deployment
 
-To build the application for production, run:
+### Local Development Build
+
+To build the application for production locally, run:
 
 ```bash
 npm run build
@@ -330,7 +342,7 @@ yarn start
 
 ## Docker Deployment
 
-The application can be easily deployed using Docker and Docker Compose.
+The application can be run using Docker and Docker Compose.
 
 ### Prerequisites
 
@@ -339,14 +351,7 @@ The application can be easily deployed using Docker and Docker Compose.
 
 ### Running with Docker Compose
 
-1. Clone the repository:
-
-```bash
-git clone <repository-url>
-cd event-hub
-```
-
-2. Start the application and database:
+1. Start the application and database:
 
 ```bash
 docker-compose up -d
@@ -358,7 +363,7 @@ This will:
 - Set up the database with the correct schema
 - Start the application on port 3000
 
-3. Access the application at [http://localhost:3000](http://localhost:3000)
+2. Access the application at [http://localhost:3000](http://localhost:3000)
 
 ### Stopping the Application
 
@@ -382,11 +387,67 @@ For development, you may want to use the normal development setup instead of Doc
 docker-compose up -d db
 ```
 
-Then update your `.env` file to point to the Docker PostgreSQL instance:
+Then update your `.env.local` file to point to the Docker PostgreSQL instance:
 
 ```
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/eventhub?schema=public"
 ```
+
+## Google Cloud Deployment
+
+The application is set up for deployment on Google Cloud Run with Cloud SQL for PostgreSQL.
+
+### Prerequisites
+
+- Google Cloud account with a project created
+- Google Cloud SDK installed locally
+- Cloud Run and Cloud SQL APIs enabled
+
+### Setting Up Cloud SQL
+
+1. Create a Cloud SQL instance:
+   - Navigate to Cloud SQL in the Google Cloud Console
+   - Create a PostgreSQL instance named "eventhub-dev"
+   - Configure basic settings (region, machine type)
+   - Create a database named "eventhub"
+
+2. Set up credentials:
+   - Create a user (e.g., "postgres") with a password
+
+### Deploying with Cloud Build
+
+The project includes a `cloudbuild.yaml` file for automating deployment:
+
+1. Push your changes to GitHub:
+   ```bash
+   git add .
+   git commit -m "Your commit message"
+   git push
+   ```
+
+2. Set up a Cloud Build trigger pointing to your GitHub repository:
+   - Navigate to Cloud Build in the Google Cloud Console
+   - Connect to your GitHub repository
+   - Create a trigger that runs on push to your main branch
+
+3. The build will:
+   - Build a Docker container from your code
+   - Deploy it to Cloud Run
+   - Connect it to your Cloud SQL instance
+   - Apply database migrations
+
+### Configuring Access Control
+
+By default, the Cloud Run service can be configured to:
+
+1. Allow unauthenticated access (public):
+   - In the Cloud Run console, go to your service
+   - Under "Security", select "Allow unauthenticated invocations"
+
+2. Require authentication:
+   - In the Cloud Run console, go to your service
+   - Under "Security", select "Require authentication"
+   - Add users by their email address with the "Cloud Run Invoker" role
 
 ## License
 
@@ -399,3 +460,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [shadcn/ui](https://ui.shadcn.com/)
 - [Prisma](https://www.prisma.io/)
 - [Socket.io](https://socket.io/)
+- [Google Cloud Platform](https://cloud.google.com/)
