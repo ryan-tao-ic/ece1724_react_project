@@ -1,0 +1,29 @@
+# Dependencies
+node_modules
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Next.js build output
+.next
+out
+
+# Misc
+.git
+.github
+.DS_Store
+*.pem
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+README.md
+.vscode
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Testing
+coverage
+jest.config.js
+__tests__ 
