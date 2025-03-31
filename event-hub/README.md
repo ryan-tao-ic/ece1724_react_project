@@ -115,6 +115,7 @@ npm run format
 ### .env changes
 
 Change the .env.example file if you want to publish your .env to github
+
 use this to copy the changes to .env.example to .env if it is updated by other teammates.
 
 ```bash
