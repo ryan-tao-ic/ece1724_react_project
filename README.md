@@ -2,7 +2,29 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+First, add database:
+
+```bash
+# Create a new PostgreSQL database
+createdb event_hub
+ 
+# Copy .env.example to .env
+cp .env.example .env
+ 
+# Update .env with your PostgreSQL credentials
+# The .env.example contains:
+# DATABASE_URL="postgresql://username:randompassword@localhost:5432/paper_management?schema=public"
+#
+# Replace:
+# - username with your PostgreSQL username
+# - randompassword with your PostgreSQL password
+# The default schema=public can be kept as is
+ 
+# Run Prisma migration
+npx prisma migrate dev --name init
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
