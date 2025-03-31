@@ -45,24 +45,15 @@ npm install
 ```
 
 3. Set up environment variables:
-
-Create a `.env.local` file in the root directory and add the following variables:
-
-```
-# Database
-DATABASE_URL="postgresql://<username>:<password>@localhost:5432/eventhub?schema=public"
-
-# App
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
-PORT=8080
-
-# File Storage
-STORAGE_BUCKET_NAME="local-bucket-name"
+```bash
+cp .env.example .env
 ```
 
 4. Initialize the database:
 
+Make sure your PostgreSQL database is running, and then:
 ```bash
+createdb event_hub   
 npx prisma migrate dev
 ```
 
@@ -113,16 +104,21 @@ This project uses ESLint and Prettier for code formatting. You can run the linte
 
 ```bash
 npm run lint
-# or
-yarn lint
 ```
 
 For formatting, use:
 
 ```bash
 npm run format
-# or
-yarn format
+```
+
+### .env changes
+
+Change the .env.example file if you want to publish your .env to github
+use this to copy the changes to .env.example to .env if it is updated by other teammates.
+
+```bash
+cp .env.example .env
 ```
 
 ### Database Schema Changes
@@ -130,7 +126,7 @@ yarn format
 After modifying the Prisma schema, run the following commands to update the database:
 
 ```bash
-# Generate Prisma client
+# Generate Prisma client (optional)
 npm run prisma:generate
 
 # Apply schema changes to the database
