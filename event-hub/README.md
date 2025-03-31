@@ -45,8 +45,10 @@ npm install
 ```
 
 3. Set up environment variables:
+
+add this to your .env.local and replace the user name and password
 ```bash
-cp .env.example .env
+DATABASE_URL="postgresql://yourdatabase:yourpassword@localhost:5432/event_hub?schema=public"
 ```
 
 4. Initialize the database:
@@ -110,16 +112,6 @@ For formatting, use:
 
 ```bash
 npm run format
-```
-
-### .env changes
-
-Change the .env.example file if you want to publish your .env to github
-
-use this to copy the changes to .env.example to .env if it is updated by other teammates.
-
-```bash
-cp .env.example .env
 ```
 
 ### Database Schema Changes
