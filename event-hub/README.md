@@ -42,8 +42,6 @@ cd event-hub
 
 ```bash
 npm install
-# or
-yarn install
 ```
 
 3. Set up environment variables:
@@ -65,8 +63,6 @@ STORAGE_BUCKET_NAME="local-bucket-name"
 4. Initialize the database:
 
 ```bash
-npx prisma db push
-# or to run migrations
 npx prisma migrate dev
 ```
 
@@ -74,8 +70,6 @@ npx prisma migrate dev
 
 ```bash
 npm run dev
-# or
-yarn dev
 ```
 
 6. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
@@ -140,8 +134,6 @@ After modifying the Prisma schema, run the following commands to update the data
 npm run prisma:generate
 
 # Apply schema changes to the database
-npm run prisma:push
-# or
 npm run prisma:migrate
 ```
 
