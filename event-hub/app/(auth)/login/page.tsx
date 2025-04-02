@@ -47,9 +47,8 @@ export default function LoginPage() {
 
   async function onSubmit(data: LoginFormValues) {
     setError(null);
-    
+
     try {
-      // Call the simplified login function
       const result = await signIn("credentials", {
       redirect: false,
       email: data.email,

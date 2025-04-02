@@ -18,7 +18,6 @@ const fullAuth = {
           password: { label: "Password", type: "password" },
         },
         async authorize(credentials) {
-            console.log('hitted')
           if (!credentials?.email || !credentials?.password) return null;
   
           const user = await prisma.user.findUnique({
