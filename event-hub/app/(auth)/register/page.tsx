@@ -10,6 +10,7 @@ import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { MainLayout } from '@/components/layout/main-layout';
 import { Container } from '@/components/ui/container';
+import { signup } from '@/lib/auth/auth';
 
 // Simple validation schema for registration
 const registerSchema = z.object({
@@ -40,6 +41,7 @@ export default function RegisterPage() {
   function onSubmit(data: RegisterFormValues) {
     // This would be implemented in a real application
     console.log(data);
+    signup(data)
   }
 
   return (

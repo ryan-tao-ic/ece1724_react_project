@@ -36,7 +36,7 @@ export async function login(email: string, password: string) {
 /**
  * Register a new user (placeholder)
  */
-export async function register(userData: {
+export async function signup(userData: {
   email: string;
   password: string;
   firstName: string;
@@ -45,6 +45,14 @@ export async function register(userData: {
   // This is a placeholder - in a real app would create user in database
   console.log('Registration attempt:', userData.email);
   
+  const res = await fetch('/api/auth/signup', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(userData)
+  });
+  console.log('Registration response:', res);
   // Always fail in development
   return {
     success: false,
