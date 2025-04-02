@@ -26,6 +26,7 @@ export async function login(email: string, password: string) {
   // This is a placeholder - in a real app would validate credentials
   console.log('Login attempt:', email);
   
+  
   // Always fail in development
   return {
     success: false,

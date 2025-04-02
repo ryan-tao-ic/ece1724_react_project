@@ -24,7 +24,7 @@ import {
   Input
 } from '@/components/ui';
 import { useState } from 'react';
-import { login } from '@/lib/auth/auth';
+import { signIn } from "next-auth/react";
 
 // Simple validation schema for login
 const loginSchema = z.object({
@@ -50,11 +50,13 @@ export default function LoginPage() {
     
     try {
       // Call the simplified login function
-      const result = await login(data.email, data.password);
+      const result = await signIn("credentials", {
+      redirect: false,
+      email: data.email,
+      password: data.password,
+    });
+      console.log('Login result:', result);
       
-      if (!result.success) {
-        setError(result.message);
-      }
       // In a real app, we would redirect on success
     } catch (err) {
       setError('An unexpected error occurred');
