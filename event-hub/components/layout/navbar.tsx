@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useSession, signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -10,21 +11,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Container } from '@/components/ui/container';
 import t from '@/lib/i18n';
-import { isAuthenticated, logout } from '@/lib/auth/auth';
 import { useRouter } from 'next/navigation';
 
 export function Navbar() {
   const router = useRouter();
-  // Use our simplified auth helper
-  const isLoggedIn = isAuthenticated();
+  const { data: session } = useSession();
 
   const handleLogout = async () => {
-    await logout();
-    // In a real app, this would actually log the user out
-    // For now it just redirects
+    await signOut({ redirect: false });
     router.push('/');
   };
 
@@ -47,12 +44,30 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-4">
-          {isLoggedIn ? (
+          {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                   <Avatar>
-                    <AvatarFallback>U</AvatarFallback>
+                    <AvatarImage
+                      src={session?.user?.image || undefined}
+                      alt={session?.user?.name || 'User avatar'}
+                    />
+                    <AvatarFallback>
+                      <svg
+                        className="size-4 text-muted-foreground"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <circle cx="12" cy="8" r="5" />
+                        <path d="M20 21a8 8 0 1 0-16 0" />
+                      </svg>
+                    </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
@@ -85,4 +100,4 @@ export function Navbar() {
       </Container>
     </header>
   );
-} 
+}

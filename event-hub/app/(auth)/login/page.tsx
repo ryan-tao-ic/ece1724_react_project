@@ -47,19 +47,25 @@ export default function LoginPage() {
 
   async function onSubmit(data: LoginFormValues) {
     setError(null);
+    console.log(data);
 
     try {
       const result = await signIn("credentials", {
-      redirect: false,
-      email: data.email,
-      password: data.password,
-    });
-      console.log('Login result:', result);
-      
-      // In a real app, we would redirect on success
-    } catch (err) {
-      setError('An unexpected error occurred');
-      console.error(err);
+        redirect: false,
+        email: data.email,
+        password: data.password,
+      });
+
+      if (result?.ok) {
+        alert('Successfully logged in!');
+        // Redirect to home page or previous page
+        window.location.href = '/';
+      } else {
+        setError(result?.error || 'Login failed');
+      }
+    } catch (error) {
+      console.error('Login error:', error); 
+      setError('An error occurred during login. Please try again.');
     }
   }
 

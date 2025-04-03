@@ -19,20 +19,20 @@ export function getCurrentUser() {
   return null;
 }
 
-/**
- * Login with credentials (placeholder)
- */
-export async function login(email: string, password: string) {
-  // This is a placeholder - in a real app would validate credentials
-  console.log('Login attempt:', email);
+// /**
+//  * Login with credentials (placeholder)
+//  */
+// export async function login(email: string, password: string) {
+//   // This is a placeholder - in a real app would validate credentials
+//   console.log('Login attempt:', email);
   
   
-  // Always fail in development
-  return {
-    success: false,
-    message: 'Authentication not implemented in this placeholder'
-  };
-}
+//   // Always fail in development
+//   return {
+//     success: false,
+//     message: 'Authentication not implemented in this placeholder'
+//   };
+// }
 
 /**
  * Register a new user (placeholder)
@@ -54,10 +54,26 @@ export async function signup(userData: {
     body: JSON.stringify(userData)
   });
   console.log('Registration response:', res);
-  // Always fail in development
+
+  if (!res.ok) {
+    return {
+      success: false,
+      message: 'Registration failed. Please try again.'
+    };
+  }
+
+  const data = await res.json();
+
+  if (data.error) {
+    return {
+      success: false, 
+      message: data.error
+    };
+  }
+
   return {
-    success: false,
-    message: 'Registration not implemented in this placeholder'
+    success: true,
+    message: 'Registration successful!'
   };
 }
 

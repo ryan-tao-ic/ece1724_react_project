@@ -42,6 +42,18 @@ export default function RegisterPage() {
     // This would be implemented in a real application
     console.log(data);
     signup(data)
+      .then(result => {
+        if (result.success) {
+          alert('Successfully registered!');
+          window.location.href = '/';
+        } else {
+          alert(`Registration failed: ${result.message}`);
+        }
+      })
+      .catch(error => {
+        console.error('Registration error:', error);
+        alert('An error occurred during registration. Please try again.');
+      });
   }
 
   return (
