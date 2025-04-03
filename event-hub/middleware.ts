@@ -10,7 +10,15 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  return NextResponse.next();
+   // ✅ Forward token manually so `auth()` can decode it later
+   const requestHeaders = new Headers(req.headers);
+   requestHeaders.set("x-auth-token", JSON.stringify(token));
+ 
+   return NextResponse.next({
+     request: {
+       headers: requestHeaders,
+     },
+   });
 }
 
 export const config = {
