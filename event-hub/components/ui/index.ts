@@ -8,9 +8,9 @@ export * from "./button";
 export * from "./card";
 export * from "./container";
 
-// Overlay components 
+// Overlay components
 export * from "./dropdown-menu";
 export * from "./sonner";
 
 // Avatar and display
-export * from "./avatar"; 
+export * from "./avatar";

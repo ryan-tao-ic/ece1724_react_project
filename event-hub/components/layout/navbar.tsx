@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react';
-import { Button } from '@/components/ui/button';
+import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,11 +10,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Container } from '@/components/ui/container';
-import t from '@/lib/i18n';
-import { useRouter } from 'next/navigation';
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Container } from "@/components/ui/container";
+import t from "@/lib/i18n";
+import { useRouter } from "next/navigation";
 
 export function Navbar() {
   const router = useRouter();
@@ -22,7 +22,7 @@ export function Navbar() {
 
   const handleLogout = async () => {
     await signOut({ redirect: false });
-    router.push('/');
+    router.push("/");
   };
 
   return (
@@ -30,16 +30,19 @@ export function Navbar() {
       <Container className="flex h-16 items-center justify-between">
         <div className="flex items-center gap-4">
           <Link href="/" className="font-semibold text-xl">
-            {t('app.name')}
+            {t("app.name")}
           </Link>
         </div>
-        
+
         <nav className="hidden md:flex items-center gap-6">
           <Link href="/events" className="text-sm font-medium hover:underline">
-            {t('navbar.browseEvents')}
+            {t("navbar.browseEvents")}
           </Link>
-          <Link href="/dashboard" className="text-sm font-medium hover:underline">
-            {t('navbar.dashboard')}
+          <Link
+            href="/dashboard"
+            className="text-sm font-medium hover:underline"
+          >
+            {t("navbar.dashboard")}
           </Link>
         </nav>
 
@@ -47,11 +50,14 @@ export function Navbar() {
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                <Button
+                  variant="ghost"
+                  className="relative h-10 w-10 rounded-full"
+                >
                   <Avatar>
                     <AvatarImage
                       src={session?.user?.image || undefined}
-                      alt={session?.user?.name || 'User avatar'}
+                      alt={session?.user?.name || "User avatar"}
                     />
                     <AvatarFallback>
                       <svg
@@ -72,27 +78,27 @@ export function Navbar() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{t('navbar.myAccount')}</DropdownMenuLabel>
+                <DropdownMenuLabel>{t("navbar.myAccount")}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard">{t('navbar.dashboard')}</Link>
+                  <Link href="/dashboard">{t("navbar.dashboard")}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/profile">{t('navbar.profile')}</Link>
+                  <Link href="/profile">{t("navbar.profile")}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>
-                  {t('navbar.logout')}
+                  {t("navbar.logout")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <>
               <Button variant="ghost" asChild>
-                <Link href="/login">{t('navbar.login')}</Link>
+                <Link href="/login">{t("navbar.login")}</Link>
               </Button>
               <Button asChild>
-                <Link href="/register">{t('navbar.signUp')}</Link>
+                <Link href="/register">{t("navbar.signUp")}</Link>
               </Button>
             </>
           )}

@@ -25,8 +25,7 @@ export function getCurrentUser() {
 // export async function login(email: string, password: string) {
 //   // This is a placeholder - in a real app would validate credentials
 //   console.log('Login attempt:', email);
-  
-  
+
 //   // Always fail in development
 //   return {
 //     success: false,
@@ -44,21 +43,21 @@ export async function signup(userData: {
   lastName: string;
 }) {
   // This is a placeholder - in a real app would create user in database
-  console.log('Registration attempt:', userData.email);
-  
-  const res = await fetch('/api/auth/signup', {
-    method: 'POST',
+  console.log("Registration attempt:", userData.email);
+
+  const res = await fetch("/api/auth/signup", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(userData)
+    body: JSON.stringify(userData),
   });
-  console.log('Registration response:', res);
+  console.log("Registration response:", res);
 
   if (!res.ok) {
     return {
       success: false,
-      message: 'Registration failed. Please try again.'
+      message: "Registration failed. Please try again.",
     };
   }
 
@@ -66,14 +65,14 @@ export async function signup(userData: {
 
   if (data.error) {
     return {
-      success: false, 
-      message: data.error
+      success: false,
+      message: data.error,
     };
   }
 
   return {
     success: true,
-    message: 'Registration successful!'
+    message: "Registration successful!",
   };
 }
 
@@ -82,6 +81,6 @@ export async function signup(userData: {
  */
 export async function logout() {
   // This is a placeholder - in a real app would clear session
-  console.log('Logout attempt');
+  console.log("Logout attempt");
   return true;
-} 
+}

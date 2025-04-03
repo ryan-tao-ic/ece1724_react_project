@@ -47,6 +47,7 @@ npm install
 3. Set up environment variables:
 
 add this to your .env.local and replace the user name and password
+
 ```bash
 DATABASE_URL="postgresql://yourdatabase:yourpassword@localhost:5432/event_hub?schema=public"
 ```
@@ -54,8 +55,9 @@ DATABASE_URL="postgresql://yourdatabase:yourpassword@localhost:5432/event_hub?sc
 4. Initialize the database:
 
 Make sure your PostgreSQL database is running, and then:
+
 ```bash
-createdb event_hub   
+createdb event_hub
 npx prisma migrate dev
 ```
 
@@ -179,7 +181,7 @@ To simplify imports, UI components are re-exported from a central barrel file:
 
 ```tsx
 // Import multiple components in a single import
-import { Button, Card, Input, Form } from '@/components/ui';
+import { Button, Card, Input, Form } from "@/components/ui";
 ```
 
 ### Theming
@@ -193,12 +195,12 @@ The application uses a consistent theming approach:
 Example usage of theme tokens:
 
 ```tsx
-import { text, spacing, radius } from '@/lib/theme';
+import { text, spacing, radius } from "@/lib/theme";
 
 // Using theme tokens in components
 <div className={`${spacing.md} ${radius.lg}`}>
   <h2 className={text.xl}>Heading</h2>
-</div>
+</div>;
 ```
 
 This approach ensures visual consistency throughout the application.
@@ -213,12 +215,12 @@ For initial page loads and static/dynamic data that doesn't require user interac
 
 ```tsx
 // In a Server Component (app/events/page.tsx)
-import { getEvents } from '@/lib/db/events';
+import { getEvents } from "@/lib/db/events";
 
 export default async function EventsPage() {
   // Fetch events using the cached data function
   const events = await getEvents();
-  
+
   return <EventList events={events} />;
 }
 ```
@@ -229,14 +231,14 @@ For data mutations and form submissions:
 
 ```tsx
 // Import the server action
-import { createEvent } from '@/app/actions';
+import { createEvent } from "@/app/actions";
 
 // Use in a client component form
 <form action={createEvent}>
   <input name="name" />
   <input name="location" />
   <button type="submit">Create Event</button>
-</form>
+</form>;
 ```
 
 ### Client Components
@@ -244,30 +246,32 @@ import { createEvent } from '@/app/actions';
 For client-side interactive features:
 
 ```tsx
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { createEvent } from '@/app/actions';
+import { useState } from "react";
+import { createEvent } from "@/app/actions";
 
 export function EventForm() {
-  const [name, setName] = useState('');
-  
+  const [name, setName] = useState("");
+
   // Form with client-side validation
   return (
-    <form action={async (formData) => {
-      // Validate form data client-side
-      if (!name) return;
-      
-      // Submit using server action
-      const result = await createEvent(formData);
-      
-      // Handle result
-      if (result.success) {
-        // Success handling
-      }
-    }}>
-      <input 
-        name="name" 
+    <form
+      action={async (formData) => {
+        // Validate form data client-side
+        if (!name) return;
+
+        // Submit using server action
+        const result = await createEvent(formData);
+
+        // Handle result
+        if (result.success) {
+          // Success handling
+        }
+      }}
+    >
+      <input
+        name="name"
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
@@ -295,7 +299,7 @@ await register({
   email,
   password,
   firstName,
-  lastName
+  lastName,
 });
 ```
 
@@ -339,6 +343,7 @@ docker-compose up -d
 ```
 
 This will:
+
 - Build the Next.js application
 - Pull and run PostgreSQL
 - Set up the database with the correct schema
@@ -387,6 +392,7 @@ The application is set up for deployment on Google Cloud Run with Cloud SQL for 
 ### Setting Up Cloud SQL
 
 1. Create a Cloud SQL instance:
+
    - Navigate to Cloud SQL in the Google Cloud Console
    - Create a PostgreSQL instance named "eventhub-dev"
    - Configure basic settings (region, machine type)
@@ -400,6 +406,7 @@ The application is set up for deployment on Google Cloud Run with Cloud SQL for 
 The project includes a `cloudbuild.yaml` file for automating deployment:
 
 1. Push your changes to GitHub:
+
    ```bash
    git add .
    git commit -m "Your commit message"
@@ -407,6 +414,7 @@ The project includes a `cloudbuild.yaml` file for automating deployment:
    ```
 
 2. Set up a Cloud Build trigger pointing to your GitHub repository:
+
    - Navigate to Cloud Build in the Google Cloud Console
    - Connect to your GitHub repository
    - Create a trigger that runs on push to your main branch
@@ -422,6 +430,7 @@ The project includes a `cloudbuild.yaml` file for automating deployment:
 By default, the Cloud Run service can be configured to:
 
 1. Allow unauthenticated access (public):
+
    - In the Cloud Run console, go to your service
    - Under "Security", select "Allow unauthenticated invocations"
 

@@ -6,4 +6,4 @@
     "react/no-unescaped-entities": "off",
     "no-var": "warn"
   }
-} 
+}

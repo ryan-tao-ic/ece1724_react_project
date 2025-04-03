@@ -1,4 +1,3 @@
-
 export const authConfig = {
   providers: [],
   session: {
@@ -20,4 +19,4 @@ export const authConfig = {
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
-}
+};
