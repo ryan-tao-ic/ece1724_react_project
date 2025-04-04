@@ -1,28 +1,44 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { MainLayout } from '@/components/layout/main-layout';
-import { Container } from '@/components/ui/container';
-import { signup } from '@/lib/auth/auth';
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { MainLayout } from "@/components/layout/main-layout";
+import { Container } from "@/components/ui/container";
+import { signup } from "@/lib/auth/auth";
 
 // Simple validation schema for registration
-const registerSchema = z.object({
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  email: z.string().email(),
-  password: z.string().min(6),
-  confirmPassword: z.string()
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+const registerSchema = z
+  .object({
+    firstName: z.string().min(1),
+    lastName: z.string().min(1),
+    email: z.string().email(),
+    password: z.string().min(6),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
@@ -30,11 +46,11 @@ export default function RegisterPage() {
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
     },
   });
 
@@ -42,6 +58,18 @@ export default function RegisterPage() {
     // This would be implemented in a real application
     console.log(data);
     signup(data)
+      .then((result) => {
+        if (result.success) {
+          alert("Successfully registered!");
+          window.location.href = "/";
+        } else {
+          alert(`Registration failed: ${result.message}`);
+        }
+      })
+      .catch((error) => {
+        console.error("Registration error:", error);
+        alert("An error occurred during registration. Please try again.");
+      });
   }
 
   return (
@@ -50,14 +78,19 @@ export default function RegisterPage() {
         <div className="mx-auto flex justify-center">
           <Card className="w-full max-w-md">
             <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
+              <CardTitle className="text-2xl font-bold">
+                Create an account
+              </CardTitle>
               <CardDescription>
                 Enter your information to create an account
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-4"
+                >
                   <div className="grid grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
@@ -106,7 +139,11 @@ export default function RegisterPage() {
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="••••••••" {...field} />
+                          <Input
+                            type="password"
+                            placeholder="••••••••"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -119,7 +156,11 @@ export default function RegisterPage() {
                       <FormItem>
                         <FormLabel>Confirm Password</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="••••••••" {...field} />
+                          <Input
+                            type="password"
+                            placeholder="••••••••"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -133,7 +174,7 @@ export default function RegisterPage() {
             </CardContent>
             <CardFooter className="flex justify-center">
               <div className="text-sm text-muted-foreground">
-                Already have an account?{' '}
+                Already have an account?{" "}
                 <Link href="/login" className="text-primary hover:underline">
                   Sign in
                 </Link>
@@ -144,4 +185,4 @@ export default function RegisterPage() {
       </Container>
     </MainLayout>
   );
-} 
+}

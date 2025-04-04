@@ -1,5 +1,5 @@
-import prisma from './prisma';
-import { cache } from 'react';
+import prisma from "./prisma";
+import { cache } from "react";
 
 /**
  * Get all published events
@@ -8,13 +8,13 @@ import { cache } from 'react';
 export const getEvents = cache(async () => {
   return await prisma.event.findMany({
     where: {
-      status: 'PUBLISHED',
+      status: "PUBLISHED",
     },
     include: {
       category: true,
     },
     orderBy: {
-      eventStartTime: 'asc',
+      eventStartTime: "asc",
     },
   });
 });
@@ -50,14 +50,14 @@ export const getEventById = cache(async (id: string) => {
 export async function searchEvents(query: string) {
   return await prisma.event.findMany({
     where: {
-      status: 'PUBLISHED',
+      status: "PUBLISHED",
       OR: [
-        { name: { contains: query, mode: 'insensitive' } },
-        { description: { contains: query, mode: 'insensitive' } },
+        { name: { contains: query, mode: "insensitive" } },
+        { description: { contains: query, mode: "insensitive" } },
       ],
     },
     include: {
       category: true,
     },
   });
-} 
+}
