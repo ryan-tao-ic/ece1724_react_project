@@ -3,6 +3,8 @@
  * This would be replaced with a real auth system in a future PR
  */
 
+import { NextRequest } from "next/server";
+
 /**
  * Check if a user is authenticated (placeholder)
  */
@@ -19,36 +21,60 @@ export function getCurrentUser() {
   return null;
 }
 
-/**
- * Login with credentials (placeholder)
- */
-export async function login(email: string, password: string) {
-  // This is a placeholder - in a real app would validate credentials
-  console.log('Login attempt:', email);
-  
-  // Always fail in development
-  return {
-    success: false,
-    message: 'Authentication not implemented in this placeholder'
-  };
-}
+// /**
+//  * Login with credentials (placeholder)
+//  */
+// export async function login(email: string, password: string) {
+//   // This is a placeholder - in a real app would validate credentials
+//   console.log('Login attempt:', email);
+
+//   // Always fail in development
+//   return {
+//     success: false,
+//     message: 'Authentication not implemented in this placeholder'
+//   };
+// }
 
 /**
  * Register a new user (placeholder)
  */
-export async function register(userData: {
+export async function signup(userData: {
   email: string;
   password: string;
   firstName: string;
   lastName: string;
 }) {
   // This is a placeholder - in a real app would create user in database
-  console.log('Registration attempt:', userData.email);
-  
-  // Always fail in development
+  console.log("Registration attempt:", userData.email);
+
+  const res = await fetch("/api/auth/signup", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userData),
+  });
+  console.log("Registration response:", res);
+
+  if (!res.ok) {
+    return {
+      success: false,
+      message: "Registration failed. Please try again.",
+    };
+  }
+
+  const data = await res.json();
+
+  if (data.error) {
+    return {
+      success: false,
+      message: data.error,
+    };
+  }
+
   return {
-    success: false,
-    message: 'Registration not implemented in this placeholder'
+    success: true,
+    message: "Registration successful!",
   };
 }
 
@@ -57,6 +83,15 @@ export async function register(userData: {
  */
 export async function logout() {
   // This is a placeholder - in a real app would clear session
-  console.log('Logout attempt');
+  console.log("Logout attempt");
   return true;
-} 
+}
+
+export function getTokenHeader(req: NextRequest) {
+  const tokenHeader = req.headers.get("x-auth-token");
+  if (!tokenHeader) {
+    throw new Error("Unauthorized");
+  }
+  return JSON.parse(tokenHeader);
+
+}

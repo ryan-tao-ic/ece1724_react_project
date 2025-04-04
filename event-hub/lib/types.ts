@@ -1,4 +1,4 @@
-import { UserRole, EventStatus, RegistrationStatus } from '@prisma/client';
+import { UserRole, EventStatus, RegistrationStatus } from "@prisma/client";
 
 export interface User {
   id: string;
@@ -79,4 +79,4 @@ export interface QAMessage {
   userId: string;
   content: string;
   timestamp: Date;
-} 
+}

@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { MainLayout } from '@/components/layout/main-layout';
-import t from '@/lib/i18n';
+import Link from "next/link";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { MainLayout } from "@/components/layout/main-layout";
+import t from "@/lib/i18n";
 import {
   Button,
   Card,
@@ -21,44 +21,51 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  Input
-} from '@/components/ui';
-import { useState } from 'react';
-import { login } from '@/lib/auth/auth';
+  Input,
+} from "@/components/ui";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
 
 // Simple validation schema for login
 const loginSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(1)
+  password: z.string().min(1),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
-  
+
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
   async function onSubmit(data: LoginFormValues) {
     setError(null);
-    
+    console.log(data);
+
     try {
-      // Call the simplified login function
-      const result = await login(data.email, data.password);
-      
-      if (!result.success) {
-        setError(result.message);
+      const result = await signIn("credentials", {
+        redirect: false,
+        email: data.email,
+        password: data.password,
+      });
+
+      if (result?.ok) {
+        alert("Successfully logged in!");
+        // Redirect to home page or previous page
+        window.location.href = "/";
+      } else {
+        setError(result?.error || "Login failed");
       }
-      // In a real app, we would redirect on success
-    } catch (err) {
-      setError('An unexpected error occurred');
-      console.error(err);
+    } catch (error) {
+      console.error("Login error:", error);
+      setError("An error occurred during login. Please try again.");
     }
   }
 
@@ -75,7 +82,10 @@ export default function LoginPage() {
             </CardHeader>
             <CardContent>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-4"
+                >
                   {error && (
                     <div className="p-3 text-sm text-white bg-red-500 rounded">
                       {error}
@@ -101,7 +111,11 @@ export default function LoginPage() {
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="••••••••" {...field} />
+                          <Input
+                            type="password"
+                            placeholder="••••••••"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -115,12 +129,15 @@ export default function LoginPage() {
             </CardContent>
             <CardFooter className="flex flex-col items-center">
               <div className="text-sm text-muted-foreground">
-                <Link href="/reset-password" className="text-primary hover:underline">
+                <Link
+                  href="/reset-password"
+                  className="text-primary hover:underline"
+                >
                   Forgot your password?
                 </Link>
               </div>
               <div className="mt-4 text-sm text-muted-foreground">
-                Don't have an account?{' '}
+                Don't have an account?{" "}
                 <Link href="/register" className="text-primary hover:underline">
                   Sign up
                 </Link>
@@ -131,4 +148,4 @@ export default function LoginPage() {
       </Container>
     </MainLayout>
   );
-} 
+}

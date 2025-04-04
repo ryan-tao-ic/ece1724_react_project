@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 // This is to prevent multiple instances of Prisma Client in development
 // eslint-disable-next-line
@@ -11,8 +11,8 @@ declare global {
 const prismaClient = global.prisma || new PrismaClient();
 
 // Assign to global to prevent multiple instances during hot reloading
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   global.prisma = prismaClient;
 }
 
-export default prismaClient; 
+export default prismaClient;

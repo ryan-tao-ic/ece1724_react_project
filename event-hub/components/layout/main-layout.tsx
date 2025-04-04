@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { ReactNode } from 'react';
-import { Navbar } from './navbar';
-import { Footer } from './footer';
+import { ReactNode } from "react";
+import { Navbar } from "./navbar";
+import { Footer } from "./footer";
 
 export function MainLayout({ children }: { children: ReactNode }) {
   return (
@@ -12,4 +12,4 @@ export function MainLayout({ children }: { children: ReactNode }) {
       <Footer />
     </div>
   );
-} 
+}
