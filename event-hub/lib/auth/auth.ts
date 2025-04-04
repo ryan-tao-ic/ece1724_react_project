@@ -3,6 +3,8 @@
  * This would be replaced with a real auth system in a future PR
  */
 
+import { NextRequest } from "next/server";
+
 /**
  * Check if a user is authenticated (placeholder)
  */
@@ -83,4 +85,13 @@ export async function logout() {
   // This is a placeholder - in a real app would clear session
   console.log("Logout attempt");
   return true;
+}
+
+export function getTokenHeader(req: NextRequest) {
+  const tokenHeader = req.headers.get("x-auth-token");
+  if (!tokenHeader) {
+    throw new Error("Unauthorized");
+  }
+  return JSON.parse(tokenHeader);
+
 }

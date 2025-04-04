@@ -17,7 +17,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import t from "@/lib/i18n";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getProfile } from "@/lib/profile/profile";
 
 const profileSchema = z.object({
   firstName: z.string().min(1),
@@ -70,7 +71,11 @@ const formFields = [
 export default function ProfilePage() {
   const { data: session } = useSession();
   const [isEditing, setIsEditing] = useState(false);
-
+  useEffect(() => {
+      getProfile().then((profile) => {
+        console.log("Profile data:", profile);
+      })
+  }, []);
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
