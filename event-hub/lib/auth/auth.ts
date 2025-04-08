@@ -4,6 +4,8 @@
  */
 
 import { NextRequest } from "next/server";
+import { getServerSession } from "next-auth";
+
 
 /**
  * Check if a user is authenticated (placeholder)
@@ -16,8 +18,8 @@ export function isAuthenticated(): boolean {
 /**
  * Get the current user (placeholder)
  */
-export function getCurrentUser() {
-  // This is a placeholder - in a real app would get from session
+export async function getCurrentUser() {
+  // This is a placeholder - in a real app would fetch user from session/cookies
   return null;
 }
 

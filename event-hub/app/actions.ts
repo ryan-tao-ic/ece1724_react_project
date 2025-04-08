@@ -5,6 +5,8 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { registerToEventInDb, cancelRegistration } from '@/lib/db/registration';
 import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 const eventSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -23,6 +25,10 @@ const eventSchema = z.object({
 type EventFormData = z.infer<typeof eventSchema>;
 
 export async function createEvent(formData: FormData) {
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
+  if (!user) redirect('/login');
+
   const rawData = {
     name: formData.get("name"),
     description: formData.get("description") || "",
@@ -53,9 +59,9 @@ export async function createEvent(formData: FormData) {
         eventStartTime: new Date(data.eventStartTime),
         eventEndTime: new Date(data.eventEndTime),
         availableSeats: data.availableSeats,
-        categoryId: data.categoryId,
+        categoryId: Number(data.categoryId),
         status: 'DRAFT',
-        createdBy: 'placeholder-user-id',
+        createdBy: user.id,
       },
     });
 
@@ -71,8 +77,11 @@ export async function createEvent(formData: FormData) {
 }
 
 export async function registerToEvent(formData: FormData) {
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
+  if (!user) redirect("/login");
+
   const eventId = formData.get('eventId') as string;
-  const userId = formData.get('userId') as string;
   const phoneNumber = formData.get('phoneNumber') as string;
   const role = formData.get('role') as string;
   const affiliation = formData.get('affiliation') as string;
@@ -84,10 +93,9 @@ export async function registerToEvent(formData: FormData) {
     }
   }
 
-  // Try register (this will handle duplication check internally)
   const result = await registerToEventInDb({
     eventId,
-    userId,
+    userId: user.id,
     phoneNumber,
     role,
     affiliation,
@@ -96,15 +104,23 @@ export async function registerToEvent(formData: FormData) {
 
   revalidatePath(`/events/${eventId}/register`);
 
-  // Redirect with status and qrCode to indicate this is a first-time registration success
-  redirect(`/events/${eventId}/register?status=${result.status}&code=${encodeURIComponent(result.qrCode)}`);
+  if (result.status === 'FULL') {
+    redirect(`/events/${eventId}/register?status=FULL`);
+  } else if (result.status === 'LECTURER_CANNOT_REGISTER') {
+    redirect(`/events/${eventId}/register?status=LECTURER_CANNOT_REGISTER`);
+  } else {
+    redirect(`/events/${eventId}/register?status=${result.status}&code=${encodeURIComponent(result.qrCode)}`);
+  }
 }
 
 export async function cancelRegistrationAction(formData: FormData) {
-  const eventId = formData.get('eventId') as string;
-  const userId = formData.get('userId') as string;
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
+  if (!user) redirect("/login");
 
-  await cancelRegistration(eventId, userId);
+  const eventId = formData.get('eventId') as string;
+
+  await cancelRegistration(eventId, user.id);
 
   revalidatePath(`/events/${eventId}/register`);
   redirect(`/events/${eventId}/register?cancelled=1`);

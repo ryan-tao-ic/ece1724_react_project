@@ -10,6 +10,44 @@ export async function getUserRegistration(eventId: string, userId: string) {
   });
 }
 
+export async function getUserRegistrations(userId: string) {
+  const now = new Date();
+  
+  const registrations = await prisma.eventUserRegistration.findMany({
+    where: {
+      userId,
+      status: {
+        in: ['REGISTERED', 'WAITLISTED', 'ATTENDED'] 
+      }
+    },
+    include: {
+      event: {
+        include: {
+          category: true
+        }
+      }
+    },
+    orderBy: {
+      event: {
+        eventStartTime: 'asc'
+      }
+    }
+  });
+
+  const upcomingRegistrations = registrations.filter(
+    reg => new Date(reg.event.eventStartTime) > now
+  );
+  
+  const pastRegistrations = registrations.filter(
+    reg => new Date(reg.event.eventStartTime) <= now
+  );
+  
+  return {
+    upcoming: upcomingRegistrations,
+    past: pastRegistrations
+  };
+}
+
 export async function registerToEventInDb(params: {
   eventId: string;
   userId: string;
@@ -31,6 +69,22 @@ export async function registerToEventInDb(params: {
     };
   }
 
+  const isLecturer = await prisma.eventLecturers.findUnique({
+    where: { 
+      eventId_lecturerId: { 
+        eventId, 
+        lecturerId: userId 
+      } 
+    },
+  });
+
+  if (isLecturer) {
+    return {
+      status: 'LECTURER_CANNOT_REGISTER',
+      qrCode: '',
+    };
+  }
+
   const event = await prisma.event.findUnique({
     where: { id: eventId },
     include: { registrations: true },
@@ -38,32 +92,69 @@ export async function registerToEventInDb(params: {
 
   if (!event) throw new Error('Event not found');
 
-  const totalRegistered = event.registrations.filter(r => r.status === 'REGISTERED').length;
-  const totalCapacity = event.availableSeats;
-  const isWaitlisted = totalRegistered >= totalCapacity;
-  const registrationStatus = isWaitlisted ? 'WAITLISTED' : 'REGISTERED';
+  const totalRegistered = event.registrations.filter(
+    (r) => r.status === 'REGISTERED'
+  ).length;
+  
+  const hasAvailableSeats = totalRegistered < event.availableSeats;
+  
+  if (hasAvailableSeats) {
+    const qrCode = JSON.stringify({ eventId, userId, timestamp: Date.now() });
+    
+    const reg = await prisma.eventUserRegistration.create({
+      data: {
+        eventId,
+        userId,
+        status: 'REGISTERED',
+        qrCode,
+        customizedQuestionAnswer: customAnswers,
+        waitlistPosition: null,
+      },
+    });
 
-  const qrCode = JSON.stringify({ eventId, userId, timestamp: Date.now() });
-
-  const reg = await prisma.eventUserRegistration.create({
-    data: {
-      eventId,
+    await sendConfirmationEmail({
+      event,
       userId,
-      status: registrationStatus,
+      status: 'REGISTERED',
       qrCode,
-      customizedQuestionAnswer: customAnswers,
-      waitlistPosition: isWaitlisted ? event.registrations.length + 1 : null,
-    },
-  });
+    });
 
-  await sendConfirmationEmail({
-    event,
-    userId,
-    status: registrationStatus,
-    qrCode,
-  });
+    return { status: 'REGISTERED', qrCode };
+  } else {
+    const totalWaitlisted = event.registrations.filter(
+      (r) => r.status === 'WAITLISTED'
+    ).length;
+    
+    const waitlistIsFull = event.waitlistCapacity > 0 && 
+                          totalWaitlisted >= event.waitlistCapacity;
+    
+    if (waitlistIsFull) {
+      return { status: 'FULL', qrCode: '' };
+    } else {
+      const waitlistPosition = totalWaitlisted + 1;
+      const qrCode = JSON.stringify({ eventId, userId, timestamp: Date.now() });
+      
+      const reg = await prisma.eventUserRegistration.create({
+        data: {
+          eventId,
+          userId,
+          status: 'WAITLISTED',
+          qrCode, 
+          customizedQuestionAnswer: customAnswers,
+          waitlistPosition,
+        },
+      });
 
-  return { status: registrationStatus, qrCode };
+      await sendConfirmationEmail({
+        event,
+        userId,
+        status: 'WAITLISTED',
+        qrCode: '', 
+      });
+
+      return { status: 'WAITLISTED', qrCode };
+    }
+  }
 }
 
 export async function cancelRegistration(eventId: string, userId: string) {
