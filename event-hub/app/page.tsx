@@ -3,8 +3,13 @@ import { Button } from "@/components/ui/button";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Container } from "@/components/ui/container";
 import t from "@/lib/i18n";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await getServerSession(authOptions);
+  const isLoggedIn = !!session?.user;
+
   return (
     <MainLayout>
       <section className="w-full py-12 md:py-20 lg:py-24">
@@ -18,13 +23,15 @@ export default function HomePage() {
           <p className="max-w-[700px] text-lg text-muted-foreground sm:text-xl">
             {t("home.hero.description")}
           </p>
-          <div className="flex flex-col gap-4 min-[400px]:flex-row">
+          <div className="flex flex-col gap-4 min-[400px]:flex-row justify-center">
             <Button size="lg" asChild>
               <Link href="/events">{t("home.cta.browseEvents")}</Link>
             </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/register">{t("home.cta.createAccount")}</Link>
-            </Button>
+            {!isLoggedIn && (
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/register">{t("home.cta.createAccount")}</Link>
+              </Button>
+            )}
           </div>
         </Container>
       </section>

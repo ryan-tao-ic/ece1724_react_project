@@ -16,7 +16,7 @@ datasource db {
 model User {
   id                    String                  @id @default(uuid())
   email                 String                  @unique
-  emailVerified DateTime?
+  emailVerified         DateTime?
   isActivated           Boolean                 @default(false)
   firstName             String
   lastName              String
@@ -99,7 +99,7 @@ model Event {
   eventEndTime        DateTime
   availableSeats      Int
   ticketSaleRequired  Boolean                @default(false)
-  categoryId          String
+  categoryId          Int
   status              EventStatus            @default(DRAFT)
   isArchived          Boolean                @default(false)
   waitlistCapacity    Int                    @default(0)
@@ -169,7 +169,7 @@ model EventLecturers {
 }
 
 model EventCategory {
-  id              String    @id @default(uuid())
+  id              Int    @id @default(autoincrement())
   name            String    @unique
   
   // Relations
@@ -177,7 +177,7 @@ model EventCategory {
 }
 
 model EventMaterials {
-  id              String    @id @default(uuid())
+  id              Int    @id @default(autoincrement())
   eventId         String
   filePath        String
   fileName        String
@@ -191,7 +191,7 @@ model EventMaterials {
 }
 
 model Lounge {
-  id              String    @id @default(uuid())
+  id              Int    @id @default(autoincrement())
   eventId         String
   openedAt        DateTime  @default(now())
   closedAt        DateTime?
@@ -202,7 +202,7 @@ model Lounge {
 }
 
 model QAMessages {
-  id              String    @id @default(uuid())
+  id              Int    @id @default(autoincrement())
   eventId         String
   userId          String
   content         String    @db.Text
