@@ -1,10 +1,11 @@
 "use server";
 
-import prisma from "@/lib/db/prisma";
-import { revalidatePath } from "next/cache";
-import { z } from "zod";
+import prisma from '@/lib/db/prisma';
+import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
+import { registerToEventInDb, cancelRegistration } from '@/lib/db/registration';
+import { redirect } from 'next/navigation';
 
-// Simple validation schema for creating events
 const eventSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().optional(),
@@ -19,14 +20,9 @@ const eventSchema = z.object({
   categoryId: z.string(),
 });
 
-// Type for form data
 type EventFormData = z.infer<typeof eventSchema>;
 
-/**
- * Create a new event
- */
 export async function createEvent(formData: FormData) {
-  // Extract form data
   const rawData = {
     name: formData.get("name"),
     description: formData.get("description") || "",
@@ -37,7 +33,6 @@ export async function createEvent(formData: FormData) {
     categoryId: formData.get("categoryId"),
   };
 
-  // Validate form data
   const validationResult = eventSchema.safeParse(rawData);
 
   if (!validationResult.success) {
@@ -50,7 +45,6 @@ export async function createEvent(formData: FormData) {
   const data = validationResult.data;
 
   try {
-    // Create event in database
     await prisma.event.create({
       data: {
         name: data.name,
@@ -60,14 +54,12 @@ export async function createEvent(formData: FormData) {
         eventEndTime: new Date(data.eventEndTime),
         availableSeats: data.availableSeats,
         categoryId: data.categoryId,
-        status: "DRAFT",
-        createdBy: "placeholder-user-id", // This would normally come from session
+        status: 'DRAFT',
+        createdBy: 'placeholder-user-id',
       },
     });
 
-    // Revalidate events page to show new event
-    revalidatePath("/events");
-
+    revalidatePath('/events');
     return { success: true };
   } catch (error) {
     console.error("Error creating event:", error);
@@ -76,4 +68,44 @@ export async function createEvent(formData: FormData) {
       errors: { _form: ["Failed to create event"] },
     };
   }
+}
+
+export async function registerToEvent(formData: FormData) {
+  const eventId = formData.get('eventId') as string;
+  const userId = formData.get('userId') as string;
+  const phoneNumber = formData.get('phoneNumber') as string;
+  const role = formData.get('role') as string;
+  const affiliation = formData.get('affiliation') as string;
+
+  const customAnswers: Record<string, string> = {};
+  for (const [key, value] of formData.entries()) {
+    if (key.startsWith('custom_')) {
+      customAnswers[key.replace('custom_', '')] = value.toString();
+    }
+  }
+
+  // Try register (this will handle duplication check internally)
+  const result = await registerToEventInDb({
+    eventId,
+    userId,
+    phoneNumber,
+    role,
+    affiliation,
+    customAnswers,
+  });
+
+  revalidatePath(`/events/${eventId}/register`);
+
+  // Redirect with status and qrCode to indicate this is a first-time registration success
+  redirect(`/events/${eventId}/register?status=${result.status}&code=${encodeURIComponent(result.qrCode)}`);
+}
+
+export async function cancelRegistrationAction(formData: FormData) {
+  const eventId = formData.get('eventId') as string;
+  const userId = formData.get('userId') as string;
+
+  await cancelRegistration(eventId, userId);
+
+  revalidatePath(`/events/${eventId}/register`);
+  redirect(`/events/${eventId}/register?cancelled=1`);
 }
