@@ -4,6 +4,7 @@
  */
 
 import { NextRequest } from "next/server";
+import { headers } from "next/headers";
 import { getServerSession } from "next-auth";
 
 
@@ -95,5 +96,12 @@ export function getTokenHeader(req: NextRequest) {
     throw new Error("Unauthorized");
   }
   return JSON.parse(tokenHeader);
+}
 
+export async function getTokenForServerComponent() {
+  const token = (await headers()).get("x-auth-token");
+  if (!token) {
+    throw new Error("Unauthorized");
+  }
+  return JSON.parse(token);
 }

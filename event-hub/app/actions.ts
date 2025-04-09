@@ -6,7 +6,8 @@ import { z } from 'zod';
 import { registerToEventInDb, cancelRegistration } from '@/lib/db/registration';
 import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getTokenForServerComponent } from '@/lib/auth/auth';
+// import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 const eventSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -25,9 +26,14 @@ const eventSchema = z.object({
 type EventFormData = z.infer<typeof eventSchema>;
 
 export async function createEvent(formData: FormData) {
-  const session = await getServerSession(authOptions);
-  const user = session?.user;
-  if (!user) redirect('/login');
+  // const session = await getServerSession(authOptions);
+  // const user = session?.user;
+  const token = await getTokenForServerComponent();
+  const id = token.id;
+  const user = await prisma.user.findUnique({
+    where: { id },
+  });
+  if (!user) redirect("/login");
 
   const rawData = {
     name: formData.get("name"),
@@ -77,8 +83,14 @@ export async function createEvent(formData: FormData) {
 }
 
 export async function registerToEvent(formData: FormData) {
-  const session = await getServerSession(authOptions);
+  /* const session = await getServerSession(authOptions);
   const user = session?.user;
+  if (!user) redirect("/login");*/
+  const token = await getTokenForServerComponent();
+  const id = token.id;
+  const user = await prisma.user.findUnique({
+    where: { id },
+  });
   if (!user) redirect("/login");
 
   const eventId = formData.get('eventId') as string;
@@ -114,9 +126,15 @@ export async function registerToEvent(formData: FormData) {
 }
 
 export async function cancelRegistrationAction(formData: FormData) {
-  const session = await getServerSession(authOptions);
-  const user = session?.user;
+  // const session = await getServerSession(authOptions);
+  const token = await getTokenForServerComponent();
+  const id = token.id;
+  const user = await prisma.user.findUnique({
+    where: { id },
+  });
   if (!user) redirect("/login");
+  /* const user = session?.user;
+  if (!user) redirect("/login");*/
 
   const eventId = formData.get('eventId') as string;
 

@@ -4,7 +4,8 @@ import t from "@/lib/i18n";
 import { Button, Container } from "@/components/ui";
 import { radius, spacing, text } from "@/lib/theme";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+// import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getTokenForServerComponent } from '@/lib/auth/auth';
 import { redirect } from "next/navigation";
 import { getUserRegistrations } from "@/lib/db/registration";
 import { formatDate, createCalendarLink } from "@/lib/utils";
@@ -12,12 +13,19 @@ import { CalendarIcon, ExternalLinkIcon, QrCodeIcon, XCircleIcon } from "lucide-
 import { cancelRegistrationAction } from "@/app/actions";
 
 export default async function DashboardPage() {
+  const token = await getTokenForServerComponent();
+  const id = token.id;
+  if (!id) {  
+    redirect("/login");
+  }
+  /*
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     redirect("/login");
-  }
+  }*/
 
-  const { upcoming, past } = await getUserRegistrations(session.user.id);
+  // const { upcoming, past } = await getUserRegistrations(session.user.id);
+  const { upcoming, past } = await getUserRegistrations(id);
 
   return (
     <MainLayout>

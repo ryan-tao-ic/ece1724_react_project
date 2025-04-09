@@ -14,6 +14,7 @@ export async function middleware(req: NextRequest) {
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-auth-token", JSON.stringify(token));
 
+
   return NextResponse.next({
     request: {
       headers: requestHeaders,
