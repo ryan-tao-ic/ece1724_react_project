@@ -3,6 +3,7 @@
  * This would be replaced with a real auth system in a future PR
  */
 
+import { headers } from "next/headers";
 import { NextRequest } from "next/server";
 
 /**
@@ -94,4 +95,12 @@ export function getTokenHeader(req: NextRequest) {
   }
   return JSON.parse(tokenHeader);
 
+}
+
+export async function getTokenForServerComponent() {
+  const token = (await headers()).get("x-auth-token");
+  if (!token) {
+    throw new Error("Unauthorized");
+  }
+  return JSON.parse(token);
 }
