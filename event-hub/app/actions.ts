@@ -1,10 +1,14 @@
 "use server";
 
-import prisma from "@/lib/db/prisma";
-import { revalidatePath } from "next/cache";
-import { z } from "zod";
-
-// Simple validation schema for creating events
+import prisma from '@/lib/db/prisma';
+import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
+import { registerToEventInDb, cancelRegistration } from '@/lib/db/registration';
+import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { getTokenForServerComponent } from '@/lib/auth/auth';
+// import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { sendConfirmationEmail } from '@/lib/email/sendConfirmationEmail';  
 const eventSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().optional(),
@@ -19,14 +23,18 @@ const eventSchema = z.object({
   categoryId: z.string(),
 });
 
-// Type for form data
 type EventFormData = z.infer<typeof eventSchema>;
 
-/**
- * Create a new event
- */
 export async function createEvent(formData: FormData) {
-  // Extract form data
+  // const session = await getServerSession(authOptions);
+  // const user = session?.user;
+  const token = await getTokenForServerComponent();
+  const id = token.id;
+  const user = await prisma.user.findUnique({
+    where: { id },
+  });
+  if (!user) redirect("/login");
+
   const rawData = {
     name: formData.get("name"),
     description: formData.get("description") || "",
@@ -37,7 +45,6 @@ export async function createEvent(formData: FormData) {
     categoryId: formData.get("categoryId"),
   };
 
-  // Validate form data
   const validationResult = eventSchema.safeParse(rawData);
 
   if (!validationResult.success) {
@@ -50,7 +57,6 @@ export async function createEvent(formData: FormData) {
   const data = validationResult.data;
 
   try {
-    // Create event in database
     await prisma.event.create({
       data: {
         name: data.name,
@@ -59,15 +65,13 @@ export async function createEvent(formData: FormData) {
         eventStartTime: new Date(data.eventStartTime),
         eventEndTime: new Date(data.eventEndTime),
         availableSeats: data.availableSeats,
-        categoryId: data.categoryId,
-        status: "DRAFT",
-        createdBy: "placeholder-user-id", // This would normally come from session
+        categoryId: Number(data.categoryId),
+        status: 'DRAFT',
+        createdBy: user.id,
       },
     });
 
-    // Revalidate events page to show new event
-    revalidatePath("/events");
-
+    revalidatePath('/events');
     return { success: true };
   } catch (error) {
     console.error("Error creating event:", error);
@@ -76,4 +80,66 @@ export async function createEvent(formData: FormData) {
       errors: { _form: ["Failed to create event"] },
     };
   }
+}
+
+export async function registerToEvent(formData: FormData) {
+  /* const session = await getServerSession(authOptions);
+  const user = session?.user;
+  if (!user) redirect("/login");*/
+  const token = await getTokenForServerComponent();
+  const id = token.id;
+  const user = await prisma.user.findUnique({
+    where: { id },
+  });
+  if (!user) redirect("/login");
+
+  const eventId = formData.get('eventId') as string;
+  const phoneNumber = formData.get('phoneNumber') as string;
+  const role = formData.get('role') as string;
+  const affiliation = formData.get('affiliation') as string;
+
+  const customAnswers: Record<string, string> = {};
+  for (const [key, value] of formData.entries()) {
+    if (key.startsWith('custom_')) {
+      customAnswers[key.replace('custom_', '')] = value.toString();
+    }
+  }
+
+  const result = await registerToEventInDb({
+    eventId,
+    userId: user.id,
+    phoneNumber,
+    role,
+    affiliation,
+    customAnswers,
+  });
+
+  revalidatePath(`/events/${eventId}/register`);
+
+  if (result.status === 'FULL') {
+    redirect(`/events/${eventId}/register?status=FULL`);
+  } else if (result.status === 'LECTURER_CANNOT_REGISTER') {
+    redirect(`/events/${eventId}/register?status=LECTURER_CANNOT_REGISTER`);
+  } else {
+    redirect(`/events/${eventId}/register?status=${result.status}&code=${encodeURIComponent(result.qrCode)}`);
+  }
+}
+
+export async function cancelRegistrationAction(formData: FormData) {
+  // const session = await getServerSession(authOptions);
+  const token = await getTokenForServerComponent();
+  const id = token.id;
+  const user = await prisma.user.findUnique({
+    where: { id },
+  });
+  if (!user) redirect("/login");
+  /* const user = session?.user;
+  if (!user) redirect("/login");*/
+
+  const eventId = formData.get('eventId') as string;
+
+  await cancelRegistration(eventId, user.id);
+
+  revalidatePath(`/events/${eventId}/register`);
+  redirect(`/events/${eventId}/register?cancelled=1`);
 }
