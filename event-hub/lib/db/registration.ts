@@ -1,6 +1,7 @@
 // lib/db/registration.ts
 import prisma from './prisma';
 import { sendConfirmationEmail } from '@/lib/email/sendConfirmationEmail';
+import { sendUpgradeEmail } from '@/lib/email/sendUpgradeEmail';
 
 export async function getUserRegistration(eventId: string, userId: string) {
   return await prisma.eventUserRegistration.findUnique({
@@ -195,10 +196,9 @@ export async function upgradeFirstWaitlistedUser(eventId: string) {
 
   const event = await prisma.event.findUniqueOrThrow({ where: { id: eventId } });
 
-  await sendConfirmationEmail({
+  await sendUpgradeEmail({
     event,
     userId: first.userId,
-    status: 'REGISTERED',
     qrCode: newQr,
   });
 }
