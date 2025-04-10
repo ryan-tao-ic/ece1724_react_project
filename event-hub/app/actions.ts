@@ -8,7 +8,7 @@ import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import { getTokenForServerComponent } from '@/lib/auth/auth';
 // import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-
+import { sendConfirmationEmail } from '@/lib/email/sendConfirmationEmail';  
 const eventSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().optional(),

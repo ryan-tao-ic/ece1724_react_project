@@ -22,6 +22,9 @@ export default async function HomePage() {
             <Button size="lg" asChild>
               <Link href="/events">{t("home.cta.browseEvents")}</Link>
             </Button>
+            <Button size="lg" variant="outline" asChild>
+              <Link href="/checkin/scanner">Launch QR Scanner</Link>
+            </Button>
           </div>
         </Container>
       </section>
