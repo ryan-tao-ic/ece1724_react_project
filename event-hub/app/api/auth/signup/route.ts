@@ -1,3 +1,9 @@
+// /app/api/auth/signup/route.ts
+// This file is responsible for handling the signup process.
+// It receives a POST request with user details, checks if the user already exists,
+// hashes the password, and creates a new user in the database.
+// It returns a JSON response indicating success or failure.
+
 import { NextResponse } from "next/server";
 import { prisma } from "@/prisma";
 import { hash } from "bcryptjs";

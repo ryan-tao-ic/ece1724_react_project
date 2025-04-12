@@ -1,3 +1,5 @@
+// app/components/layout/navbar.tsx
+
 "use client";
 
 import Link from "next/link";
@@ -56,8 +58,8 @@ export function Navbar() {
                 >
                   <Avatar>
                     <AvatarImage
-                      src={session?.user?.image || undefined}
-                      alt={session?.user?.name || "User avatar"}
+                      // src={session?.user?.image || undefined}
+                      alt={`${session?.user?.firstName || ""} ${session?.user?.lastName || ""}`.trim() || "User avatar"}
                     />
                     <AvatarFallback>
                       <svg

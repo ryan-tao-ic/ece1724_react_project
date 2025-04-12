@@ -1,4 +1,9 @@
-// pages/api/auth/[...nextauth].ts
+// app/api/auth/[...nextauth]/route.js
+// This file is used to handle authentication using NextAuth.js and Prisma.
+// It configures the authentication providers, including credentials provider,
+// and sets up the Prisma adapter to interact with the database.
+// It also includes a custom authorization function to validate user credentials.
+
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/prisma";
@@ -20,13 +25,13 @@ const fullAuth = {
         if (!credentials?.email || !credentials?.password) return null;
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
+          where: { email: credentials.email },
         });
 
         if (!user || !user.passwordHash) return null;
 
         const isValid = await compare(
-          credentials.password as string,
+          credentials.password,
           user.passwordHash,
         );
         if (!isValid) return null;
@@ -43,4 +48,7 @@ const fullAuth = {
   ],
 };
 
-export const { GET, POST } = NextAuth(fullAuth as any).handlers;
+// export const { GET, POST } = NextAuth(fullAuth).handlers;
+const handler = NextAuth(fullAuth);
+export { handler as GET, handler as POST };
+
