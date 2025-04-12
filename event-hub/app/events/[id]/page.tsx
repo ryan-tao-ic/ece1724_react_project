@@ -1,4 +1,5 @@
 // app/events/[id]/page.tsx 
+
 import { getEventById } from '@/lib/db/events';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -9,6 +10,7 @@ import { format } from 'date-fns';
 import { getTokenForServerComponent } from '@/lib/auth/auth';
 import { getUserRegistration } from '@/lib/db/registration';
 import { InfoIcon } from 'lucide-react';
+import { cancelEventAction } from '@/app/actions';
 
 export default async function EventDetailPage({ params }: { params: { id: string } }) {
   const resolvedParams = await Promise.resolve(params);
@@ -18,9 +20,6 @@ export default async function EventDetailPage({ params }: { params: { id: string
   const event = await getEventById(id);
   if (!event) return notFound();
 
-  // const session = await getServerSession(authOptions);
-  // const userId = session?.user?.id;
-  // const {userId} = await getTokenForServerComponent(); 
   const token = await getTokenForServerComponent();
   const userId = token.id;
 
@@ -34,6 +33,10 @@ export default async function EventDetailPage({ params }: { params: { id: string
       (l: { lecturer: { id: string } }) => l.lecturer.id === userId
     );
   }
+
+  const isStaffReviewer = token.role === 'STAFF' && event.reviewedBy === userId;
+  const canCancelEvent = event.status === 'PUBLISHED' && isStaffReviewer;
+  const isCancelled = event.status === 'CANCELLED';
 
   const startDate = new Date(event.eventStartTime);
   const endDate = new Date(event.eventEndTime);
@@ -107,6 +110,15 @@ export default async function EventDetailPage({ params }: { params: { id: string
           </div>
         )}
 
+        {isCancelled && (
+          <div className="p-3 rounded-md bg-red-50 text-red-700 border border-red-200">
+            <div className="flex items-center gap-2">
+              <InfoIcon className="h-4 w-4" />
+              <p className="text-sm font-medium">This event has been cancelled and is no longer available for registration.</p>
+            </div>
+          </div>
+        )}
+
         {registrationMessage && (
           <div className={`p-3 rounded-md ${
             registrationMessage.type === "success" ? "bg-green-50 text-green-700 border border-green-200" :
@@ -121,12 +133,22 @@ export default async function EventDetailPage({ params }: { params: { id: string
         )}
 
         <div className="flex flex-col sm:flex-row gap-4">
-          {showRegisterButton && (
+          {showRegisterButton && !isCancelled && (
             <Button asChild>
               <Link href={userId ? `/events/${event.id}/register` : "/login"}>
                 {registerButtonText}
               </Link>
             </Button>
+          )}
+
+          {canCancelEvent && (
+            <form action={cancelEventAction}>
+              <input type="hidden" name="eventId" value={event.id} />
+              <input type="hidden" name="staffId" value={userId} />
+              <Button type="submit" variant="destructive">
+                Cancel Event
+              </Button>
+            </form>
           )}
 
           <Button asChild variant="outline">

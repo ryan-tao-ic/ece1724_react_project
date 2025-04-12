@@ -1,6 +1,9 @@
+// app/events/[id]/register/RegisterClientForm.tsx
+// This file is a client component that handles the registration form for an event.
+// It includes the form fields for user input, handles the registration process, and displays the QR code if the registration is successful.  
+
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -129,7 +132,11 @@ export default function RegisterClientForm({
     );
   }
 
-  const customQuestions = event.customizedQuestion as Record<string, string> | null;
+  type CustomQuestion = { question: string };
+
+  const customQuestions: CustomQuestion[] = Array.isArray(event.customizedQuestion)
+    ? event.customizedQuestion
+    : [];
 
   return (
     <div className="max-w-2xl mx-auto py-10">
@@ -169,16 +176,19 @@ export default function RegisterClientForm({
           <Input name="affiliation" defaultValue={user.affiliation || ''} />
         </div>
 
-        {customQuestions && Object.entries(customQuestions).map(([key, label]) => (
-          <div key={key}>
-            <Label>{label}</Label>
-            {label.toLowerCase().includes('why') || label.toLowerCase().includes('goal') ? (
-              <Textarea name={`custom_${key}`} />
-            ) : (
-              <Input name={`custom_${key}`} />
-            )}
-          </div>
-        ))}
+        {customQuestions.map((item, index) => {
+          const label = typeof item?.question === 'string' ? item.question : '';
+          return (
+            <div key={index}>
+              <Label>{label}</Label>
+              {label.toLowerCase().includes('why') || label.toLowerCase().includes('goal') ? (
+                <Textarea name={`custom_${index}`} />
+              ) : (
+                <Input name={`custom_${index}`} />
+              )}
+            </div>
+          );
+        })}
 
         <Button type="submit">Submit Registration</Button>
       </form>

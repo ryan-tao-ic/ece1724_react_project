@@ -1,3 +1,5 @@
+// app/components/cancelled-redirect.tsx
+
 'use client';
 
 import { useEffect } from 'react';
