@@ -1,5 +1,6 @@
 import { prisma } from "@/prisma";
 import { UserRole } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 export async function getUserById(id: string) {
     const user = await prisma.user.findUnique({
@@ -10,6 +11,7 @@ export async function getUserById(id: string) {
         firstName: true,
         lastName: true,
         createdAt: true,
+        role: true,
         // Add more fields as needed
         },
     });
@@ -30,32 +32,74 @@ export async function getUsersByRole(role: UserRole) {
         firstName: true,
         lastName: true,
         createdAt: true,
+        role: true,
         // Add more fields as needed
         },
     });
-    if (!users.length) {
-        throw new Error("Users not found");
+
+    // Check if there are any users at all in the database
+    const allUsers = await prisma.user.findMany({
+        select: { id: true }
+    });
+    
+    if (!allUsers.length) {
+        throw new Error("No users found in the database");
     }
+    
     return users;
 }
 
-export async function assignStaff(id: string) {
-    const user = await prisma.user.findUnique({
-        where: { id }
-    });
-    if (!user) {
-        throw new Error("User not found");
-    }
-    if (user.role === UserRole.STAFF) {
-        throw new Error("User is already a staff member");
-    }
+export async function assignStaffRole(userId: string) {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: userId }
+        });
+        
+        if (!user) {
+            throw new Error("User not found");
+        }
+        
+        if (user.role === UserRole.STAFF) {
+            throw new Error("User is already a staff member");
+        }
 
-    await prisma.user.update({
-        where: { id },
-        data: { role: UserRole.STAFF },
-    });
-    
-    
-    return user;
+        await prisma.user.update({
+            where: { id: userId },
+            data: { role: UserRole.STAFF },
+        });
+
+        revalidatePath('/roleManagement');
+        return { success: true };
+    } catch (error) {
+        console.error('Error assigning staff role:', error);
+        return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
+}
+
+export async function unassignStaffRole(userId: string) {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: userId }
+        });
+        
+        if (!user) {
+            throw new Error("User not found");
+        }
+        
+        if (user.role !== UserRole.STAFF) {
+            throw new Error("User is not a staff member");
+        }
+
+        await prisma.user.update({
+            where: { id: userId },
+            data: { role: UserRole.USER },
+        });
+
+        revalidatePath('/roleManagement');
+        return { success: true };
+    } catch (error) {
+        console.error('Error unassigning staff role:', error);
+        return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    }
 }
 
