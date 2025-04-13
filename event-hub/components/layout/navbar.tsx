@@ -38,6 +38,11 @@ export function Navbar() {
           <Link href="/events" className="text-sm font-medium hover:underline">
             {t("navbar.browseEvents")}
           </Link>
+          {session?.user?.role === "STAFF" && (
+            <Link href="/roleManagement" className="text-sm font-medium hover:underline">
+              Role Management
+            </Link>
+          )}
           <Link
             href="/dashboard"
             className="text-sm font-medium hover:underline"
