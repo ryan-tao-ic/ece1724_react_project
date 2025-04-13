@@ -29,6 +29,11 @@ export default async function EditEventPage({
   if (event.status === 'PUBLISHED' && user.role !== 'STAFF') {
     redirect(`/events/${event.id}`);
   }
+
+  const wasRejected =
+    event.status === 'DRAFT' &&
+    !!event.reviewedBy && 
+    !!event.reviewComment;
   
   const categories = await getCategories();
   
@@ -65,6 +70,8 @@ export default async function EditEventPage({
   return (
     <EditEventClientForm
       eventId={event.id}
+      wasRejected={wasRejected}
+      reviewComment={event.reviewComment || ""}
       defaultValues={{
         name: event.name,
         location: event.location,

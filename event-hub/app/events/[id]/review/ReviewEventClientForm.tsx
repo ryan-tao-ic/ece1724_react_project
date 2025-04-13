@@ -21,7 +21,8 @@ const reviewSchema = z.object({
   categoryId: z.string().min(1),
   eventStartTime: z.string().min(1),
   eventEndTime: z.string().min(1),
-  availableSeats: z.number().min(1),
+  availableSeats: z.number().min(10),
+  waitlistCapacity: z.number().min(0).optional().default(0), 
   reviewComment: z.string().optional(),
   customizedQuestion: z.array(z.object({ question: z.string().min(1) })).optional(),
 });
@@ -115,6 +116,13 @@ export default function ReviewEventClientForm({
         <div>
           <Label>Available Seats</Label>
           <Input type="number" {...form.register("availableSeats", { valueAsNumber: true })} />
+        </div>
+        <div>
+          <Label>Waitlist Capacity</Label>
+          <Input
+            type="number"
+            {...form.register("waitlistCapacity", { valueAsNumber: true })}
+          />
         </div>
         <div>
           <Label>Review Comment</Label>

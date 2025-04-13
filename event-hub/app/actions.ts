@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { registerToEventInDb, cancelRegistration } from '@/lib/db/registration';
 import { redirect } from 'next/navigation';
 import { getTokenForServerComponent } from '@/lib/auth/auth';
+import { sendCancelNoticeEmails } from '@/lib/email/sendCancelNoticeEmails';
 
 const eventSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -38,6 +39,7 @@ export async function createEventAction(data: {
   eventStartTime: string;
   eventEndTime: string;
   availableSeats: number;
+  waitlistCapacity?: number;
   status: 'DRAFT' | 'PENDING_REVIEW';
   createdBy: string;
   customizedQuestion?: string[];
@@ -64,6 +66,7 @@ type ReviewFormValues = {
   availableSeats: number;
   customizedQuestion?: { question: string }[];
   reviewComment?: string;
+  waitlistCapacity?: number;
 };
 
 // Define or import EventStatus
@@ -79,6 +82,7 @@ export async function reviewEventAction(eventId: string, data: ReviewFormValues 
       eventStartTime,
       eventEndTime,
       availableSeats,
+      waitlistCapacity,
       customizedQuestion,
       reviewComment,
       status: status,
@@ -97,6 +101,7 @@ export async function reviewEventAction(eventId: string, data: ReviewFormValues 
         eventStartTime: new Date(eventStartTime),
         eventEndTime: new Date(eventEndTime),
         availableSeats,
+        waitlistCapacity: waitlistCapacity ?? 0,
         customizedQuestion: formattedQuestions,
         reviewComment: reviewComment ?? null,
         status,
@@ -216,6 +221,8 @@ export async function cancelEventAction(formData: FormData) {
     where: { id: eventId },
     data: { status: "CANCELLED" },
   });
+
+  await sendCancelNoticeEmails(eventId);
 
   revalidatePath(`/events/${eventId}`);
 }

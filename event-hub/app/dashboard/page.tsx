@@ -57,19 +57,29 @@ export default async function DashboardPage() {
           <h1 className={`font-bold tracking-tight ${text["3xl"]}`}>
             {t("dashboard.title")}
           </h1>
-          <p className="text-muted-foreground">{t("dashboard.description")}</p>
+          <p className="text-muted-foreground">
+            {role === "STAFF"
+              ? "Review, manage, and publish events submitted by lecturers."
+              : t("dashboard.description")}
+          </p>
         </div>
 
-        {/* Upcoming Events */}
-        <Section title={t("dashboard.upcomingEvents.title")} events={upcoming} type="upcoming" />
+        {role !== 'STAFF' && (
+          <>
+            {/* Upcoming Events */}
+            <Section title={t("dashboard.upcomingEvents.title")} events={upcoming} type="upcoming" />
 
-        {/* Past Events */}
-        <Section title={t("dashboard.pastEvents.title")} events={past} type="past" />
+            {/* Past Events */}
+            <Section title={t("dashboard.pastEvents.title")} events={past} type="past" />
+          </>
+        )}
 
         {/* My Created Events */}
         {(role === "LECTURER" || role === "STAFF") && (
           <div className="mt-12">
-            <h2 className={`font-semibold mb-4 ${text.xl}`}>My Created Events</h2>
+            <h2 className={`font-semibold mb-4 ${text.xl}`}>
+              {role === "STAFF" ? "Events You are Reviewing or Reviewed" : "My Created Events"}
+            </h2>
             {visibleCreatedEvents.length > 0 ? (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {visibleCreatedEvents.map(event => (

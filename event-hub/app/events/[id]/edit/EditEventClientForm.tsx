@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { updateEvent } from '@/app/actions';
 
-// ✅ Schema with optional status
+// Schema with optional status
 const eventSchema = z.object({
   name: z.string().min(1, 'Title is required'),
   description: z.string().min(1, 'Description is required'),
@@ -26,12 +26,30 @@ const eventSchema = z.object({
   availableSeats: z.number().min(1, 'At least 1 seat is required'),
   customizedQuestion: z.array(z.object({ question: z.string().min(1) })).optional(),
   status: z.enum(['DRAFT', 'PENDING_REVIEW', 'APPROVED']).optional(),
-}).refine((data) => {
+})
+.refine((data) => {
+  const now = new Date();
+  const start = new Date(data.eventStartTime);
+  return start > now;
+}, {
+  message: 'Start time must be in the future.',
+  path: ['eventStartTime'],
+})
+.refine((data) => {
   const start = new Date(data.eventStartTime);
   const end = new Date(data.eventEndTime);
   return start < end;
 }, {
   message: 'Start time must be before end time.',
+  path: ['eventEndTime'],
+})
+.refine((data) => {
+  const start = new Date(data.eventStartTime);
+  const end = new Date(data.eventEndTime);
+  const oneHourInMs = 60 * 60 * 1000;
+  return end.getTime() - start.getTime() >= oneHourInMs;
+}, {
+  message: 'Event must last at least 1 hour.',
   path: ['eventEndTime'],
 });
 
@@ -39,10 +57,14 @@ export type EventFormValues = z.infer<typeof eventSchema>;
 
 export default function EditEventClientForm({
   eventId,
+  wasRejected,
+  reviewComment,
   defaultValues,
   categories,
 }: {
   eventId: string;
+  wasRejected: boolean;
+  reviewComment: string;
   defaultValues: EventFormValues;
   categories: { id: number; name: string }[];
 }) {
@@ -86,6 +108,12 @@ export default function EditEventClientForm({
   return (
     <div className="max-w-2xl mx-auto py-12">
       <h1 className="text-3xl font-bold mb-6">Edit Event</h1>
+      {wasRejected && reviewComment && (
+        <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 p-4 rounded mb-6">
+          <p className="font-semibold">This event was reviewed and sent back by staff.</p>
+          <p className="mt-2 whitespace-pre-line">{reviewComment}</p>
+        </div>
+      )}
       <form className="space-y-6">
         <div>
           <Label>Title</Label>

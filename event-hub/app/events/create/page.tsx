@@ -21,7 +21,8 @@ const eventSchema = z.object({
   categoryId: z.string().min(1, 'Category is required'),
   eventStartTime: z.string().min(1, 'Start time is required'),
   eventEndTime: z.string().min(1, 'End time is required'),
-  availableSeats: z.number().min(1, 'At least 1 seat is required'),
+  availableSeats: z.number().min(10, 'At least 10 seats are required'),
+  waitlistCapacity: z.number().min(0).optional().default(0),
   customizedQuestion: z.array(z.object({ question: z.string().min(1) })).optional(),
 }).refine((data) => {
   const start = new Date(data.eventStartTime);
@@ -51,6 +52,7 @@ export default function CreateEventPage() {
       eventStartTime: '',
       eventEndTime: '',
       availableSeats: 10,
+      waitlistCapacity: 0,
       customizedQuestion: [],
     },
   });
@@ -121,6 +123,10 @@ export default function CreateEventPage() {
         <div>
           <Label>Available Seats</Label>
           <Input type="number" {...form.register('availableSeats', { valueAsNumber: true })} />
+        </div>
+        <div>
+          <Label>Waitlist Capacity</Label>
+          <Input type="number" {...form.register('waitlistCapacity', { valueAsNumber: true })} />
         </div>
 
         {/* Custom Questions */}
