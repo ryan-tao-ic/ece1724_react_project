@@ -5,8 +5,6 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
-// import { getServerSession } from "next-auth";
-// import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getTokenForServerComponent } from '@/lib/auth/auth';
 import { getUserRegistration } from '@/lib/db/registration';
 import { InfoIcon } from 'lucide-react';
@@ -45,7 +43,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
   const timeString = `${format(startDate, 'h:mm a')} - ${format(endDate, 'h:mm a')}`;
 
   let registerButtonText = "Register";
-  let showRegisterButton = true;
+  let showRegisterButton = token.role !== "STAFF";
   let registrationMessage = null;
   
   if (!userId) {

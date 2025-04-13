@@ -15,6 +15,7 @@
     "incremental": true,
     "types": ["next-auth"], 
     "baseUrl": ".",
+    "ignoreDeprecations": "5.0",    
     "plugins": [
       {
         "name": "next"

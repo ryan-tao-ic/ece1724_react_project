@@ -7,11 +7,9 @@ import { getUserById } from "@/lib/db/users";
 import { notFound, redirect } from "next/navigation";
 import ReviewEventClientForm from "./ReviewEventClientForm";
 
-export default async function ReviewEventPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function ReviewEventPage({ params }: { params: { id: string } }) {
+  const { id } = await params;
+  const eventId = decodeURIComponent(id);
   const token = await getTokenForServerComponent();
   const userId = token?.id;
   if (!userId) redirect("/login");
@@ -19,7 +17,7 @@ export default async function ReviewEventPage({
   const user = await getUserById(userId);
   if (!user || user.role !== "STAFF") redirect("/dashboard");
 
-  const event = await getEventById(params.id);
+  const event = await getEventById(eventId);
   if (!event) return notFound();
 
   // Stricter access: check reviewedBy
@@ -61,6 +59,7 @@ export default async function ReviewEventPage({
         eventStartTime: new Date(event.eventStartTime).toISOString().slice(0, 16),
         eventEndTime: new Date(event.eventEndTime).toISOString().slice(0, 16),
         availableSeats: event.availableSeats,
+        waitlistCapacity: event.waitlistCapacity ?? 0,
         reviewComment: event.reviewComment || "",
         customizedQuestion: formattedQuestions,
       }}
