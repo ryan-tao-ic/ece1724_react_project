@@ -1,3 +1,6 @@
+// app/checkin/scanner/page.tsx
+// Scanner page for event check-in using QR codes
+// This page is designed to be used by staff members to check in attendees using QR codes.
 "use client";
 
 import { useSession } from "next-auth/react";

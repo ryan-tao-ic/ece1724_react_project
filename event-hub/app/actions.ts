@@ -5,10 +5,9 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { registerToEventInDb, cancelRegistration } from '@/lib/db/registration';
 import { redirect } from 'next/navigation';
-import { getServerSession } from 'next-auth';
 import { getTokenForServerComponent } from '@/lib/auth/auth';
-// import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { sendConfirmationEmail } from '@/lib/email/sendConfirmationEmail';  
+import { sendCancelNoticeEmails } from '@/lib/email/sendCancelNoticeEmails';
+
 const eventSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().optional(),
@@ -25,61 +24,124 @@ const eventSchema = z.object({
 
 type EventFormData = z.infer<typeof eventSchema>;
 
-export async function createEvent(formData: FormData) {
-  // const session = await getServerSession(authOptions);
-  // const user = session?.user;
-  const token = await getTokenForServerComponent();
-  const id = token.id;
-  const user = await prisma.user.findUnique({
-    where: { id },
+export async function getCategories() {
+  return await prisma.eventCategory.findMany({
+    select: { id: true, name: true },
+    orderBy: { name: 'asc' },
   });
-  if (!user) redirect("/login");
+}
 
-  const rawData = {
-    name: formData.get("name"),
-    description: formData.get("description") || "",
-    location: formData.get("location"),
-    eventStartTime: formData.get("eventStartTime"),
-    eventEndTime: formData.get("eventEndTime"),
-    availableSeats: formData.get("availableSeats"),
-    categoryId: formData.get("categoryId"),
-  };
+export async function createEventAction(data: {
+  name: string;
+  description: string;
+  location: string;
+  categoryId: string;
+  eventStartTime: string;
+  eventEndTime: string;
+  availableSeats: number;
+  waitlistCapacity?: number;
+  status: 'DRAFT' | 'PENDING_REVIEW';
+  createdBy: string;
+  customizedQuestion?: string[];
+}) {
+  return await prisma.event.create({
+    data: {
+      ...data,
+      categoryId: parseInt(data.categoryId, 10),
+      eventStartTime: new Date(data.eventStartTime),
+      eventEndTime: new Date(data.eventEndTime),
+      customizedQuestion: data.customizedQuestion?.map((q) => ({ question: q })),
+    },
+  });
+}
 
-  const validationResult = eventSchema.safeParse(rawData);
+// Define or import ReviewFormValues
+type ReviewFormValues = {
+  name: string;
+  description?: string;
+  location: string;
+  categoryId: string;
+  eventStartTime: string;
+  eventEndTime: string;
+  availableSeats: number;
+  customizedQuestion?: { question: string }[];
+  reviewComment?: string;
+  waitlistCapacity?: number;
+};
 
-  if (!validationResult.success) {
-    return {
-      success: false,
-      errors: validationResult.error.format(),
-    };
-  }
+// Define or import EventStatus
+export type EventStatus = 'DRAFT' | 'PENDING_REVIEW' | 'APPROVED' | 'PUBLISHED';
 
-  const data = validationResult.data;
-
+export async function reviewEventAction(eventId: string, data: ReviewFormValues & { status: EventStatus, reviewerId: string }) {
   try {
-    await prisma.event.create({
+    const {
+      name,
+      description,
+      location,
+      categoryId,
+      eventStartTime,
+      eventEndTime,
+      availableSeats,
+      waitlistCapacity,
+      customizedQuestion,
+      reviewComment,
+      status: status,
+      reviewerId
+    } = data;
+
+    const formattedQuestions = customizedQuestion?.map((q) => q.question) || [];
+
+    await prisma.event.update({
+      where: { id: eventId },
       data: {
-        name: data.name,
-        description: data.description,
-        location: data.location,
-        eventStartTime: new Date(data.eventStartTime),
-        eventEndTime: new Date(data.eventEndTime),
-        availableSeats: data.availableSeats,
-        categoryId: Number(data.categoryId),
-        status: 'DRAFT',
-        createdBy: user.id,
+        name,
+        description,
+        location,
+        categoryId: parseInt(categoryId),
+        eventStartTime: new Date(eventStartTime),
+        eventEndTime: new Date(eventEndTime),
+        availableSeats,
+        waitlistCapacity: waitlistCapacity ?? 0,
+        customizedQuestion: formattedQuestions,
+        reviewComment: reviewComment ?? null,
+        status,
+        reviewedBy: reviewerId  
       },
     });
 
-    revalidatePath('/events');
     return { success: true };
-  } catch (error) {
-    console.error("Error creating event:", error);
-    return {
-      success: false,
-      errors: { _form: ["Failed to create event"] },
-    };
+  } catch (err) {
+    console.error('reviewEventAction error:', err);
+    return { success: false, message: 'Failed to review event.' };
   }
+}
+
+
+export async function updateEvent(id: string, data: {
+  name: string;
+  description: string;
+  location: string;
+  categoryId: string;
+  eventStartTime: string;
+  eventEndTime: string;
+  availableSeats: number;
+  customizedQuestion?: string[];
+  status?: "DRAFT" | "PENDING_REVIEW" | "APPROVED"; 
+}) {
+  return await prisma.event.update({
+    where: { id },
+    data: {
+      name: data.name,
+      description: data.description,
+      location: data.location,
+      categoryId: parseInt(data.categoryId, 10),
+      eventStartTime: new Date(data.eventStartTime),
+      eventEndTime: new Date(data.eventEndTime),
+      availableSeats: data.availableSeats,
+      customizedQuestion: data.customizedQuestion,
+      status: data.status, 
+    },
+  });
 }
 
 export async function registerToEvent(formData: FormData) {
@@ -142,4 +204,25 @@ export async function cancelRegistrationAction(formData: FormData) {
 
   revalidatePath(`/events/${eventId}/register`);
   redirect(`/events/${eventId}/register?cancelled=1`);
+}
+
+export async function cancelEventAction(formData: FormData) {
+  'use server';
+
+  const eventId = formData.get('eventId') as string;
+  const staffId = formData.get('staffId') as string;
+
+  const event = await prisma.event.findUnique({ where: { id: eventId } });
+  if (!event || event.status !== "PUBLISHED" || event.reviewedBy !== staffId) {
+    throw new Error("Not allowed to cancel this event.");
+  }
+
+  await prisma.event.update({
+    where: { id: eventId },
+    data: { status: "CANCELLED" },
+  });
+
+  await sendCancelNoticeEmails(eventId);
+
+  revalidatePath(`/events/${eventId}`);
 }

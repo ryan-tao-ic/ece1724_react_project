@@ -1,3 +1,7 @@
+// app/layout.tsx
+// This file is used to define the layout of the application.
+// It includes the global styles, fonts, and providers for the application.
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";

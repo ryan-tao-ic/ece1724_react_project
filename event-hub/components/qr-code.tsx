@@ -1,3 +1,5 @@
+// app/components/qr-code.tsx
+
 'use client';
 
 import { QRCodeCanvas } from 'qrcode.react';

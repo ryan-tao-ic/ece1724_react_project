@@ -1,7 +1,8 @@
-// ✅ app/events/[id]/register/page.tsx (Server Component)
+// app/events/[id]/register/page.tsx (Server Component)
+// This file is a server component that handles the registration process for an event.
+// It retrieves the event details, user information, and any existing registration for the user.
+// If the user is not logged in, it redirects them to the login page. If the event or user is not found, it returns a 404 error.
 
-// import { getServerSession } from "next-auth";
-// import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getTokenForServerComponent } from '@/lib/auth/auth';
 import { getEventById } from "@/lib/db/events";
 import { getUserById } from "@/lib/db/users";

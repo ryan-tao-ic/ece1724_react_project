@@ -1,4 +1,11 @@
 // app/api/checkin/route.ts
+
+// This route handles the check-in process for users at events using QR codes.
+// It verifies the QR code, checks if the user is registered for the event, and updates their check-in status.
+// It also checks if the current time is within the event's start and end times.
+// If the user has already checked in, it returns an error.
+// If the QR code is invalid or missing, it returns an error.
+
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db/prisma";
 
