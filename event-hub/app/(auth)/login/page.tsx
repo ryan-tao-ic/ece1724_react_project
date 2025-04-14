@@ -1,11 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { MainLayout } from "@/components/layout/main-layout";
-import t from "@/lib/i18n";
 import {
   Button,
   Card,
@@ -23,8 +18,12 @@ import {
   FormMessage,
   Input,
 } from "@/components/ui";
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 // Simple validation schema for login
 const loginSchema = z.object({
@@ -61,7 +60,12 @@ export default function LoginPage() {
         // Redirect to home page or previous page
         window.location.href = "/";
       } else {
-        setError(result?.error || "Login failed");
+        // Check if the error is related to account activation
+        if (result?.error?.includes("Account not activated")) {
+          setError("Your account is not activated yet. Please check your email for the activation link.");
+        } else {
+          setError(result?.error || "Login failed");
+        }
       }
     } catch (error) {
       console.error("Login error:", error);

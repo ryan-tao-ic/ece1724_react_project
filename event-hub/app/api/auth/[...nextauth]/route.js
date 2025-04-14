@@ -81,12 +81,12 @@ export const authOptions: NextAuthOptions = {
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };*/
 
-import NextAuth from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "@/prisma";
 import { authConfig } from "@/auth.config";
-import CredentialsProvider from "next-auth/providers/credentials";
+import { prisma } from "@/prisma";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcrypt";
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 const fullAuth = {
   ...authConfig,
@@ -112,6 +112,11 @@ const fullAuth = {
           user.passwordHash,
         );
         if (!isValid) return null;
+
+        // Check if account is activated
+        if (!user.isActivated) {
+          throw new Error("Account not activated. Please check your email for activation link.");
+        }
 
         return {
           id: user.id,
