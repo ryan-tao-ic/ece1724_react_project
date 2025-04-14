@@ -9,6 +9,8 @@ import { format } from 'date-fns';
 import { getTokenForServerComponent } from '@/lib/auth/auth';
 import { getUserRegistration } from '@/lib/db/registration';
 import { InfoIcon } from 'lucide-react';
+import { EventMaterialsUpload } from '@/components/event-materials-upload';
+import { getEventMaterials } from '@/lib/db/materials';
 
 export default async function EventDetailPage({ params }: { params: { id: string } }) {
   const resolvedParams = await Promise.resolve(params);
@@ -23,6 +25,9 @@ export default async function EventDetailPage({ params }: { params: { id: string
   // const {userId} = await getTokenForServerComponent(); 
   const token = await getTokenForServerComponent();
   const userId = token.id;
+
+  // Fetch event materials
+  const materials = await getEventMaterials(id);
 
   let userRegistration = null;
   let isUserLecturer = false;
@@ -133,6 +138,19 @@ export default async function EventDetailPage({ params }: { params: { id: string
             <Link href="/events">Back to Events</Link>
           </Button>
         </div>
+        
+        {/* Event Materials Upload Section */}
+        <EventMaterialsUpload 
+          eventId={event.id} 
+          isLoggedIn={!!userId}
+          existingMaterials={materials.map(material => ({
+            id: material.id,
+            fileName: material.fileName,
+            fileType: material.fileType,
+            filePath: material.filePath,
+            signedUrl: material.signedUrl
+          }))}
+        />
       </div>
     </div>
   );

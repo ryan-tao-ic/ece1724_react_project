@@ -56,13 +56,23 @@ export interface EventLecturer {
 }
 
 export interface EventMaterial {
-  id: string;
-  eventId: string;
-  filePath: string;
+  id: number;
   fileName: string;
   fileType: string;
-  uploadedBy: string;
+  filePath: string;
   uploadedAt: Date;
+  signedUrl?: string | null;
+  uploader?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
+}
+
+export interface UploadResult {
+  success: boolean;
+  material?: EventMaterial;
+  error?: string;
 }
 
 export interface Lounge {
