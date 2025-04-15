@@ -1,21 +1,24 @@
 import { PrismaClient } from '@prisma/client';
 
+// Initialize Prisma Client
 const prisma = new PrismaClient();
 
 async function main() {
-  const categories = ["CONFERENCE", "WORKSHOP", "SEMINAR", "LECTURE", "OTHER"] as const;
-
-  for (const cat of categories) {
-    await prisma.eventCategory.upsert({
-      where: { name: cat },
-      update: {},
-      create: { name: cat },
-    });
-  }
-
-  console.log("✅ Event categories seeded");
+  console.log('Starting database seed...');
+  
+  // Your seed code will go here - I'll wait for your instructions
+  // on what data you want to populate
+  
+  console.log('Database seeding completed successfully!');
 }
 
+// Execute the main function
 main()
-  .catch((e) => console.error(e))
-  .finally(() => prisma.$disconnect());
+  .catch((error) => {
+    console.error('Error seeding database:', error);
+    process.exit(1);
+  })
+  .finally(async () => {
+    // Close database connections when done
+    await prisma.$disconnect();
+  }); 

@@ -7,7 +7,7 @@ import { registerToEventInDb, cancelRegistration } from '@/lib/db/registration';
 import { redirect } from 'next/navigation';
 import { getTokenForServerComponent } from '@/lib/auth/auth';
 import { sendConfirmationEmail } from '@/lib/email/sendConfirmationEmail';  
-import { createEventMaterial } from "@/lib/db/materials";
+import { createEventMaterial, detachEventMaterial } from "@/lib/db/materials";
 import { uploadFileToStorage, getSignedUrl } from "@/lib/file-storage";
 import { StorageError } from "@/lib/file-storage/errors";
 import { UploadResult } from "@/lib/types";
@@ -431,4 +431,39 @@ export async function deleteEventAction(formData: FormData) {
   });
 
   revalidatePath("/events");
+}
+
+/**
+ * Detach a material from an event
+ */
+export async function detachEventMaterialAction(formData: FormData): Promise<{ success: boolean; error?: string }> {
+  try {
+    const token = await getTokenForServerComponent();
+    
+    // Check if user is authenticated
+    if (!token || !token.id) {
+      return { success: false, error: "You must be logged in to manage files" };
+    }
+    
+    const materialId = parseInt(formData.get('materialId') as string, 10);
+    const eventId = formData.get('eventId') as string;
+    
+    if (isNaN(materialId) || !eventId) {
+      return { success: false, error: "Invalid material ID or event ID" };
+    }
+    
+    // Detach the material
+    const result = await detachEventMaterial(materialId);
+    
+    if (result) {
+      // Revalidate the page to reflect the changes
+      revalidatePath(`/events/${eventId}`);
+      return { success: true };
+    } else {
+      return { success: false, error: "Failed to remove the material" };
+    }
+  } catch (error) {
+    console.error('Error detaching material:', error);
+    return { success: false, error: "An unexpected error occurred" };
+  }
 }

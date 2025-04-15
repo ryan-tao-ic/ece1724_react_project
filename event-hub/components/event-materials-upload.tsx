@@ -1,10 +1,13 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { FileIcon, UploadIcon, AlertCircleIcon, Loader2 } from 'lucide-react';
+import { FileIcon, UploadIcon, AlertCircleIcon, Loader2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PDFViewer } from '@/components/ui/pdf-viewer';
 import { useFileUpload } from '@/hooks/useFileUpload';
+import { detachEventMaterialAction } from '@/app/actions';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 interface Material {
   id: number;
@@ -28,10 +31,12 @@ export function EventMaterialsUpload({
   existingMaterials = [],
   isLoggedIn
 }: EventMaterialsUploadProps) {
+  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   
   const {
     uploadFile,
@@ -104,6 +109,30 @@ export function EventMaterialsUpload({
     }
   };
 
+  const handleDelete = async (materialId: number) => {
+    setDeletingId(materialId);
+    
+    try {
+      const formData = new FormData();
+      formData.append('materialId', materialId.toString());
+      formData.append('eventId', eventId);
+      
+      const result = await detachEventMaterialAction(formData);
+      
+      if (result.success) {
+        toast.success('Document removed successfully');
+        // The page will be automatically refreshed by the server action
+      } else {
+        toast.error(result.error || 'Failed to remove document');
+      }
+    } catch (error) {
+      console.error('Error deleting material:', error);
+      toast.error('An error occurred while removing the document');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   // Component for unauthenticated users
   if (!isLoggedIn) {
     return (
@@ -130,9 +159,24 @@ export function EventMaterialsUpload({
           <ul className="space-y-6">
             {existingMaterials.map((material) => (
               <li key={material.id} className="border rounded-md p-4">
-                <div className="flex items-center space-x-2 text-sm">
-                  <FileIcon className="h-4 w-4 text-blue-500" />
-                  <span className="font-medium">{material.fileName}</span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2 text-sm">
+                    <FileIcon className="h-4 w-4 text-blue-500" />
+                    <span className="font-medium">{material.fileName}</span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDelete(material.id)}
+                    disabled={deletingId === material.id}
+                    className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                  >
+                    {deletingId === material.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
+                  </Button>
                 </div>
                 {material.signedUrl && material.filePath && (
                   <PDFViewer 

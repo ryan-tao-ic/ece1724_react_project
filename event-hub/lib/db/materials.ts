@@ -1,79 +1,94 @@
 import prisma from "./prisma";
 import { cache } from "react";
 import { getSignedUrl } from "../file-storage";
+import { EventMaterial } from "@/lib/types";
 
 /**
- * Get all materials for an event with signed URLs
+ * Get all materials for an event
  */
-export const getEventMaterials = cache(async (eventId: string) => {
+export async function getEventMaterials(eventId: string): Promise<EventMaterial[]> {
   const materials = await prisma.eventMaterials.findMany({
     where: {
       eventId,
     },
-    include: {
-      uploader: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-        },
-      },
-    },
     orderBy: {
-      uploadedAt: "desc",
+      uploadedAt: 'desc',
     },
   });
 
   // Generate signed URLs for each material
   const materialsWithSignedUrls = await Promise.all(
     materials.map(async (material) => {
-      try {
-        const signedUrl = await getSignedUrl(material.filePath);
-        return {
-          ...material,
-          signedUrl,
-        };
-      } catch (error) {
-        console.error(`Error generating signed URL for material ${material.id}:`, error);
-        return {
-          ...material,
-          signedUrl: null,
-        };
-      }
+      const signedUrl = await getSignedUrl(material.filePath);
+      return {
+        ...material,
+        signedUrl,
+      };
     })
   );
 
   return materialsWithSignedUrls;
-});
+}
 
 /**
  * Create a new event material
  */
 export async function createEventMaterial(
-  eventId: string, 
-  uploadedBy: string, 
-  filePath: string, 
-  fileName: string, 
+  eventId: string,
+  uploaderId: string,
+  filePath: string,
+  fileName: string,
   fileType: string
-) {
-  return await prisma.eventMaterials.create({
+): Promise<EventMaterial> {
+  const material = await prisma.eventMaterials.create({
     data: {
       eventId,
-      uploadedBy,
+      uploadedBy: uploaderId,
       filePath,
       fileName,
       fileType,
+      uploadedAt: new Date(),
     },
   });
+
+  return material;
 }
 
 /**
- * Delete an event material
+ * Detach a material from an event (soft delete)
  */
-export async function deleteEventMaterial(id: number) {
-  return await prisma.eventMaterials.delete({
-    where: {
-      id,
-    },
-  });
+export async function detachEventMaterial(materialId: number): Promise<boolean> {
+  try {
+    await prisma.eventMaterials.update({
+      where: {
+        id: materialId,
+      },
+      data: {
+        eventId: undefined,
+      },
+    });
+    
+    return true;
+  } catch (error) {
+    console.error('Error detaching material:', error);
+    return false;
+  }
+}
+
+/**
+ * Delete a material completely from the database
+ */
+export async function deleteEventMaterial(materialId: number): Promise<boolean> {
+  try {
+    await prisma.eventMaterials.delete({
+      where: {
+        id: materialId,
+      },
+    });
+    
+    return true;
+  } catch (error) {
+    console.error('Error deleting material:', error);
+    return false;
+  }
 } 
