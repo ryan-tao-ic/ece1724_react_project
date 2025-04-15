@@ -99,8 +99,6 @@ export function getTokenHeader(req: NextRequest) {
 export async function getTokenForServerComponent() {
   const { headers } = await import("next/headers");
   const token = (await headers()).get("x-auth-token");
-  if (!token) {
-    throw new Error("Unauthorized");
-  }
+  if (!token) return null;
   return JSON.parse(token);
 }

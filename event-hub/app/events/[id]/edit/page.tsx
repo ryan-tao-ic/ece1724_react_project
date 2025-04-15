@@ -8,6 +8,8 @@ import { notFound, redirect } from "next/navigation";
 import EditEventClientForm from "./EditEventClientForm";
 import { getTokenForServerComponent } from '@/lib/auth/auth';
 import { getUserById } from "@/lib/db/users";
+import { MainLayout } from "@/components/layout/main-layout";
+import { Container } from "@/components/ui/container";
 
 export default async function EditEventPage({
   params, 
@@ -68,24 +70,31 @@ export default async function EditEventPage({
   }
   
   return (
-    <EditEventClientForm
-      eventId={event.id}
-      wasRejected={wasRejected}
-      reviewComment={event.reviewComment || ""}
-      defaultValues={{
-        name: event.name,
-        location: event.location,
-        eventStartTime: new Date(event.eventStartTime).toISOString().substring(0, 16),
-        eventEndTime: new Date(event.eventEndTime).toISOString().substring(0, 16),
-        availableSeats: event.availableSeats,
-        categoryId: event.category.id.toString(),
-        description: event.description || '',
-        customizedQuestion: formattedQuestions,
-        status: ['DRAFT', 'PENDING_REVIEW', 'APPROVED'].includes(event.status) 
-          ? event.status as 'DRAFT' | 'PENDING_REVIEW' | 'APPROVED' 
-          : undefined,
-      }}
-      categories={categories}
-    />
+    <MainLayout>
+      <Container>
+        <EditEventClientForm
+          eventId={event.id}
+          wasRejected={wasRejected}
+          reviewComment={event.reviewComment || ""}
+          defaultValues={{
+            name: event.name,
+            location: event.location,
+            eventStartTime: new Date(event.eventStartTime).toISOString().substring(0, 16),
+            eventEndTime: new Date(event.eventEndTime).toISOString().substring(0, 16),
+            availableSeats: event.availableSeats,
+            waitlistCapacity: event.waitlistCapacity ?? 0,
+            categoryId: event.category.id.toString(),
+            description: event.description || '',
+            customizedQuestion: formattedQuestions,
+            status: ['DRAFT', 'PENDING_REVIEW', 'APPROVED'].includes(event.status) ? event.status as 'DRAFT' | 'PENDING_REVIEW' | 'APPROVED' : undefined,
+          }}
+          rawStatus={event.status}
+          categories={categories}
+          userId={userId} 
+          userRole={user.role} 
+          createdBy={event.createdBy}
+        />
+      </Container>
+    </MainLayout>
   );
 }

@@ -44,16 +44,39 @@ export async function createEventAction(data: {
   createdBy: string;
   customizedQuestion?: string[];
 }) {
-  return await prisma.event.create({
+  const event = await prisma.event.create({
     data: {
-      ...data,
+      name: data.name,
+      description: data.description,
+      location: data.location,
       categoryId: parseInt(data.categoryId, 10),
       eventStartTime: new Date(data.eventStartTime),
       eventEndTime: new Date(data.eventEndTime),
+      availableSeats: data.availableSeats,
+      waitlistCapacity: data.waitlistCapacity ?? 0,
+      status: data.status,
+      createdBy: data.createdBy,
       customizedQuestion: data.customizedQuestion?.map((q) => ({ question: q })),
     },
   });
+
+  const creator = await prisma.user.findUnique({
+    where: { id: data.createdBy },
+    select: { role: true },
+  });
+  
+  if (creator?.role === 'LECTURER') {
+    await prisma.eventLecturers.create({
+      data: {
+        eventId: event.id,
+        lecturerId: data.createdBy,
+      },
+    });
+  }
+
+  return event;
 }
+
 
 // Define or import ReviewFormValues
 type ReviewFormValues = {
@@ -125,6 +148,7 @@ export async function updateEvent(id: string, data: {
   eventStartTime: string;
   eventEndTime: string;
   availableSeats: number;
+  waitlistCapacity?: number;
   customizedQuestion?: string[];
   status?: "DRAFT" | "PENDING_REVIEW" | "APPROVED"; 
 }) {
@@ -138,6 +162,7 @@ export async function updateEvent(id: string, data: {
       eventStartTime: new Date(data.eventStartTime),
       eventEndTime: new Date(data.eventEndTime),
       availableSeats: data.availableSeats,
+      waitlistCapacity: data.waitlistCapacity ?? 0,
       customizedQuestion: data.customizedQuestion,
       status: data.status, 
     },
@@ -210,11 +235,26 @@ export async function cancelEventAction(formData: FormData) {
   'use server';
 
   const eventId = formData.get('eventId') as string;
-  const staffId = formData.get('staffId') as string;
+  const userId = formData.get('userId') as string;
 
-  const event = await prisma.event.findUnique({ where: { id: eventId } });
-  if (!event || event.status !== "PUBLISHED" || event.reviewedBy !== staffId) {
-    throw new Error("Not allowed to cancel this event.");
+  const event = await prisma.event.findUnique({
+    where: { id: eventId },
+    include: {
+      lecturers: {
+        select: { lecturerId: true },
+      },
+    },
+  });
+
+  if (!event || event.status !== "PUBLISHED") {
+    throw new Error("Event not found or not in PUBLISHED state.");
+  }
+
+  const isReviewedByUser = event.reviewedBy === userId;
+  const isLecturedByUser = event.lecturers.some(l => l.lecturerId === userId);
+
+  if (!isReviewedByUser && !isLecturedByUser) {
+    throw new Error("You are not authorized to cancel this event.");
   }
 
   await prisma.event.update({
@@ -225,4 +265,31 @@ export async function cancelEventAction(formData: FormData) {
   await sendCancelNoticeEmails(eventId);
 
   revalidatePath(`/events/${eventId}`);
+}
+
+export async function deleteEventAction(formData: FormData) {
+  const eventId = formData.get("eventId") as string;
+  const userId = formData.get("userId") as string;
+
+  const event = await prisma.event.findUnique({
+    where: { id: eventId },
+    select: {
+      createdBy: true,
+      status: true,
+    },
+  });
+
+  if (!event) throw new Error("Event not found");
+  if (event.status === "PUBLISHED" || event.status === "CANCELLED") {
+    throw new Error("Cannot delete a published or cancelled event.");
+  }
+  if (event.createdBy !== userId) {
+    throw new Error("You are not authorized to delete this event.");
+  }
+
+  await prisma.event.delete({
+    where: { id: eventId },
+  });
+
+  revalidatePath("/events");
 }

@@ -9,6 +9,8 @@ import { useEffect, useState, useRef } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import { Button } from "@/components/ui/button";
 import { UserRole } from "@prisma/client";
+import { MainLayout } from "@/components/layout/main-layout";
+import { Container } from "@/components/ui/container";
 
 export default function ScannerPage() {
   const { data: session, status } = useSession();
@@ -149,27 +151,31 @@ export default function ScannerPage() {
   }
 
   return (
-    <div className="max-w-xl mx-auto py-12 px-4 text-center">
-      <h1 className="text-2xl font-bold mb-6">QR Code Check-in Scanner</h1>
+    <MainLayout>
+      <Container>
+        <div className="max-w-xl mx-auto py-12 px-4 text-center">
+          <h1 className="text-2xl font-bold mb-6">QR Code Check-in Scanner</h1>
+          
+          {showScanner && (
+            <div
+              id="qr-reader"
+              ref={scannerRef}
+              className="mb-6 mx-auto border rounded shadow overflow-hidden"
+              style={{ width: "100%", maxWidth: "500px", height: "auto", minHeight: "300px" }}
+            />
+          )}
       
-      {showScanner && (
-        <div
-          id="qr-reader"
-          ref={scannerRef}
-          className="mb-6 mx-auto border rounded shadow overflow-hidden"
-          style={{ width: "100%", maxWidth: "500px", height: "auto", minHeight: "300px" }}
-        />
-      )}
-  
-      {result && <div className="text-lg font-medium mt-4">{result}</div>}
-      {errorMessage && <div className="text-red-600 mt-2">{errorMessage}</div>}
-  
-      <div className="mt-6 flex flex-col items-center gap-4">
-        <Button onClick={restartScanner}>Restart Scanner</Button>
-        <Button variant="secondary" onClick={() => router.push("/")}>
-          Back to Home
-        </Button>
-      </div>
-    </div>
+          {result && <div className="text-lg font-medium mt-4">{result}</div>}
+          {errorMessage && <div className="text-red-600 mt-2">{errorMessage}</div>}
+      
+          <div className="mt-6 flex flex-col items-center gap-4">
+            <Button onClick={restartScanner}>Restart Scanner</Button>
+            <Button variant="secondary" onClick={() => router.push("/")}>
+              Back to Home
+            </Button>
+          </div>
+        </div>
+      </Container>
+    </MainLayout>
   );
 }

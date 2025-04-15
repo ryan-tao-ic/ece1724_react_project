@@ -6,6 +6,8 @@ import { getTokenForServerComponent } from "@/lib/auth/auth";
 import { getUserById } from "@/lib/db/users";
 import { notFound, redirect } from "next/navigation";
 import ReviewEventClientForm from "./ReviewEventClientForm";
+import { MainLayout } from "@/components/layout/main-layout";
+import { Container } from "@/components/ui/container";
 
 export default async function ReviewEventPage({ params }: { params: { id: string } }) {
   const { id } = await params;
@@ -47,23 +49,27 @@ export default async function ReviewEventPage({ params }: { params: { id: string
   }
 
   return (
-    <ReviewEventClientForm
-      eventId={event.id}
-      reviewerId={userId}
-      status={event.status as "PENDING_REVIEW" | "APPROVED"}
-      defaultValues={{
-        name: event.name,
-        description: event.description || "",
-        location: event.location,
-        categoryId: String(event.category.id),
-        eventStartTime: new Date(event.eventStartTime).toISOString().slice(0, 16),
-        eventEndTime: new Date(event.eventEndTime).toISOString().slice(0, 16),
-        availableSeats: event.availableSeats,
-        waitlistCapacity: event.waitlistCapacity ?? 0,
-        reviewComment: event.reviewComment || "",
-        customizedQuestion: formattedQuestions,
-      }}
-      categories={categories}
-    />
+    <MainLayout>
+      <Container>
+        <ReviewEventClientForm
+          eventId={event.id}
+          reviewerId={userId}
+          status={event.status as "PENDING_REVIEW" | "APPROVED"}
+          defaultValues={{
+            name: event.name,
+            description: event.description || "",
+            location: event.location,
+            categoryId: String(event.category.id),
+            eventStartTime: new Date(event.eventStartTime).toISOString().slice(0, 16),
+            eventEndTime: new Date(event.eventEndTime).toISOString().slice(0, 16),
+            availableSeats: event.availableSeats,
+            waitlistCapacity: event.waitlistCapacity ?? 0,
+            reviewComment: event.reviewComment || "",
+            customizedQuestion: formattedQuestions,
+          }}
+          categories={categories}
+        />
+      </Container>
+    </MainLayout>
   );
 }
