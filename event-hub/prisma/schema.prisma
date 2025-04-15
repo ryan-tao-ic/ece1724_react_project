@@ -22,6 +22,7 @@ model User {
   lastName              String
   passwordHash          String
   role                  UserRole                @default(USER)
+  previousRole          UserRole?
   activatedAt           DateTime?
   phoneNumber           String?
   affiliation           String?

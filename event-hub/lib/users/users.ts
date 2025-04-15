@@ -1,4 +1,4 @@
-import { prisma } from "@/prisma";
+import prisma from "@/lib/db/prisma";
 import { UserRole } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
@@ -6,13 +6,14 @@ export async function getUserById(id: string) {
     const user = await prisma.user.findUnique({
         where: { id },
         select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        createdAt: true,
-        role: true,
-        // Add more fields as needed
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            createdAt: true,
+            role: true,
+            previousRole: true,
+            // Add more fields as needed
         },
     });
     
@@ -27,13 +28,14 @@ export async function getUsersByRole(role: UserRole) {
     const users = await prisma.user.findMany({
         where: { role },
         select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        createdAt: true,
-        role: true,
-        // Add more fields as needed
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            createdAt: true,
+            role: true,
+            previousRole: true,
+            // Add more fields as needed
         },
     });
 
@@ -52,7 +54,12 @@ export async function getUsersByRole(role: UserRole) {
 export async function assignStaffRole(userId: string) {
     try {
         const user = await prisma.user.findUnique({
-            where: { id: userId }
+            where: { id: userId },
+            select: {
+                id: true,
+                role: true,
+                previousRole: true,
+            },
         });
         
         if (!user) {
@@ -65,7 +72,10 @@ export async function assignStaffRole(userId: string) {
 
         await prisma.user.update({
             where: { id: userId },
-            data: { role: UserRole.STAFF },
+            data: {
+                previousRole: user.role, // Save current role (USER or LECTURER)
+                role: UserRole.STAFF
+            },
         });
 
         revalidatePath('/roleManagement');
@@ -79,7 +89,12 @@ export async function assignStaffRole(userId: string) {
 export async function unassignStaffRole(userId: string) {
     try {
         const user = await prisma.user.findUnique({
-            where: { id: userId }
+            where: { id: userId },
+            select: {
+                id: true,
+                role: true,
+                previousRole: true,
+            },
         });
         
         if (!user) {
@@ -90,9 +105,14 @@ export async function unassignStaffRole(userId: string) {
             throw new Error("User is not a staff member");
         }
 
+        const newRole = user.previousRole || UserRole.USER;
+
         await prisma.user.update({
             where: { id: userId },
-            data: { role: UserRole.USER },
+            data: {
+                role: newRole,
+                previousRole: null // Clear previousRole after restore
+            },
         });
 
         revalidatePath('/roleManagement');
