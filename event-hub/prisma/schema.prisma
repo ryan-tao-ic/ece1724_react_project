@@ -185,7 +185,7 @@ model EventCategory {
 
 model EventMaterials {
   id              Int    @id @default(autoincrement())
-  eventId         String
+  eventId         String?
   filePath        String
   fileName        String
   fileType        String
@@ -193,7 +193,7 @@ model EventMaterials {
   uploadedAt      DateTime  @default(now())
 
   // Relations
-  event           Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  event           Event?     @relation(fields: [eventId], references: [id], onDelete: SetNull)
   uploader        User      @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
 }
 
