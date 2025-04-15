@@ -60,20 +60,22 @@ export default function VerifyEmailPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center p-4">
-        <Alert>
-          <AlertTitle>Verifying your email</AlertTitle>
-          <AlertDescription>
-            Please wait while we verify your email address...
-          </AlertDescription>
-        </Alert>
+      <main className="min-h-screen p-4">
+        <div className="mt-20">
+          <Alert>
+            <AlertTitle>Verifying your email</AlertTitle>
+            <AlertDescription>
+              Please wait while we verify your email address...
+            </AlertDescription>
+          </Alert>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-4">
+    <main className="min-h-screen p-4">
+      <div className="mt-20 w-full max-w-md mx-auto space-y-4">
         {verified && (
           <Alert variant="default" className="mb-5 border-green-200 bg-green-50">
             <SquareCheckBig className="h-5 w-5 text-green-600" />
