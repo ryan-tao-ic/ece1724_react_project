@@ -137,7 +137,7 @@ export default async function DashboardPage() {
                       Ready to contribute a lecture or event?
                     </p>
                     <Button className="mt-4" asChild>
-                      <Link href="/events/create">Submit an Event</Link>
+                      <Link href="/events/create">{t("dashboard.createEvent")}</Link>
                     </Button>
                   </>
                 )}

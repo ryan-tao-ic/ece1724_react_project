@@ -64,10 +64,11 @@ export async function detachEventMaterial(materialId: number): Promise<boolean> 
         id: materialId,
       },
       data: {
-        eventId: undefined,
+        eventId: null,
       },
     });
     
+    console.log(`Successfully detached material ID ${materialId}`);
     return true;
   } catch (error) {
     console.error('Error detaching material:', error);

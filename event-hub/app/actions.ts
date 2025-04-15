@@ -147,8 +147,6 @@ export async function createEventAction(data: {
   return event;
 }
 
-
-// Define or import ReviewFormValues
 type ReviewFormValues = {
   name: string;
   description?: string;
@@ -162,7 +160,6 @@ type ReviewFormValues = {
   waitlistCapacity?: number;
 };
 
-// Define or import EventStatus
 export type EventStatus = 'DRAFT' | 'PENDING_REVIEW' | 'APPROVED' | 'PUBLISHED';
 
 export async function reviewEventAction(eventId: string, data: ReviewFormValues & { status: EventStatus, reviewerId: string }) {
@@ -208,7 +205,6 @@ export async function reviewEventAction(eventId: string, data: ReviewFormValues 
     return { success: false, message: 'Failed to review event.' };
   }
 }
-
 
 export async function updateEvent(id: string, data: {
   name: string;
@@ -286,12 +282,29 @@ export async function cancelRegistrationAction(formData: FormData) {
 
 /**
  * Refresh a signed URL for a file
- * @param filePath The path of the file
- * @returns A new signed URL
  */
 export async function refreshSignedUrl(filePath: string): Promise<string> {
-  // Pass through directly to the storage service
   return await getSignedUrl(filePath);
+}
+
+/**
+ * Check if a user can manage materials for an event (either as a lecturer or creator)
+ */
+async function canUserManageEventMaterials(userId: string, eventId: string): Promise<boolean> {
+  const event = await prisma.event.findUnique({
+    where: { id: eventId },
+    select: {
+      createdBy: true,
+      lecturers: {
+        where: { lecturerId: userId },
+      },
+    },
+  });
+
+  if (!event) return false;
+  
+  // User is either the creator or a lecturer
+  return event.createdBy === userId || event.lecturers.length > 0;
 }
 
 /**
@@ -308,6 +321,12 @@ export async function uploadEventMaterial(formData: FormData): Promise<UploadRes
     
     if (!eventId || !file) {
       return { success: false, error: "Missing event ID or file" };
+    }
+    
+    // Check if user can manage materials (lecturer or creator)
+    const canManage = await canUserManageEventMaterials(user.id, eventId);
+    if (!canManage) {
+      return { success: false, error: "Only lecturers and event creators can upload materials" };
     }
     
     // Validate file type
@@ -371,8 +390,6 @@ export async function uploadEventMaterial(formData: FormData): Promise<UploadRes
 }
 
 export async function cancelEventAction(formData: FormData) {
-  'use server';
-
   const eventId = formData.get('eventId') as string;
   const userId = formData.get('userId') as string;
 
@@ -390,7 +407,7 @@ export async function cancelEventAction(formData: FormData) {
   }
 
   const isReviewedByUser = event.reviewedBy === userId;
-  const isLecturedByUser = event.lecturers.some(l => l.lecturerId === userId);
+  const isLecturedByUser = event.lecturers.some((l) => l.lecturerId === userId);
 
   if (!isReviewedByUser && !isLecturedByUser) {
     throw new Error("You are not authorized to cancel this event.");
@@ -438,18 +455,19 @@ export async function deleteEventAction(formData: FormData) {
  */
 export async function detachEventMaterialAction(formData: FormData): Promise<{ success: boolean; error?: string }> {
   try {
-    const token = await getTokenForServerComponent();
-    
-    // Check if user is authenticated
-    if (!token || !token.id) {
-      return { success: false, error: "You must be logged in to manage files" };
-    }
+    const user = await getAuthenticatedUser();
     
     const materialId = parseInt(formData.get('materialId') as string, 10);
     const eventId = formData.get('eventId') as string;
     
     if (isNaN(materialId) || !eventId) {
       return { success: false, error: "Invalid material ID or event ID" };
+    }
+    
+    // Check if user can manage materials (lecturer or creator)
+    const canManage = await canUserManageEventMaterials(user.id, eventId);
+    if (!canManage) {
+      return { success: false, error: "Only lecturers and event creators can manage materials" };
     }
     
     // Detach the material

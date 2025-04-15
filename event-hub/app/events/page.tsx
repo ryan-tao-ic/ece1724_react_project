@@ -52,7 +52,7 @@ export default async function EventsPage() {
               }
             >
               <h2 className="text-lg font-semibold mb-1">Is your event not listed?</h2>
-              <Button variant="outline">Submit an Event</Button>
+              <Button variant="outline">{t("home.cta.submitEvent")}</Button>
             </Link>
           </div>
 

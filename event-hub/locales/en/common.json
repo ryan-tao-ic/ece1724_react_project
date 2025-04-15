@@ -39,7 +39,8 @@
     },
     "cta": {
       "browseEvents": "Browse Events",
-      "createAccount": "Create Account"
+      "createAccount": "Create Account",
+      "submitEvent": "Submit New Event"
     }
   },
   "events": {
