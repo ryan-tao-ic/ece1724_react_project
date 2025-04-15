@@ -1,6 +1,12 @@
+// /app/(auth)/login/page.tsx
+// This file implements the login page for a Next.js app using NextAuth for authentication.
+// It renders a form where users input email and password, performs client-side validation,
+// and calls NextAuth's `signIn` with "credentials" provider.
+
 "use client";
 
 import { MainLayout } from "@/components/layout/main-layout";
+
 import {
   Button,
   Card,

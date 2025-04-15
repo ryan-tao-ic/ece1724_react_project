@@ -1,3 +1,5 @@
+// // app/(auth)/register/page.tsx
+
 "use client";
 
 import { MainLayout } from "@/components/layout/main-layout";

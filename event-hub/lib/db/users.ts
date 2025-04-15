@@ -10,7 +10,7 @@ import { prisma } from "@/prisma";
          firstName: true,
          lastName: true,
          createdAt: true,
-         // Add more fields as needed
+         role: true,
          },
      });
      
