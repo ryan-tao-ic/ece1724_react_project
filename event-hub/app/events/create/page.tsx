@@ -90,67 +90,98 @@ export default function CreateEventPage() {
   return (
     <MainLayout>
       <Container>
-        <div className="max-w-2xl mx-auto py-12">
-          <h1 className="text-3xl font-bold mb-6">Create an Event</h1>
+        <div className="max-w-2xl mx-auto py-12 space-y-10">
+          <h1 className="text-4xl font-bold leading-tight tracking-tight">Create an Event</h1>
+
           <form className="space-y-6" onSubmit={form.handleSubmit((data) => onSubmit(data, 'PENDING_REVIEW'))}>
-            <div>
-              <Label>Title</Label>
+
+            {/* Title */}
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium text-gray-700">Title</Label>
               <Input {...form.register('name')} />
             </div>
-            <div>
-              <Label>Description</Label>
-              <Textarea {...form.register('description')} />
+
+            {/* Description */}
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium text-gray-700">Description</Label>
+              <Textarea {...form.register('description')} rows={4} />
             </div>
-            <div>
-              <Label>Location</Label>
+
+            {/* Location */}
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium text-gray-700">Location</Label>
               <Input {...form.register('location')} />
             </div>
-            <div>
-              <Label>Category</Label>
-              <select {...form.register('categoryId')} className="w-full h-10 rounded border px-3">
+
+            {/* Category */}
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium text-gray-700">Category</Label>
+              <select {...form.register('categoryId')} className="w-full h-10 rounded border border-gray-300 px-3">
                 <option value="">Select a category</option>
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>
             </div>
-            <div className="flex gap-4">
-              <div className="flex-1">
-                <Label>Start Time</Label>
+
+            {/* Time */}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1 space-y-1.5">
+                <Label className="text-sm font-medium text-gray-700">Start Time</Label>
                 <Input type="datetime-local" {...form.register('eventStartTime')} />
               </div>
-              <div className="flex-1">
-                <Label>End Time</Label>
+              <div className="flex-1 space-y-1.5">
+                <Label className="text-sm font-medium text-gray-700">End Time</Label>
                 <Input type="datetime-local" {...form.register('eventEndTime')} />
               </div>
             </div>
-            <div>
-              <Label>Available Seats</Label>
+
+            {/* Seats */}
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium text-gray-700">Available Seats</Label>
               <Input type="number" {...form.register('availableSeats', { valueAsNumber: true })} />
             </div>
-            <div>
-              <Label>Waitlist Capacity</Label>
+
+            {/* Waitlist */}
+            <div className="space-y-1.5">
+              <Label className="text-sm font-medium text-gray-700">Waitlist Capacity</Label>
               <Input type="number" {...form.register('waitlistCapacity', { valueAsNumber: true })} />
             </div>
 
             {/* Custom Questions */}
-            <div>
-              <Label>Custom Questions (Optional)</Label>
+            <div className="space-y-2 p-4 border rounded-md bg-gray-50">
+              <Label className="text-sm font-semibold text-gray-800">Custom Questions (Optional)</Label>
               <div className="space-y-2">
                 {fields.map((field, index) => (
                   <div key={field.id} className="flex gap-2">
-                    <Input {...form.register(`customizedQuestion.${index}.question`)} placeholder={`Question ${index + 1}`} />
+                    <Input
+                      {...form.register(`customizedQuestion.${index}.question`)}
+                      placeholder={`Question ${index + 1}`}
+                      className="flex-1"
+                    />
                     <Button type="button" variant="destructive" onClick={() => remove(index)}>Remove</Button>
                   </div>
                 ))}
-                <Button type="button" variant="secondary" onClick={() => append({ question: '' })}>+ Add Question</Button>
+                <Button type="button" variant="secondary" onClick={() => append({ question: '' })}>
+                  + Add Question
+                </Button>
               </div>
             </div>
 
-            <div className="flex gap-4">
-              <Button type="button" variant="outline" onClick={() => window.history.back()}>Return</Button>
-              <Button type="submit" disabled={loading}>Submit for Review</Button>
-              <Button type="button" variant="secondary" onClick={form.handleSubmit((data) => onSubmit(data, 'DRAFT'))} disabled={loading}>
+            {/* Action buttons */}
+            <div className="flex flex-col sm:flex-row justify-end gap-4 pt-6">
+              <Button type="button" variant="outline" onClick={() => window.history.back()}>
+                Return
+              </Button>
+              <Button type="submit" disabled={loading}>
+                Submit for Review
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={form.handleSubmit((data) => onSubmit(data, 'DRAFT'))}
+                disabled={loading}
+              >
                 Save as Draft
               </Button>
             </div>

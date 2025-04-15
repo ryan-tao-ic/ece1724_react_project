@@ -24,7 +24,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { signup } from "@/lib/auth/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -60,25 +59,16 @@ export default function RegisterPage() {
   });
 
   async function onSubmit(data: RegisterFormValues) {
-    // This would be implemented in a real application
     console.log(data);
     try {
       const result = await signup(data);
       if (result.success) {
-        alert("Successfully registered!");
-        
-        // Sign in the user after successful registration
-        const signInResult = await signIn("credentials", {
-          redirect: false,
-          email: data.email,
-          password: data.password,
-        });
-
-        if (signInResult?.ok) {
-          window.location.href = "/";
-        } else {
-          alert("Registration successful but login failed. Please try logging in manually.");
-        }
+        alert(
+          "Registration successful!\n\n" +
+          "We've sent a verification email to your inbox. " +
+          "Please check your email and click the verification link to activate your account."
+        );
+        window.location.href = "/login?message=check-email";
       } else {
         alert(`Registration failed: ${result.message}`);
       }

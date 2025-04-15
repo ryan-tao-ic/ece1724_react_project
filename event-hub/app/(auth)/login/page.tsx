@@ -5,10 +5,6 @@
 
 "use client";
 
-import Link from "next/link";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { MainLayout } from "@/components/layout/main-layout";
 
 import {
@@ -28,8 +24,12 @@ import {
   FormMessage,
   Input,
 } from "@/components/ui";
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 // Simple validation schema for login
 const loginSchema = z.object({
@@ -66,7 +66,12 @@ export default function LoginPage() {
         // Redirect to home page or previous page
         window.location.href = "/";
       } else {
-        setError(result?.error || "Login failed");
+        // Check if the error is related to account activation
+        if (result?.error?.includes("Account not activated")) {
+          setError("Your account is not activated yet. Please check your email for the activation link.");
+        } else {
+          setError(result?.error || "Login failed");
+        }
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -134,16 +139,46 @@ export default function LoginPage() {
             </CardContent>
             <CardFooter className="flex flex-col items-center">
               <div className="text-sm text-muted-foreground">
-                <Link
-                  href="/reset-password"
-                  className="text-primary hover:underline"
+                <Button
+                  variant="link"
+                  className="text-primary hover:underline font-medium p-0 cursor-pointer"
+                  onClick={async () => {
+                    const email = form.getValues("email");
+                    if (!email) {
+                      alert("Please enter your email address first");
+                      return;
+                    }
+
+                    try {
+                      const response = await fetch("/api/auth/forgotPassword", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ email }),
+                      });
+
+                      if (response.ok) {
+                        alert(
+                          "Password reset requested!\n\n" +
+                          "We've sent a password reset link to your email. " +
+                          "Please check your inbox and click the link to reset your password."
+                        );
+                      } else {
+                        const data = await response.json();
+                        throw new Error(data.message || "Failed to send reset email");
+                      }
+                    } catch (error) {
+                      alert(error instanceof Error ? error.message : "Failed to send reset email");
+                    }
+                  }}
                 >
                   Forgot your password?
-                </Link>
+                </Button>
               </div>
               <div className="mt-4 text-sm text-muted-foreground">
                 Don't have an account?{" "}
-                <Link href="/register" className="text-primary hover:underline">
+                <Link href="/register" className="text-primary hover:underline cursor-pointer">
                   Sign up
                 </Link>
               </div>

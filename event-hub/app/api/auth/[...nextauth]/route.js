@@ -4,12 +4,12 @@
 // and sets up the Prisma adapter to interact with the database.
 // It also includes a custom authorization function to validate user credentials.
 
-import NextAuth from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "@/prisma";
 import { authConfig } from "@/auth.config";
-import CredentialsProvider from "next-auth/providers/credentials";
+import { prisma } from "@/prisma";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcrypt";
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 const fullAuth = {
   ...authConfig,
@@ -35,6 +35,11 @@ const fullAuth = {
           user.passwordHash,
         );
         if (!isValid) return null;
+
+        // Check if account is activated
+        if (!user.isActivated) {
+          throw new Error("Account not activated. Please check your email for activation link.");
+        }
 
         return {
           id: user.id,
