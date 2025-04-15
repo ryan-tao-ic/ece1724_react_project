@@ -119,35 +119,35 @@ export default function EditEventClientForm({
   };
 
   return (
-    <div className="max-w-2xl mx-auto py-12">
-      <h1 className="text-3xl font-bold mb-6">Edit Event</h1>
+    <div className="max-w-2xl mx-auto py-12 space-y-10">
+      <h1 className="text-4xl font-bold leading-tight tracking-tight">Edit Event</h1>
   
       {wasRejected && reviewComment && (
-        <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 p-4 rounded mb-6">
+        <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 p-4 rounded">
           <p className="font-semibold">This event was reviewed and sent back by staff.</p>
           <p className="mt-2 whitespace-pre-line">{reviewComment}</p>
         </div>
       )}
   
       <form className="space-y-6">
-        <div>
-          <Label>Title</Label>
+        <div className="space-y-1.5">
+          <Label className="text-sm font-medium text-gray-700">Title</Label>
           <Input {...form.register('name')} />
         </div>
   
-        <div>
-          <Label>Description</Label>
-          <Textarea {...form.register('description')} />
+        <div className="space-y-1.5">
+          <Label className="text-sm font-medium text-gray-700">Description</Label>
+          <Textarea {...form.register('description')} rows={4} />
         </div>
   
-        <div>
-          <Label>Location</Label>
+        <div className="space-y-1.5">
+          <Label className="text-sm font-medium text-gray-700">Location</Label>
           <Input {...form.register('location')} />
         </div>
   
-        <div>
-          <Label>Category</Label>
-          <select {...form.register('categoryId')} className="w-full h-10 rounded border px-3">
+        <div className="space-y-1.5">
+          <Label className="text-sm font-medium text-gray-700">Category</Label>
+          <select {...form.register('categoryId')} className="w-full h-10 rounded border border-gray-300 px-3">
             <option value="">Select a category</option>
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -155,35 +155,36 @@ export default function EditEventClientForm({
           </select>
         </div>
   
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <Label>Start Time</Label>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex-1 space-y-1.5">
+            <Label className="text-sm font-medium text-gray-700">Start Time</Label>
             <Input type="datetime-local" {...form.register('eventStartTime')} />
           </div>
-          <div className="flex-1">
-            <Label>End Time</Label>
+          <div className="flex-1 space-y-1.5">
+            <Label className="text-sm font-medium text-gray-700">End Time</Label>
             <Input type="datetime-local" {...form.register('eventEndTime')} />
           </div>
         </div>
   
-        <div>
-          <Label>Available Seats</Label>
+        <div className="space-y-1.5">
+          <Label className="text-sm font-medium text-gray-700">Available Seats</Label>
           <Input type="number" {...form.register('availableSeats', { valueAsNumber: true })} />
         </div>
   
-        <div>
-          <Label>Waitlist Capacity</Label>
+        <div className="space-y-1.5">
+          <Label className="text-sm font-medium text-gray-700">Waitlist Capacity</Label>
           <Input type="number" {...form.register('waitlistCapacity', { valueAsNumber: true })} />
         </div>
   
-        <div>
-          <Label>Custom Questions (Optional)</Label>
+        <div className="space-y-2 p-4 border rounded-md bg-gray-50">
+          <Label className="text-sm font-semibold text-gray-800">Custom Questions (Optional)</Label>
           <div className="space-y-2">
             {fields.map((field, index) => (
               <div key={field.id} className="flex gap-2">
                 <Input
                   {...form.register(`customizedQuestion.${index}.question`)}
                   placeholder={`Question ${index + 1}`}
+                  className="flex-1"
                 />
                 <Button type="button" variant="destructive" onClick={() => remove(index)}>Remove</Button>
               </div>
@@ -193,16 +194,17 @@ export default function EditEventClientForm({
             </Button>
           </div>
         </div>
-
-        <div className="flex gap-4 items-center">
+  
+        <div className="flex flex-col sm:flex-row justify-end gap-4 pt-6">
           <Button
             type="button"
             variant="outline"
             onClick={() => window.history.back()}
+            className="sm:mr-auto"
           >
-            Return 
+            Return
           </Button>
-    
+
           {currentStatus === 'DRAFT' && (
             <Button
               type="button"
@@ -215,24 +217,23 @@ export default function EditEventClientForm({
   
           <Button
             type="button"
-            variant="secondary"
-            disabled={loading}
+            variant="outline"
             onClick={form.handleSubmit((data) => onSubmit(data))}
           >
             Save
           </Button>
   
           {canDeleteEvent && (
-            <Button 
-              type="button" 
+            <Button
+              type="button"
               variant="destructive"
-              onClick={async (e) => {
+              onClick={async () => {
                 if (confirm("Are you sure you want to permanently delete this event and all associated data?")) {
                   const formData = new FormData();
                   formData.append("eventId", eventId);
                   formData.append("userId", userId);
                   await deleteEventAction(formData);
-                  router.push("/dashboard"); 
+                  router.push("/dashboard");
                 }
               }}
             >
