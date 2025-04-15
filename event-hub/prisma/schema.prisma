@@ -37,8 +37,8 @@ model User {
   lecturerEvents        EventLecturers[]
   uploadedMaterials     EventMaterials[]
   qaMessages            QAMessages[]
-  accounts      Account[]
-  sessions      Session[]
+  accounts              Account[]
+  sessions              Session[]
 }
 
 model Account {
@@ -79,7 +79,6 @@ model VerificationToken {
  
   @@id([identifier, token])
 }
-
 
 enum UserRole {
   USER
