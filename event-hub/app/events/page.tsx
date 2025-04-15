@@ -35,33 +35,45 @@ export default async function EventsPage() {
 
   return (
     <MainLayout>
-      <Container className="py-10">
-        <div className="flex flex-col gap-8">
-          
+      <Container className="py-12">
+        <div className="flex flex-col gap-10">
+
           {/* Header section with Submit button */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">{t('events.title')}</h1>
-              <p className="text-muted-foreground">{t('events.description')}</p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+            <div className="space-y-2">
+              <h1 className="text-4xl font-bold leading-snug tracking-tight">
+                {t('events.title')}
+              </h1>
+              <p className="text-muted-foreground text-base leading-relaxed tracking-wide">
+                {t('events.description')}
+              </p>
             </div>
-            <Link
-              href={
-                userRole === 'LECTURER' || userRole === 'STAFF'
-                  ? '/events/create'
-                  : '/not-authorized'
-              }
-            >
-              <h2 className="text-lg font-semibold mb-1">Is your event not listed?</h2>
-              <Button variant="outline">Submit an Event</Button>
-            </Link>
+
+            <div className="w-full sm:w-auto sm:text-right ml-auto space-y-2 sm:space-y-3">
+              <h2 className="text-2xl font-bold text-gray-900">
+                Is your event not listed?
+              </h2>
+              <Link
+                href={
+                  userRole === 'LECTURER' || userRole === 'STAFF'
+                    ? '/events/create'
+                    : '/not-authorized'
+                }
+              >
+                <Button className="bg-primary text-white hover:bg-primary/90 px-6 py-2 text-base font-semibold shadow">
+                  Submit an Event
+                </Button>
+              </Link>
+            </div>
           </div>
 
           {/* Main content */}
-          <EventsClient 
-            events={events} 
-            categories={categories} 
+          <EventsClient
+            events={events}
+            categories={categories}
             userRole={userRole}
           />
+
         </div>
       </Container>
     </MainLayout>
