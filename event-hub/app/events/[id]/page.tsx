@@ -178,22 +178,22 @@ export default async function EventDetailPage({ params }: { params: { id: string
               </Button>
             </div>
           </div>
+          
+          {/* Event Materials Upload Section - full width */}
+          <div className="md:col-span-3">
+            <EventMaterialsUpload 
+              eventId={event.id} 
+              isLoggedIn={!!userId}
+              existingMaterials={materials.map(material => ({
+                id: material.id,
+                fileName: material.fileName,
+                fileType: material.fileType,
+                filePath: material.filePath,
+                signedUrl: material.signedUrl
+              }))}
+            />
+          </div>
         </div>
-        
-        {/* Event Materials Upload Section */}
-        <EventMaterialsUpload 
-          eventId={event.id} 
-          isLoggedIn={!!userId}
-          existingMaterials={materials.map(material => ({
-            id: material.id,
-            fileName: material.fileName,
-            fileType: material.fileType,
-            filePath: material.filePath,
-            signedUrl: material.signedUrl
-          }))}
-        />
-      </div>
-    </div>
       </Container>
     </MainLayout>
   );

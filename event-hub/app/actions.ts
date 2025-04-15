@@ -47,6 +47,53 @@ async function getAuthenticatedUser() {
 export async function createEvent(formData: FormData) {
   const user = await getAuthenticatedUser();
 
+  const rawData = {
+    name: formData.get("name"),
+    description: formData.get("description") || "",
+    location: formData.get("location"),
+    eventStartTime: formData.get("eventStartTime"),
+    eventEndTime: formData.get("eventEndTime"),
+    availableSeats: formData.get("availableSeats"),
+    categoryId: formData.get("categoryId"),
+  };
+
+  const validationResult = eventSchema.safeParse(rawData);
+
+  if (!validationResult.success) {
+    return {
+      success: false,
+      errors: validationResult.error.format(),
+    };
+  }
+
+  const data = validationResult.data;
+
+  try {
+    await prisma.event.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        location: data.location,
+        eventStartTime: new Date(data.eventStartTime),
+        eventEndTime: new Date(data.eventEndTime),
+        availableSeats: data.availableSeats,
+        categoryId: Number(data.categoryId),
+        status: 'DRAFT',
+        createdBy: user.id,
+      },
+    });
+
+    revalidatePath('/events');
+    return { success: true };
+  } catch (error) {
+    console.error("Error creating event:", error);
+    return {
+      success: false,
+      errors: { _form: ["Failed to create event"] },
+    };
+  }
+}
+
 export async function getCategories() {
   return await prisma.eventCategory.findMany({
     select: { id: true, name: true },
@@ -321,6 +368,7 @@ export async function uploadEventMaterial(formData: FormData): Promise<UploadRes
       error: "An unexpected error occurred. Please try again later." 
     };
   }
+}
 
 export async function cancelEventAction(formData: FormData) {
   'use server';
