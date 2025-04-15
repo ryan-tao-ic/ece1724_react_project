@@ -1,3 +1,5 @@
+// app/components/layout/footer.tsx
+
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import t from "@/lib/i18n";

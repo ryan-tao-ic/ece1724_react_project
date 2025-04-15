@@ -1,6 +1,8 @@
+// // app/(auth)/register/page.tsx
+
 "use client";
 
-import Link from "next/link";
+import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,10 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { Container } from "@/components/ui/container";
 import {
   Form,
   FormControl,
@@ -22,9 +21,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { MainLayout } from "@/components/layout/main-layout";
-import { Container } from "@/components/ui/container";
+import { Input } from "@/components/ui/input";
 import { signup } from "@/lib/auth/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
+import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+
 
 // Simple validation schema for registration
 const registerSchema = z
@@ -54,22 +59,33 @@ export default function RegisterPage() {
     },
   });
 
-  function onSubmit(data: RegisterFormValues) {
+  async function onSubmit(data: RegisterFormValues) {
     // This would be implemented in a real application
     console.log(data);
-    signup(data)
-      .then((result) => {
-        if (result.success) {
-          alert("Successfully registered!");
+    try {
+      const result = await signup(data);
+      if (result.success) {
+        alert("Successfully registered!");
+        
+        // Sign in the user after successful registration
+        const signInResult = await signIn("credentials", {
+          redirect: false,
+          email: data.email,
+          password: data.password,
+        });
+
+        if (signInResult?.ok) {
           window.location.href = "/";
         } else {
-          alert(`Registration failed: ${result.message}`);
+          alert("Registration successful but login failed. Please try logging in manually.");
         }
-      })
-      .catch((error) => {
-        console.error("Registration error:", error);
-        alert("An error occurred during registration. Please try again.");
-      });
+      } else {
+        alert(`Registration failed: ${result.message}`);
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      alert("An error occurred during registration. Please try again.");
+    }
   }
 
   return (

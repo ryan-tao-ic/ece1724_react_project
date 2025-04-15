@@ -1,3 +1,5 @@
+// app/page.tsx
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { MainLayout } from "@/components/layout/main-layout";
@@ -21,9 +23,6 @@ export default async function HomePage() {
           <div className="flex flex-col gap-4 min-[400px]:flex-row justify-center">
             <Button size="lg" asChild>
               <Link href="/events">{t("home.cta.browseEvents")}</Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/checkin/scanner">Launch QR Scanner</Link>
             </Button>
           </div>
         </Container>

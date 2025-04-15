@@ -1,6 +1,7 @@
-'use client';
 // app/events/events-client.tsx
-import { useState, useEffect } from 'react';
+
+'use client';
+
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import t from '@/lib/i18n';
 import { format } from 'date-fns';
 
-// Define types for props
 interface Event {
   id: string;
   name: string;
@@ -23,18 +23,16 @@ interface Event {
 interface EventsClientProps {
   events: Event[];
   categories: string[];
+  userRole: "USER" | "LECTURER" | "STAFF" | "ADMIN" | null;
 }
 
-export default function EventsClient({ events, categories }: EventsClientProps) {
-  // Use the client-side hook to safely access search params
+export default function EventsClient({ events, categories, userRole }: EventsClientProps) {
   const searchParams = useSearchParams();
-  
-  // Extract filter values
+
   const categoryFilter = searchParams.get('category') || '';
   const dateFilter = searchParams.get('date') || '';
   const query = searchParams.get('query')?.toLowerCase() || '';
-  
-  // Filter events based on the search parameters
+
   const filteredEvents = events.filter((event) => {
     const categoryMatch = categoryFilter ? event.category.name === categoryFilter : true;
     const now = new Date();
@@ -64,14 +62,17 @@ export default function EventsClient({ events, categories }: EventsClientProps) 
 
   return (
     <>
-      <form method="GET" className="flex flex-col sm:flex-row gap-4">
+      {/* Filters */}
+      <form method="GET" className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="flex-1">
           <Input placeholder={t('events.search')} type="search" name="query" defaultValue={query} />
         </div>
         <div className="flex flex-row gap-2">
           <select name="category" defaultValue={categoryFilter} className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm sm:w-[200px]">
             {categories.map((category) => (
-              <option key={category} value={category === t('events.filters.allCategories') ? '' : category}>{category}</option>
+              <option key={category} value={category === t('events.filters.allCategories') ? '' : category}>
+                {category}
+              </option>
             ))}
           </select>
           <select name="date" defaultValue={dateFilter} className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm sm:w-[150px]">
@@ -84,6 +85,7 @@ export default function EventsClient({ events, categories }: EventsClientProps) 
         </div>
       </form>
 
+      {/* Event list */}
       {filteredEvents.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredEvents.map((event) => (

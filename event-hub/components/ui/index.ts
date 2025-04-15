@@ -1,3 +1,5 @@
+// app/components/ui/index.ts
+
 // Form components
 export * from "./form";
 export * from "./input";
