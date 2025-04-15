@@ -1,5 +1,4 @@
 // app/events/[id]/edit/EditEventClientForm.tsx
-// This component is responsible for rendering the edit event form.
 
 'use client';
 
@@ -13,9 +12,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { updateEvent } from '@/app/actions';
+import { updateEvent, deleteEventAction } from '@/app/actions';
+import { EventStatus } from '@prisma/client';
 
-// Schema with optional status
 const eventSchema = z.object({
   name: z.string().min(1, 'Title is required'),
   description: z.string().min(1, 'Description is required'),
@@ -24,6 +23,7 @@ const eventSchema = z.object({
   eventStartTime: z.string().min(1, 'Start time is required'),
   eventEndTime: z.string().min(1, 'End time is required'),
   availableSeats: z.number().min(1, 'At least 1 seat is required'),
+  waitlistCapacity: z.number().min(0, 'Waitlist capacity cannot be negative').optional(),
   customizedQuestion: z.array(z.object({ question: z.string().min(1) })).optional(),
   status: z.enum(['DRAFT', 'PENDING_REVIEW', 'APPROVED']).optional(),
 })
@@ -60,13 +60,21 @@ export default function EditEventClientForm({
   wasRejected,
   reviewComment,
   defaultValues,
+  rawStatus,
   categories,
+  userId,
+  userRole,
+  createdBy,
 }: {
   eventId: string;
   wasRejected: boolean;
   reviewComment: string;
   defaultValues: EventFormValues;
+  rawStatus: string;
   categories: { id: number; name: string }[];
+  userId: string;
+  userRole: "USER" | "LECTURER" | "STAFF" | "ADMIN";
+  createdBy: string;
 }) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -83,9 +91,14 @@ export default function EditEventClientForm({
 
   const currentStatus = defaultValues?.status || 'DRAFT';
 
+  const canDeleteEvent =
+    userRole === "LECTURER" &&
+    createdBy === userId &&
+    !["PUBLISHED", "CANCELLED"].includes(rawStatus);
+
   const onSubmit = async (
     data: EventFormValues,
-    status?: 'DRAFT' | 'PENDING_REVIEW' | 'APPROVED'
+    status?: EventStatus
   ) => {
     setLoading(true);
     try {
@@ -93,7 +106,7 @@ export default function EditEventClientForm({
       await updateEvent(eventId, {
         ...data,
         customizedQuestion: formattedQuestions,
-        status: status ?? data.status, // keep current if none specified
+        status: (status ?? data.status) as "DRAFT" | "PENDING_REVIEW" | "APPROVED" | undefined,
       });
       alert("Event updated successfully.");
       router.push('/dashboard');
@@ -108,28 +121,30 @@ export default function EditEventClientForm({
   return (
     <div className="max-w-2xl mx-auto py-12">
       <h1 className="text-3xl font-bold mb-6">Edit Event</h1>
+  
       {wasRejected && reviewComment && (
         <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 p-4 rounded mb-6">
           <p className="font-semibold">This event was reviewed and sent back by staff.</p>
           <p className="mt-2 whitespace-pre-line">{reviewComment}</p>
         </div>
       )}
+  
       <form className="space-y-6">
         <div>
           <Label>Title</Label>
           <Input {...form.register('name')} />
         </div>
-
+  
         <div>
           <Label>Description</Label>
           <Textarea {...form.register('description')} />
         </div>
-
+  
         <div>
           <Label>Location</Label>
           <Input {...form.register('location')} />
         </div>
-
+  
         <div>
           <Label>Category</Label>
           <select {...form.register('categoryId')} className="w-full h-10 rounded border px-3">
@@ -139,7 +154,7 @@ export default function EditEventClientForm({
             ))}
           </select>
         </div>
-
+  
         <div className="flex gap-4">
           <div className="flex-1">
             <Label>Start Time</Label>
@@ -150,12 +165,17 @@ export default function EditEventClientForm({
             <Input type="datetime-local" {...form.register('eventEndTime')} />
           </div>
         </div>
-
+  
         <div>
           <Label>Available Seats</Label>
           <Input type="number" {...form.register('availableSeats', { valueAsNumber: true })} />
         </div>
-
+  
+        <div>
+          <Label>Waitlist Capacity</Label>
+          <Input type="number" {...form.register('waitlistCapacity', { valueAsNumber: true })} />
+        </div>
+  
         <div>
           <Label>Custom Questions (Optional)</Label>
           <div className="space-y-2">
@@ -174,7 +194,15 @@ export default function EditEventClientForm({
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => window.history.back()}
+          >
+            Return 
+          </Button>
+    
           {currentStatus === 'DRAFT' && (
             <Button
               type="button"
@@ -184,7 +212,7 @@ export default function EditEventClientForm({
               Submit for Review
             </Button>
           )}
-
+  
           <Button
             type="button"
             variant="secondary"
@@ -193,6 +221,24 @@ export default function EditEventClientForm({
           >
             Save
           </Button>
+  
+          {canDeleteEvent && (
+            <Button 
+              type="button" 
+              variant="destructive"
+              onClick={async (e) => {
+                if (confirm("Are you sure you want to permanently delete this event and all associated data?")) {
+                  const formData = new FormData();
+                  formData.append("eventId", eventId);
+                  formData.append("userId", userId);
+                  await deleteEventAction(formData);
+                  router.push("/dashboard"); 
+                }
+              }}
+            >
+              Delete Event
+            </Button>
+          )}
         </div>
       </form>
     </div>

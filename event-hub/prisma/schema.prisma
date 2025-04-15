@@ -168,9 +168,17 @@ model EventLecturers {
   @@unique([eventId, lecturerId])
 }
 
+enum CategoryType {
+  CONFERENCE
+  WORKSHOP
+  SEMINAR
+  LECTURE
+  OTHER
+}
+
 model EventCategory {
   id              Int    @id @default(autoincrement())
-  name            String    @unique
+  name            CategoryType @unique
   
   // Relations
   events          Event[]
