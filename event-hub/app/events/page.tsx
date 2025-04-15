@@ -61,7 +61,7 @@ export default async function EventsPage() {
                 }
               >
                 <Button className="bg-primary text-white hover:bg-primary/90 px-6 py-2 text-base font-semibold shadow">
-                  Submit an Event
+                  {t("home.cta.submitEvent")}
                 </Button>
               </Link>
             </div>
