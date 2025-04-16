@@ -1,14 +1,28 @@
+// app/page.tsx
+
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Container } from "@/components/ui/container";
 import t from "@/lib/i18n";
 
-export default function HomePage() {
+export default async function HomePage() {
   return (
     <MainLayout>
       <section className="w-full py-12 md:py-20 lg:py-24">
         <Container className="flex flex-col items-center justify-center gap-4 text-center mx-auto">
+          <div className="flex justify-center items-center w-full max-w-[800px] mx-auto mb-8">
+            <Image
+              src="/cartoonish-communication-logo.png"
+              width={600}
+              height={300}
+              alt="Community communication illustration"
+              className="rounded-lg shadow-md mx-auto"
+              priority
+              style={{ objectFit: 'contain', maxWidth: '100%', height: 'auto' }}
+            />
+          </div>
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
             {t("home.hero.title")} <br />
             <span className="text-primary">
@@ -18,12 +32,12 @@ export default function HomePage() {
           <p className="max-w-[700px] text-lg text-muted-foreground sm:text-xl">
             {t("home.hero.description")}
           </p>
-          <div className="flex flex-col gap-4 min-[400px]:flex-row">
+          <div className="flex flex-col gap-4 min-[400px]:flex-row justify-center">
             <Button size="lg" asChild>
               <Link href="/events">{t("home.cta.browseEvents")}</Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link href="/register">{t("home.cta.createAccount")}</Link>
+              <Link href="/events/create">{t("home.cta.submitEvent")}</Link>
             </Button>
           </div>
         </Container>

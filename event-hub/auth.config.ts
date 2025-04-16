@@ -1,11 +1,12 @@
 export const authConfig = {
-  providers: [],
+  providers: [ 
+  ],
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // optional: 30 days
   },
   callbacks: {
-    async jwt({ token, user }: { token: any; user?: any }) {
+    async jwt({ token, user}: { token: any; user?: any}) {
       if (user) {
         token.id = user.id;
         token.email = user.email;

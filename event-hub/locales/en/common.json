@@ -19,8 +19,8 @@
   },
   "home": {
     "hero": {
-      "title": "Academic Event Management",
-      "titleHighlight": "Simplified",
+      "title": "All-In-One",
+      "titleHighlight": "Event Management",
       "description": "EventHub streamlines the management of academic events, from registration to check-in, making it easier for organizers and attendees alike."
     },
     "features": {
@@ -39,7 +39,8 @@
     },
     "cta": {
       "browseEvents": "Browse Events",
-      "createAccount": "Create Account"
+      "createAccount": "Create Account",
+      "submitEvent": "Submit New Event"
     }
   },
   "events": {

@@ -16,12 +16,13 @@ datasource db {
 model User {
   id                    String                  @id @default(uuid())
   email                 String                  @unique
-  emailVerified DateTime?
+  emailVerified         DateTime?
   isActivated           Boolean                 @default(false)
   firstName             String
   lastName              String
   passwordHash          String
   role                  UserRole                @default(USER)
+  previousRole          UserRole?
   activatedAt           DateTime?
   phoneNumber           String?
   affiliation           String?
@@ -37,8 +38,8 @@ model User {
   lecturerEvents        EventLecturers[]
   uploadedMaterials     EventMaterials[]
   qaMessages            QAMessages[]
-  accounts      Account[]
-  sessions      Session[]
+  accounts              Account[]
+  sessions              Session[]
 }
 
 model Account {
@@ -80,7 +81,6 @@ model VerificationToken {
   @@id([identifier, token])
 }
 
-
 enum UserRole {
   USER
   LECTURER
@@ -99,7 +99,7 @@ model Event {
   eventEndTime        DateTime
   availableSeats      Int
   ticketSaleRequired  Boolean                @default(false)
-  categoryId          String
+  categoryId          Int
   status              EventStatus            @default(DRAFT)
   isArchived          Boolean                @default(false)
   waitlistCapacity    Int                    @default(0)
@@ -168,17 +168,25 @@ model EventLecturers {
   @@unique([eventId, lecturerId])
 }
 
+enum CategoryType {
+  CONFERENCE
+  WORKSHOP
+  SEMINAR
+  LECTURE
+  OTHER
+}
+
 model EventCategory {
-  id              String    @id @default(uuid())
-  name            String    @unique
+  id              Int    @id @default(autoincrement())
+  name            CategoryType @unique
   
   // Relations
   events          Event[]
 }
 
 model EventMaterials {
-  id              String    @id @default(uuid())
-  eventId         String
+  id              Int    @id @default(autoincrement())
+  eventId         String?
   filePath        String
   fileName        String
   fileType        String
@@ -186,12 +194,12 @@ model EventMaterials {
   uploadedAt      DateTime  @default(now())
 
   // Relations
-  event           Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  event           Event?     @relation(fields: [eventId], references: [id], onDelete: SetNull)
   uploader        User      @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
 }
 
 model Lounge {
-  id              String    @id @default(uuid())
+  id              Int    @id @default(autoincrement())
   eventId         String
   openedAt        DateTime  @default(now())
   closedAt        DateTime?
@@ -202,7 +210,7 @@ model Lounge {
 }
 
 model QAMessages {
-  id              String    @id @default(uuid())
+  id              Int    @id @default(autoincrement())
   eventId         String
   userId          String
   content         String    @db.Text

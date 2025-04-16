@@ -5,6 +5,7 @@
 
 import { NextRequest } from "next/server";
 
+
 /**
  * Check if a user is authenticated (placeholder)
  */
@@ -16,8 +17,8 @@ export function isAuthenticated(): boolean {
 /**
  * Get the current user (placeholder)
  */
-export function getCurrentUser() {
-  // This is a placeholder - in a real app would get from session
+export async function getCurrentUser() {
+  // This is a placeholder - in a real app would fetch user from session/cookies
   return null;
 }
 
@@ -93,5 +94,11 @@ export function getTokenHeader(req: NextRequest) {
     throw new Error("Unauthorized");
   }
   return JSON.parse(tokenHeader);
+}
 
+export async function getTokenForServerComponent() {
+  const { headers } = await import("next/headers");
+  const token = (await headers()).get("x-auth-token");
+  if (!token) return null;
+  return JSON.parse(token);
 }

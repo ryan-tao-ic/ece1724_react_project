@@ -8,7 +8,9 @@ import { cache } from "react";
 export const getEvents = cache(async () => {
   return await prisma.event.findMany({
     where: {
-      status: "PUBLISHED",
+      status: {
+        in: ['PUBLISHED', 'CANCELLED'], 
+      },
     },
     include: {
       category: true,
@@ -18,6 +20,84 @@ export const getEvents = cache(async () => {
     },
   });
 });
+
+export async function getCreatedEvents(userId: string) {
+  return await prisma.event.findMany({
+    where: { createdBy: userId },
+    include: { category: true },
+    orderBy: { createdAt: 'asc' },
+  });
+}
+
+export async function getPendingReviewEvents() {
+  return await prisma.event.findMany({
+    where: {
+      status: 'PENDING_REVIEW',
+    },
+    include: {
+      category: true,
+      creator: true,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+}
+
+export async function getApprovedEventsByReviewer(staffId: string) {
+  return await prisma.event.findMany({
+    where: {
+      status: 'APPROVED',
+      reviewedBy: staffId,
+      NOT: {
+        reviewedBy: null    // This explicitly excludes events where reviewedBy is null
+      }
+    },
+    include: {
+      category: true,
+      creator: true,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+}
+
+export async function getPublishedEventsByReviewer(staffId: string) {
+  return await prisma.event.findMany({
+    where: {
+      status: 'PUBLISHED',
+      reviewedBy: staffId,
+      NOT: {
+        reviewedBy: null    // This explicitly excludes events where reviewedBy is null
+      }
+    },
+    include: {
+      category: true,
+      creator: true,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+}
+
+export async function getCancelledEventsByReviewer(staffId: string) {
+  return await prisma.event.findMany({
+    where: {
+      status: 'CANCELLED',
+      reviewedBy: staffId,
+    },
+    include: {
+      category: true,
+      creator: true,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+}
+
 
 /**
  * Get event by ID
@@ -30,13 +110,7 @@ export const getEventById = cache(async (id: string) => {
       category: true,
       lecturers: {
         include: {
-          lecturer: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-            },
-          },
+          lecturer: true,
         },
       },
     },
@@ -61,3 +135,5 @@ export async function searchEvents(query: string) {
     },
   });
 }
+
+
