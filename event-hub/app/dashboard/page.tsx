@@ -181,7 +181,7 @@ function Section({ title, events, type }: { title: string; events: any[]; type: 
                     Event Details
                   </Link>
                 </Button>
-                {isUpcoming && reg.status === 'REGISTERED' && (
+                {isUpcoming && reg.status === 'REGISTERED' && reg.event.status !== 'CANCELLED' && (
                   <>
                     <Button variant="outline" size="sm" asChild>
                       <Link href={`/events/${reg.event.id}/register`}>
@@ -210,6 +210,10 @@ function Section({ title, events, type }: { title: string; events: any[]; type: 
                       Add to Calendar
                     </a>
                   </>
+                )}
+
+                {isUpcoming && reg.event.status === 'CANCELLED' && (
+                  <p className="text-sm text-red-600 font-medium">This event has been cancelled.</p>
                 )}
               </div>
             </div>

@@ -46,22 +46,25 @@ export async function sendConfirmationEmail({
   }
 
   const qrImageData = await QRCode.toDataURL(qrCode);
-  const calendarLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
-    event.name
-  )}&dates=${event.eventStartTime.toISOString().replace(/[-:]/g, '').split('.')[0]}/${event.eventEndTime
-    .toISOString()
-    .replace(/[-:]/g, '')
-    .split('.')[0]}&location=${encodeURIComponent(event.location)}`;
+
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '');
+  const icsFileUrl = `${baseUrl}/api/calendar/events/${event.id}`;
+  const icsSubscribeUrl = `${baseUrl}/calendar/subscribe?ics=${encodeURIComponent(icsFileUrl)}`;
 
   const html = `
     ${baseHtml}
     <p>Your QR Code:</p>
     <img src="${qrImageData}" alt="QR Code" width="150" height="150" />
-    <p><a href="${calendarLink}" target="_blank">➕ Add to Google Calendar</a></p>
+    <p>You can <a href="${icsSubscribeUrl}">subscribe to this event calendar</a> to stay updated if the event is cancelled or changed.</p>
   `;
 
+  const FROM_EMAIL = process.env.RESEND_FROM_EMAIL;
+  if (!FROM_EMAIL) {
+    throw new Error('RESEND_FROM_EMAIL is not defined in environment variables');
+  }
+
   await resend.emails.send({
-    from: 'onboarding@resend.dev',
+    from: FROM_EMAIL,
     to: user.email,
     subject,
     html,

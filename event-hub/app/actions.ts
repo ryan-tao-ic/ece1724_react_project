@@ -12,6 +12,7 @@ import { uploadFileToStorage, getSignedUrl } from "@/lib/file-storage";
 import { StorageError } from "@/lib/file-storage/errors";
 import { UploadResult } from "@/lib/types";
 import { sendCancelNoticeEmails } from '@/lib/email/sendCancelNoticeEmails';
+import { createGoogleCalendarEvent } from "@/lib/calendar/google";
 
 const eventSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -165,7 +166,14 @@ type ReviewFormValues = {
 // Define or import EventStatus
 export type EventStatus = 'DRAFT' | 'PENDING_REVIEW' | 'APPROVED' | 'PUBLISHED';
 
-export async function reviewEventAction(eventId: string, data: ReviewFormValues & { status: EventStatus, reviewerId: string }) {
+export async function reviewEventAction(
+  eventId: string,
+  data: ReviewFormValues & {
+    status: EventStatus;
+    reviewerId: string;
+    accessToken?: string; 
+  }
+) {
   try {
     const {
       name,
@@ -178,8 +186,8 @@ export async function reviewEventAction(eventId: string, data: ReviewFormValues 
       waitlistCapacity,
       customizedQuestion,
       reviewComment,
-      status: status,
-      reviewerId
+      status,
+      reviewerId,
     } = data;
 
     const formattedQuestions = customizedQuestion?.map((q) => q.question) || [];
@@ -198,30 +206,32 @@ export async function reviewEventAction(eventId: string, data: ReviewFormValues 
         customizedQuestion: formattedQuestions,
         reviewComment: reviewComment ?? null,
         status,
-        reviewedBy: reviewerId  
+        reviewedBy: reviewerId,
       },
     });
 
     return { success: true };
   } catch (err) {
-    console.error('reviewEventAction error:', err);
-    return { success: false, message: 'Failed to review event.' };
+    console.error("reviewEventAction error:", err);
+    return { success: false, message: "Failed to review event." };
   }
 }
 
-
-export async function updateEvent(id: string, data: {
-  name: string;
-  description: string;
-  location: string;
-  categoryId: string;
-  eventStartTime: string;
-  eventEndTime: string;
-  availableSeats: number;
-  waitlistCapacity?: number;
-  customizedQuestion?: string[];
-  status?: "DRAFT" | "PENDING_REVIEW" | "APPROVED"; 
-}) {
+export async function updateEvent(
+  id: string,
+  data: {
+    name: string;
+    description: string;
+    location: string;
+    categoryId: string;
+    eventStartTime: string;
+    eventEndTime: string;
+    availableSeats: number;
+    waitlistCapacity?: number;
+    customizedQuestion?: string[];
+    status?: "DRAFT" | "PENDING_REVIEW" | "APPROVED";
+  }
+) {
   return await prisma.event.update({
     where: { id },
     data: {
@@ -234,10 +244,11 @@ export async function updateEvent(id: string, data: {
       availableSeats: data.availableSeats,
       waitlistCapacity: data.waitlistCapacity ?? 0,
       customizedQuestion: data.customizedQuestion,
-      status: data.status, 
+      status: data.status,
     },
   });
 }
+
 
 export async function registerToEvent(formData: FormData) {
   const user = await getAuthenticatedUser();

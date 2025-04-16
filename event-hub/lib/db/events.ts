@@ -8,7 +8,9 @@ import { cache } from "react";
 export const getEvents = cache(async () => {
   return await prisma.event.findMany({
     where: {
-      status: "PUBLISHED",
+      status: {
+        in: ['PUBLISHED', 'CANCELLED'], 
+      },
     },
     include: {
       category: true,
