@@ -12,7 +12,6 @@ import { uploadFileToStorage, getSignedUrl } from "@/lib/file-storage";
 import { StorageError } from "@/lib/file-storage/errors";
 import { UploadResult } from "@/lib/types";
 import { sendCancelNoticeEmails } from '@/lib/email/sendCancelNoticeEmails';
-import { createGoogleCalendarEvent } from "@/lib/calendar/google";
 
 const eventSchema = z.object({
   name: z.string().min(1, "Name is required"),
