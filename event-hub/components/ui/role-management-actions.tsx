@@ -34,7 +34,7 @@ export function RoleManagementActions({
           <Button variant="destructive" size="sm" disabled className="w-full">
             Unassign Staff Role
           </Button>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground break-words w-[150px]">
             You cannot unassign yourself from this role
           </p>
         </div>

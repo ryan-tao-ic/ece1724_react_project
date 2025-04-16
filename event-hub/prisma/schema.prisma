@@ -22,6 +22,7 @@ model User {
   lastName              String
   passwordHash          String
   role                  UserRole                @default(USER)
+  previousRole          UserRole?
   activatedAt           DateTime?
   phoneNumber           String?
   affiliation           String?
@@ -37,8 +38,8 @@ model User {
   lecturerEvents        EventLecturers[]
   uploadedMaterials     EventMaterials[]
   qaMessages            QAMessages[]
-  accounts      Account[]
-  sessions      Session[]
+  accounts              Account[]
+  sessions              Session[]
 }
 
 model Account {
@@ -79,7 +80,6 @@ model VerificationToken {
  
   @@id([identifier, token])
 }
-
 
 enum UserRole {
   USER
@@ -186,7 +186,7 @@ model EventCategory {
 
 model EventMaterials {
   id              Int    @id @default(autoincrement())
-  eventId         String
+  eventId         String?
   filePath        String
   fileName        String
   fileType        String
@@ -194,7 +194,7 @@ model EventMaterials {
   uploadedAt      DateTime  @default(now())
 
   // Relations
-  event           Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  event           Event?     @relation(fields: [eventId], references: [id], onDelete: SetNull)
   uploader        User      @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
 }
 

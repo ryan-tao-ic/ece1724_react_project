@@ -7,7 +7,7 @@ import { registerToEventInDb, cancelRegistration } from '@/lib/db/registration';
 import { redirect } from 'next/navigation';
 import { getTokenForServerComponent } from '@/lib/auth/auth';
 import { sendConfirmationEmail } from '@/lib/email/sendConfirmationEmail';  
-import { createEventMaterial } from "@/lib/db/materials";
+import { createEventMaterial, detachEventMaterial } from "@/lib/db/materials";
 import { uploadFileToStorage, getSignedUrl } from "@/lib/file-storage";
 import { StorageError } from "@/lib/file-storage/errors";
 import { UploadResult } from "@/lib/types";
@@ -148,8 +148,6 @@ export async function createEventAction(data: {
   return event;
 }
 
-
-// Define or import ReviewFormValues
 type ReviewFormValues = {
   name: string;
   description?: string;
@@ -163,7 +161,6 @@ type ReviewFormValues = {
   waitlistCapacity?: number;
 };
 
-// Define or import EventStatus
 export type EventStatus = 'DRAFT' | 'PENDING_REVIEW' | 'APPROVED' | 'PUBLISHED';
 
 export async function reviewEventAction(
@@ -217,21 +214,19 @@ export async function reviewEventAction(
   }
 }
 
-export async function updateEvent(
-  id: string,
-  data: {
-    name: string;
-    description: string;
-    location: string;
-    categoryId: string;
-    eventStartTime: string;
-    eventEndTime: string;
-    availableSeats: number;
-    waitlistCapacity?: number;
-    customizedQuestion?: string[];
-    status?: "DRAFT" | "PENDING_REVIEW" | "APPROVED";
-  }
-) {
+
+export async function updateEvent(id: string, data: {
+  name: string;
+  description: string;
+  location: string;
+  categoryId: string;
+  eventStartTime: string;
+  eventEndTime: string;
+  availableSeats: number;
+  waitlistCapacity?: number;
+  customizedQuestion?: string[];
+  status?: "DRAFT" | "PENDING_REVIEW" | "APPROVED"; 
+}) {
   return await prisma.event.update({
     where: { id },
     data: {
@@ -297,12 +292,29 @@ export async function cancelRegistrationAction(formData: FormData) {
 
 /**
  * Refresh a signed URL for a file
- * @param filePath The path of the file
- * @returns A new signed URL
  */
 export async function refreshSignedUrl(filePath: string): Promise<string> {
-  // Pass through directly to the storage service
   return await getSignedUrl(filePath);
+}
+
+/**
+ * Check if a user can manage materials for an event (either as a lecturer or creator)
+ */
+async function canUserManageEventMaterials(userId: string, eventId: string): Promise<boolean> {
+  const event = await prisma.event.findUnique({
+    where: { id: eventId },
+    select: {
+      createdBy: true,
+      lecturers: {
+        where: { lecturerId: userId },
+      },
+    },
+  });
+
+  if (!event) return false;
+  
+  // User is either the creator or a lecturer
+  return event.createdBy === userId || event.lecturers.length > 0;
 }
 
 /**
@@ -319,6 +331,12 @@ export async function uploadEventMaterial(formData: FormData): Promise<UploadRes
     
     if (!eventId || !file) {
       return { success: false, error: "Missing event ID or file" };
+    }
+    
+    // Check if user can manage materials (lecturer or creator)
+    const canManage = await canUserManageEventMaterials(user.id, eventId);
+    if (!canManage) {
+      return { success: false, error: "Only lecturers and event creators can upload materials" };
     }
     
     // Validate file type
@@ -382,8 +400,6 @@ export async function uploadEventMaterial(formData: FormData): Promise<UploadRes
 }
 
 export async function cancelEventAction(formData: FormData) {
-  'use server';
-
   const eventId = formData.get('eventId') as string;
   const userId = formData.get('userId') as string;
 
@@ -401,7 +417,7 @@ export async function cancelEventAction(formData: FormData) {
   }
 
   const isReviewedByUser = event.reviewedBy === userId;
-  const isLecturedByUser = event.lecturers.some(l => l.lecturerId === userId);
+  const isLecturedByUser = event.lecturers.some((l) => l.lecturerId === userId);
 
   if (!isReviewedByUser && !isLecturedByUser) {
     throw new Error("You are not authorized to cancel this event.");
@@ -442,4 +458,40 @@ export async function deleteEventAction(formData: FormData) {
   });
 
   revalidatePath("/events");
+}
+
+/**
+ * Detach a material from an event
+ */
+export async function detachEventMaterialAction(formData: FormData): Promise<{ success: boolean; error?: string }> {
+  try {
+    const user = await getAuthenticatedUser();
+    
+    const materialId = parseInt(formData.get('materialId') as string, 10);
+    const eventId = formData.get('eventId') as string;
+    
+    if (isNaN(materialId) || !eventId) {
+      return { success: false, error: "Invalid material ID or event ID" };
+    }
+    
+    // Check if user can manage materials (lecturer or creator)
+    const canManage = await canUserManageEventMaterials(user.id, eventId);
+    if (!canManage) {
+      return { success: false, error: "Only lecturers and event creators can manage materials" };
+    }
+    
+    // Detach the material
+    const result = await detachEventMaterial(materialId);
+    
+    if (result) {
+      // Revalidate the page to reflect the changes
+      revalidatePath(`/events/${eventId}`);
+      return { success: true };
+    } else {
+      return { success: false, error: "Failed to remove the material" };
+    }
+  } catch (error) {
+    console.error('Error detaching material:', error);
+    return { success: false, error: "An unexpected error occurred" };
+  }
 }

@@ -139,16 +139,46 @@ export default function LoginPage() {
             </CardContent>
             <CardFooter className="flex flex-col items-center">
               <div className="text-sm text-muted-foreground">
-                <Link
-                  href="/reset-password"
-                  className="text-primary hover:underline"
+                <Button
+                  variant="link"
+                  className="text-primary hover:underline font-medium p-0 cursor-pointer"
+                  onClick={async () => {
+                    const email = form.getValues("email");
+                    if (!email) {
+                      alert("Please enter your email address first");
+                      return;
+                    }
+
+                    try {
+                      const response = await fetch("/api/auth/forgotPassword", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ email }),
+                      });
+
+                      if (response.ok) {
+                        alert(
+                          "Password reset requested!\n\n" +
+                          "We've sent a password reset link to your email. " +
+                          "Please check your inbox and click the link to reset your password."
+                        );
+                      } else {
+                        const data = await response.json();
+                        throw new Error(data.message || "Failed to send reset email");
+                      }
+                    } catch (error) {
+                      alert(error instanceof Error ? error.message : "Failed to send reset email");
+                    }
+                  }}
                 >
                   Forgot your password?
-                </Link>
+                </Button>
               </div>
               <div className="mt-4 text-sm text-muted-foreground">
                 Don't have an account?{" "}
-                <Link href="/register" className="text-primary hover:underline">
+                <Link href="/register" className="text-primary hover:underline cursor-pointer">
                   Sign up
                 </Link>
               </div>
