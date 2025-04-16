@@ -61,12 +61,12 @@ export default function ReviewEventClientForm({
 
     try {
       setLoading(true);
+
       await reviewEventAction(eventId, {
         ...data,
         customizedQuestion: formattedQuestions.map((q) => ({ question: q })),
         status: newStatus || status, // keep same status for Save
         reviewerId,
-        
       });
       alert("Event updated.");
       router.push("/dashboard");

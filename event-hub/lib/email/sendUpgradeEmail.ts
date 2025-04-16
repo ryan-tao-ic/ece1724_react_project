@@ -39,8 +39,14 @@ export async function sendUpgradeEmail({
     <p>We look forward to seeing you!</p>
   `;
 
+  const FROM_EMAIL = process.env.RESEND_FROM_EMAIL;
+
+  if (!FROM_EMAIL) {
+    throw new Error('RESEND_FROM_EMAIL is not defined in environment variables');
+  }
+
   await resend.emails.send({
-    from: 'onboarding@resend.dev',
+    from: FROM_EMAIL,
     to: user.email,
     subject,
     html,

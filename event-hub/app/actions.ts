@@ -162,7 +162,14 @@ type ReviewFormValues = {
 
 export type EventStatus = 'DRAFT' | 'PENDING_REVIEW' | 'APPROVED' | 'PUBLISHED';
 
-export async function reviewEventAction(eventId: string, data: ReviewFormValues & { status: EventStatus, reviewerId: string }) {
+export async function reviewEventAction(
+  eventId: string,
+  data: ReviewFormValues & {
+    status: EventStatus;
+    reviewerId: string;
+    accessToken?: string; 
+  }
+) {
   try {
     const {
       name,
@@ -175,8 +182,8 @@ export async function reviewEventAction(eventId: string, data: ReviewFormValues 
       waitlistCapacity,
       customizedQuestion,
       reviewComment,
-      status: status,
-      reviewerId
+      status,
+      reviewerId,
     } = data;
 
     const formattedQuestions = customizedQuestion?.map((q) => q.question) || [];
@@ -195,16 +202,17 @@ export async function reviewEventAction(eventId: string, data: ReviewFormValues 
         customizedQuestion: formattedQuestions,
         reviewComment: reviewComment ?? null,
         status,
-        reviewedBy: reviewerId  
+        reviewedBy: reviewerId,
       },
     });
 
     return { success: true };
   } catch (err) {
-    console.error('reviewEventAction error:', err);
-    return { success: false, message: 'Failed to review event.' };
+    console.error("reviewEventAction error:", err);
+    return { success: false, message: "Failed to review event." };
   }
 }
+
 
 export async function updateEvent(id: string, data: {
   name: string;
@@ -230,10 +238,11 @@ export async function updateEvent(id: string, data: {
       availableSeats: data.availableSeats,
       waitlistCapacity: data.waitlistCapacity ?? 0,
       customizedQuestion: data.customizedQuestion,
-      status: data.status, 
+      status: data.status,
     },
   });
 }
+
 
 export async function registerToEvent(formData: FormData) {
   const user = await getAuthenticatedUser();

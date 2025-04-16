@@ -13,6 +13,7 @@ import { getEventMaterials } from '@/lib/db/materials';
 import { cancelEventAction} from '@/app/actions';
 import { MainLayout } from "@/components/layout/main-layout";
 import { Container } from "@/components/ui/container";
+import CalendarSubscription from '@/components/calendar/CalendarSubscription';
 import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, Key } from 'react';
 
 export default async function EventDetailPage({ params }: { params: { id: string } }) {
@@ -89,14 +90,14 @@ export default async function EventDetailPage({ params }: { params: { id: string
             <p>{dateString}</p>
             <p>{timeString}</p>
             <p>{event.location}</p>
-            <Link
-              href={`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.name)}&dates=${startDate.toISOString().replace(/[-:]/g, '').split('.')[0]}/${endDate.toISOString().replace(/[-:]/g, '').split('.')[0]}&location=${encodeURIComponent(event.location)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 underline"
-            >
-              Google Calendar – ICS
-            </Link>
+            <div className="mt-4">
+              {/* Replace the simple link with our new component */}
+              <CalendarSubscription 
+                eventId={event.id} 
+                variant="outline" 
+                buttonText="Add to Calendar" 
+              />
+            </div>
           </div>
 
           <div className="md:col-span-2 space-y-6">
