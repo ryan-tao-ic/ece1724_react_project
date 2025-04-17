@@ -1,19 +1,19 @@
 // app//events/[id]/review/ReviewEventClientForm.tsx
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { reviewEventAction } from '@/app/actions';
+import { reviewEventAction } from "@/app/actions";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 const reviewSchema = z.object({
   name: z.string().min(1),
@@ -23,9 +23,11 @@ const reviewSchema = z.object({
   eventStartTime: z.string().min(1),
   eventEndTime: z.string().min(1),
   availableSeats: z.number().min(10),
-  waitlistCapacity: z.number().min(0).optional().default(0), 
+  waitlistCapacity: z.number().min(0).optional().default(0),
   reviewComment: z.string().optional(),
-  customizedQuestion: z.array(z.object({ question: z.string().min(1) })).optional(),
+  customizedQuestion: z
+    .array(z.object({ question: z.string().min(1) }))
+    .optional(),
 });
 
 export type ReviewFormValues = z.infer<typeof reviewSchema>;
@@ -41,7 +43,7 @@ export default function ReviewEventClientForm({
   reviewerId: string;
   defaultValues: ReviewFormValues;
   categories: { id: number; name: string }[];
-  status: 'PENDING_REVIEW' | 'APPROVED';
+  status: "PENDING_REVIEW" | "APPROVED";
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -56,16 +58,19 @@ export default function ReviewEventClientForm({
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: 'customizedQuestion',
+    name: "customizedQuestion",
   });
 
-  const onReviewSubmit = async (newStatus: 'APPROVED' | 'PUBLISHED' | 'DRAFT' | undefined) => {
+  const onReviewSubmit = async (
+    newStatus: "APPROVED" | "PUBLISHED" | "DRAFT" | undefined
+  ) => {
     setError("");
     setSuccess("");
     setMissingCommentError(false);
 
     const data = form.getValues();
-    const formattedQuestions = data.customizedQuestion?.map((q) => q.question) || [];
+    const formattedQuestions =
+      data.customizedQuestion?.map((q) => q.question) || [];
 
     if (newStatus === "DRAFT") {
       const comment = data.reviewComment?.trim();
@@ -96,7 +101,9 @@ export default function ReviewEventClientForm({
 
   return (
     <div className="max-w-2xl mx-auto py-12 space-y-10">
-      <h1 className="text-4xl font-bold leading-tight tracking-tight">Review Event</h1>
+      <h1 className="text-4xl font-bold leading-tight tracking-tight">
+        Review Event
+      </h1>
 
       {error && (
         <Alert variant="destructive" className="mb-4">
@@ -112,27 +119,30 @@ export default function ReviewEventClientForm({
 
       {missingCommentError && (
         <Alert variant="destructive" className="mb-4">
-          <AlertDescription>Please provide a review comment when rejecting the event.</AlertDescription>
+          <AlertDescription>
+            Please provide a review comment when rejecting the event.
+          </AlertDescription>
         </Alert>
       )}
-  
+
       <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-  
         <div className="space-y-1.5">
           <Label className="text-sm font-medium text-gray-700">Title</Label>
           <Input {...form.register("name")} />
         </div>
-  
+
         <div className="space-y-1.5">
-          <Label className="text-sm font-medium text-gray-700">Description</Label>
+          <Label className="text-sm font-medium text-gray-700">
+            Description
+          </Label>
           <Textarea {...form.register("description")} rows={4} />
         </div>
-  
+
         <div className="space-y-1.5">
           <Label className="text-sm font-medium text-gray-700">Location</Label>
           <Input {...form.register("location")} />
         </div>
-  
+
         <div className="space-y-1.5">
           <Label className="text-sm font-medium text-gray-700">Category</Label>
           <select
@@ -141,35 +151,53 @@ export default function ReviewEventClientForm({
           >
             <option value="">Select a category</option>
             {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>{cat.name}</option>
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
             ))}
           </select>
         </div>
-  
+
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1 space-y-1.5">
-            <Label className="text-sm font-medium text-gray-700">Start Time</Label>
+            <Label className="text-sm font-medium text-gray-700">
+              Start Time
+            </Label>
             <Input type="datetime-local" {...form.register("eventStartTime")} />
           </div>
           <div className="flex-1 space-y-1.5">
-            <Label className="text-sm font-medium text-gray-700">End Time</Label>
+            <Label className="text-sm font-medium text-gray-700">
+              End Time
+            </Label>
             <Input type="datetime-local" {...form.register("eventEndTime")} />
           </div>
         </div>
-  
+
         <div className="space-y-1.5">
-          <Label className="text-sm font-medium text-gray-700">Available Seats</Label>
-          <Input type="number" {...form.register("availableSeats", { valueAsNumber: true })} />
+          <Label className="text-sm font-medium text-gray-700">
+            Available Seats
+          </Label>
+          <Input
+            type="number"
+            {...form.register("availableSeats", { valueAsNumber: true })}
+          />
         </div>
-  
+
         <div className="space-y-1.5">
-          <Label className="text-sm font-medium text-gray-700">Waitlist Capacity</Label>
-          <Input type="number" {...form.register("waitlistCapacity", { valueAsNumber: true })} />
+          <Label className="text-sm font-medium text-gray-700">
+            Waitlist Capacity
+          </Label>
+          <Input
+            type="number"
+            {...form.register("waitlistCapacity", { valueAsNumber: true })}
+          />
         </div>
-  
+
         {/* Review Comment */}
         <div className="space-y-1.5">
-          <Label className="text-sm font-semibold text-gray-800">Review Comment</Label>
+          <Label className="text-sm font-semibold text-gray-800">
+            Review Comment
+          </Label>
           <Textarea
             {...form.register("reviewComment")}
             placeholder={
@@ -181,13 +209,17 @@ export default function ReviewEventClientForm({
             className={missingCommentError ? "border-red-500" : ""}
           />
           {missingCommentError && (
-            <p className="text-sm text-red-500 mt-1">Review comment is required when rejecting an event.</p>
+            <p className="text-sm text-red-500 mt-1">
+              Review comment is required when rejecting an event.
+            </p>
           )}
         </div>
-  
+
         {/* Custom Questions */}
         <div className="space-y-2 p-4 border rounded-md bg-gray-50">
-          <Label className="text-sm font-semibold text-gray-800">Custom Questions</Label>
+          <Label className="text-sm font-semibold text-gray-800">
+            Custom Questions
+          </Label>
           <div className="space-y-2">
             {fields.map((field, index) => (
               <div key={field.id} className="flex gap-2">
@@ -214,7 +246,7 @@ export default function ReviewEventClientForm({
             </Button>
           </div>
         </div>
-  
+
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row justify-end gap-4 pt-6">
           <Button
@@ -263,5 +295,5 @@ export default function ReviewEventClientForm({
         </div>
       </form>
     </div>
-  );  
+  );
 }
