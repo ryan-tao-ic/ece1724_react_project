@@ -1,14 +1,15 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import QrCode from "@/components/qr-code";
-import CancelledRedirect from "@/components/cancelled-redirect";
-import CalendarSubscription from "@/components/calendar/CalendarSubscription";
 import { cancelRegistrationAction, registerToEvent } from "@/app/actions";
+import CancelledRedirect from "@/components/cancelled-redirect";
+import QrCode from "@/components/qr-code";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Textarea } from "@/components/ui/textarea";
+import CheckinListener from "./CheckInListener";
+import CalendarSubscription from "@/components/calendar/CalendarSubscription";
 
 export default function RegisterClientForm({
   user,
@@ -25,14 +26,37 @@ export default function RegisterClientForm({
   const qrCode = searchParams?.code;
   const cancelled = searchParams?.cancelled === "1";
 
-  if (cancelled) return <CancelledRedirect eventName={event.name} />;
+
+  const start = new Date(event.eventStartTime)
+    .toISOString()
+    .replace(/[-:]/g, "")
+    .split(".")[0];
+  const end = new Date(event.eventEndTime)
+    .toISOString()
+    .replace(/[-:]/g, "")
+    .split(".")[0];
+
+  const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.name)}&dates=${start}/${end}&location=${encodeURIComponent(event.location)}`;
+
+  // Cancelled flow
+  if (cancelled) {
+    return <CancelledRedirect eventName={event.name} />;
+  }
 
   if (status === "LECTURER_CANNOT_REGISTER") {
     return (
       <div className="max-w-xl mx-auto py-10 space-y-6 text-center">
-        <h1 className="text-2xl font-bold text-amber-600">You cannot register for this event</h1>
-        <p className="text-sm">As a lecturer for this event, you are automatically included and do not need to register.</p>
-        <Button asChild><a href="/dashboard">Return to Dashboard</a></Button>
+        <h1 className="text-2xl font-bold text-amber-600">
+          You cannot register for this event
+        </h1>
+        <p className="text-sm">
+          As a lecturer for this event, you are automatically included and do
+          not need to register.
+        </p>
+        <Button asChild>
+          <a href="/dashboard">Return to Dashboard</a>
+        </Button>
+
       </div>
     );
   }
@@ -51,7 +75,9 @@ export default function RegisterClientForm({
     return (
       <div className="max-w-xl mx-auto py-10 space-y-6 text-center">
         <h1 className="text-2xl font-bold">
-          {status === "REGISTERED" ? "Registration successful!" : "You have been added to the waitlist!"}
+          {status === "REGISTERED"
+            ? "Registration successful!"
+            : "You have been added to the waitlist!"}
         </h1>
         <p className="text-sm">Event: {event.name}</p>
 
@@ -61,6 +87,7 @@ export default function RegisterClientForm({
             <div className="flex justify-center">
               <QrCode value={qrCode} />
             </div>
+
             <div className="flex justify-center mt-4">
               <CalendarSubscription eventId={event.id} />
             </div>
@@ -69,18 +96,28 @@ export default function RegisterClientForm({
 
         <form action={cancelRegistrationAction} className="pt-2">
           <input type="hidden" name="eventId" value={event.id} />
-          <Button variant="destructive" type="submit">Cancel Registration</Button>
+          <Button variant="destructive" type="submit">
+            Cancel Registration
+          </Button>
         </form>
         <Button asChild><a href="/dashboard">Return to Dashboard</a></Button>
       </div>
     );
   }
 
-  if (registration?.status === "REGISTERED" || registration?.status === "WAITLISTED") {
+
+  // Already registered in DB
+  if (
+    registration?.status === "REGISTERED" ||
+    registration?.status === "WAITLISTED"
+  ) {
+
     return (
       <div className="max-w-xl mx-auto py-10 space-y-6 text-center">
         <h1 className="text-2xl font-bold">
-          {registration.status === "REGISTERED" ? "You have already registered for this event." : "You are already on the waitlist for this event."}
+          {registration.status === "REGISTERED"
+            ? "You have already registered for this event."
+            : "You are already on the waitlist for this event."}
         </h1>
         <p className="text-sm">Event: {event.name}</p>
 
@@ -90,6 +127,7 @@ export default function RegisterClientForm({
             <div className="flex justify-center">
               <QrCode value={registration.qrCode} />
             </div>
+            <CheckinListener qrCode={registration.qrCode} eventId={event.id} />
             <div className="flex justify-center mt-4">
               <CalendarSubscription eventId={event.id} />
             </div>
@@ -97,13 +135,17 @@ export default function RegisterClientForm({
         )}
 
         <form action={cancelRegistrationAction} className="pt-2">
+
           <input type="hidden" name="eventId" value={event.id} />
-          <Button variant="destructive" type="submit">Cancel Registration</Button>
+          <Button variant="destructive" type="submit">
+            Cancel Registration
+          </Button>
         </form>
         <Button asChild><a href="/dashboard">Go to Dashboard</a></Button>
       </div>
     );
   }
+
 
   const customQuestions = Array.isArray(event.customizedQuestion) ? event.customizedQuestion : [];
   const roles = ['Undergraduate Student', 'Graduate Student', 'Faculty/Staff', 'General Public'];
@@ -125,6 +167,7 @@ export default function RegisterClientForm({
             <Input type="email" value={user.email} readOnly />
           </div>
         </div>
+
 
         <div className="space-y-6">
           <h2 className="text-xl font-semibold">Optional Details</h2>
@@ -164,6 +207,7 @@ export default function RegisterClientForm({
             ))}
           </div>
         )}
+
 
         <div className="flex justify-end gap-4 pt-2">
           <Button type="submit">Submit Registration</Button>
