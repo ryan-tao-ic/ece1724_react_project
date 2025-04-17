@@ -58,12 +58,12 @@ export async function POST(req) {
   const start = new Date(registration.event.eventStartTime);
   const end = new Date(registration.event.eventEndTime);
 
-  // if (now < start || now > end) {
-  //   return NextResponse.json(
-  //     { error: "QR code not valid at this time" },
-  //     { status: 400 }
-  //   );
-  // }
+  if (now < start || now > end) {
+    return NextResponse.json(
+      { error: "QR code not valid at this time" },
+      { status: 400 }
+    );
+  }
 
   // if (registration.checkInTime) {
   //   return NextResponse.json(
