@@ -1,4 +1,7 @@
 // app/not-authorized/page.tsx
+/**
+ * Renders the NotAuthorizedPage component.
+ */
 export default function NotAuthorizedPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-4 text-center">

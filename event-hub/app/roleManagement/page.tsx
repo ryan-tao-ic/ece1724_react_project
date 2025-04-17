@@ -43,8 +43,9 @@ export default async function RoleManagementPage() {
 
   // Get all users
   const staffUsers = await getUsersByRole(UserRole.STAFF);
+  const lecturerUsers = await getUsersByRole(UserRole.LECTURER);
   const regularUsers = await getUsersByRole(UserRole.USER);
-  const users = [...staffUsers, ...regularUsers].sort((a, b) => 
+  const users = [...staffUsers, ...lecturerUsers, ...regularUsers].sort((a, b) => 
     a.createdAt.getTime() - b.createdAt.getTime()
   );
 
@@ -65,13 +66,13 @@ export default async function RoleManagementPage() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[200px]">
                     Name
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[200px]">
                     Email
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[200px]">
                     Role
                   </th>
                   <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[200px]">
@@ -82,24 +83,26 @@ export default async function RoleManagementPage() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {users.map((user) => (
                   <tr key={user.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 whitespace-nowrap w-[200px]">
                       <div className="text-sm font-medium text-gray-900">
                         {user.firstName} {user.lastName}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 whitespace-nowrap w-[200px]">
                       <div className="text-sm text-gray-500">{user.email}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 whitespace-nowrap w-[200px]">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        user.role === 'STAFF' 
+                        user.role === 'STAFF'
                           ? 'bg-green-100 text-green-800'
-                          : 'bg-blue-100 text-blue-800'
+                          : user.role === 'LECTURER'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-blue-100 text-blue-800'
                       }`}>
                         {user.role}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm w-[200px]">
                       {user.id === users[0].id ? (
                         <div className="text-gray-500">System Default</div>
                       ) : (

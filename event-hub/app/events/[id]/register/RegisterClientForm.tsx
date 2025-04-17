@@ -1,7 +1,3 @@
-// app/events/[id]/register/RegisterClientForm.tsx
-// This file is a client component that handles the registration form for an event.
-// It includes the form fields for user input, handles the registration process, and displays the QR code if the registration is successful.
-
 "use client";
 
 import { cancelRegistrationAction, registerToEvent } from "@/app/actions";
@@ -13,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import CheckinListener from "./CheckInListener";
+import CalendarSubscription from "@/components/calendar/CalendarSubscription";
 
 export default function RegisterClientForm({
   user,
@@ -28,6 +25,7 @@ export default function RegisterClientForm({
   const status = searchParams?.status;
   const qrCode = searchParams?.code;
   const cancelled = searchParams?.cancelled === "1";
+
 
   const start = new Date(event.eventStartTime)
     .toISOString()
@@ -58,6 +56,7 @@ export default function RegisterClientForm({
         <Button asChild>
           <a href="/dashboard">Return to Dashboard</a>
         </Button>
+
       </div>
     );
   }
@@ -65,18 +64,13 @@ export default function RegisterClientForm({
   if (status === "FULL") {
     return (
       <div className="max-w-xl mx-auto py-10 space-y-6 text-center">
-        <h1 className="text-2xl font-bold">
-          We're sorry, this event and its waitlist are both full.
-        </h1>
+        <h1 className="text-2xl font-bold">We're sorry, this event and its waitlist are both full.</h1>
         <p className="text-sm">Event: {event.name}</p>
-        <Button asChild>
-          <a href="/dashboard">Return to Dashboard</a>
-        </Button>
+        <Button asChild><a href="/dashboard">Return to Dashboard</a></Button>
       </div>
     );
   }
 
-  // Fresh redirect after registration
   if ((status === "REGISTERED" || status === "WAITLISTED") && qrCode) {
     return (
       <div className="max-w-xl mx-auto py-10 space-y-6 text-center">
@@ -93,34 +87,31 @@ export default function RegisterClientForm({
             <div className="flex justify-center">
               <QrCode value={qrCode} />
             </div>
-            <a
-              href={calendarUrl}
-              target="_blank"
-              className="text-blue-600 underline"
-            >
-              Add to Google Calendar
-            </a>
+
+            <div className="flex justify-center mt-4">
+              <CalendarSubscription eventId={event.id} />
+            </div>
           </>
         )}
 
-        <form action={cancelRegistrationAction}>
+        <form action={cancelRegistrationAction} className="pt-2">
           <input type="hidden" name="eventId" value={event.id} />
           <Button variant="destructive" type="submit">
             Cancel Registration
           </Button>
         </form>
-        <Button asChild>
-          <a href="/dashboard">Return to Dashboard</a>
-        </Button>
+        <Button asChild><a href="/dashboard">Return to Dashboard</a></Button>
       </div>
     );
   }
+
 
   // Already registered in DB
   if (
     registration?.status === "REGISTERED" ||
     registration?.status === "WAITLISTED"
   ) {
+
     return (
       <div className="max-w-xl mx-auto py-10 space-y-6 text-center">
         <h1 className="text-2xl font-bold">
@@ -137,100 +128,91 @@ export default function RegisterClientForm({
               <QrCode value={registration.qrCode} />
             </div>
             <CheckinListener qrCode={registration.qrCode} eventId={event.id} />
-            <a
-              href={calendarUrl}
-              target="_blank"
-              className="text-blue-600 underline"
-            >
-              Add to Google Calendar
-            </a>
+            <div className="flex justify-center mt-4">
+              <CalendarSubscription eventId={event.id} />
+            </div>
           </>
         )}
 
-        <form action={cancelRegistrationAction}>
+        <form action={cancelRegistrationAction} className="pt-2">
+
           <input type="hidden" name="eventId" value={event.id} />
           <Button variant="destructive" type="submit">
             Cancel Registration
           </Button>
         </form>
-        <Button asChild>
-          <a href="/dashboard">Go to Dashboard</a>
-        </Button>
+        <Button asChild><a href="/dashboard">Go to Dashboard</a></Button>
       </div>
     );
   }
 
-  type CustomQuestion = { question: string };
 
-  const customQuestions: CustomQuestion[] = Array.isArray(
-    event.customizedQuestion
-  )
-    ? event.customizedQuestion
-    : [];
+  const customQuestions = Array.isArray(event.customizedQuestion) ? event.customizedQuestion : [];
+  const roles = ['Undergraduate Student', 'Graduate Student', 'Faculty/Staff', 'General Public'];
 
   return (
     <div className="max-w-2xl mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-6">Register for: {event.name}</h1>
-      <form action={registerToEvent} className="space-y-4">
+      <h1 className="text-3xl font-bold text-center mb-8">Register for: {event.name}</h1>
+      <form action={registerToEvent} className="space-y-8">
         <input type="hidden" name="eventId" value={event.id} />
 
-        <div>
-          <Label>Full Name</Label>
-          <Input value={`${user.firstName} ${user.lastName}`} readOnly />
+        <div className="space-y-6">
+          <h2 className="text-xl font-semibold">Basic Information</h2>
+          <div className="space-y-1.5">
+            <Label>Full Name</Label>
+            <Input value={`${user.firstName} ${user.lastName}`} readOnly />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Email Address</Label>
+            <Input type="email" value={user.email} readOnly />
+          </div>
         </div>
 
-        <div>
-          <Label>Email Address</Label>
-          <Input type="email" value={user.email} readOnly />
+
+        <div className="space-y-6">
+          <h2 className="text-xl font-semibold">Optional Details</h2>
+          <div className="space-y-1.5">
+            <Label>Phone Number</Label>
+            <Input name="phoneNumber" type="tel" defaultValue={user.phoneNumber || ''} />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Affiliation</Label>
+            <Input name="affiliation" defaultValue={user.affiliation || ''} />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Role in the Event</Label>
+            <RadioGroup name="role" required className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1.5">
+              {roles.map(role => (
+                <div key={role} className="flex items-center space-x-2">
+                  <RadioGroupItem value={role} id={role} />
+                  <Label htmlFor={role}>{role}</Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
         </div>
 
-        <div>
-          <Label>Phone Number (optional)</Label>
-          <Input
-            name="phoneNumber"
-            type="tel"
-            defaultValue={user.phoneNumber || ""}
-          />
-        </div>
-
-        <div>
-          <Label>Role in the Event</Label>
-          <RadioGroup name="role" required>
-            {[
-              "Undergraduate Student",
-              "Graduate Student",
-              "Faculty/Staff",
-              "General Public",
-            ].map((role) => (
-              <div key={role} className="flex items-center space-x-2">
-                <RadioGroupItem value={role} id={role} />
-                <Label htmlFor={role}>{role}</Label>
+        {customQuestions.length > 0 && (
+          <div className="space-y-6">
+            <h2 className="text-xl font-semibold">Additional Questions</h2>
+            {customQuestions.map((item: { question: string }, index: number) => (
+              <div key={index} className="space-y-1.5">
+                <Label>{item.question}</Label>
+                {item.question.toLowerCase().includes("why") || item.question.toLowerCase().includes("goal") ? (
+                  <Textarea name={`custom_${index}`} />
+                ) : (
+                  <Input name={`custom_${index}`} />
+                )}
               </div>
             ))}
-          </RadioGroup>
+          </div>
+        )}
+
+
+        <div className="flex justify-end gap-4 pt-2">
+          <Button type="submit">Submit Registration</Button>
+          <Button type="button" variant="outline" asChild><a href="/dashboard">Cancel</a></Button>
         </div>
-
-        <div>
-          <Label>Affiliation (optional)</Label>
-          <Input name="affiliation" defaultValue={user.affiliation || ""} />
-        </div>
-
-        {customQuestions.map((item, index) => {
-          const label = typeof item?.question === "string" ? item.question : "";
-          return (
-            <div key={index}>
-              <Label>{label}</Label>
-              {label.toLowerCase().includes("why") ||
-              label.toLowerCase().includes("goal") ? (
-                <Textarea name={`custom_${index}`} />
-              ) : (
-                <Input name={`custom_${index}`} />
-              )}
-            </div>
-          );
-        })}
-
-        <Button type="submit">Submit Registration</Button>
       </form>
     </div>
   );

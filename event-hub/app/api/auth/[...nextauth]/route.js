@@ -51,7 +51,12 @@ const fullAuth = {
       },
     }),
   ],
+  secret: process.env.NEXTAUTH_SECRET,
+  // Add any other settings from authConfig that are needed
+  pages: authConfig.pages,
 };
+
+
 
 // export const { GET, POST } = NextAuth(fullAuth).handlers;
 const handler = NextAuth(fullAuth);

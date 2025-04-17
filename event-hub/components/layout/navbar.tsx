@@ -66,6 +66,9 @@ export function Navbar() {
                   STAFF
                 </span>
               )}
+              <span className="text-sm font-medium">
+                {`${session?.user?.firstName || ""} ${session?.user?.lastName || ""}`.trim()}
+              </span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button

@@ -13,6 +13,8 @@ import { getEventMaterials } from '@/lib/db/materials';
 import { cancelEventAction} from '@/app/actions';
 import { MainLayout } from "@/components/layout/main-layout";
 import { Container } from "@/components/ui/container";
+import CalendarSubscription from '@/components/calendar/CalendarSubscription';
+import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, Key } from 'react';
 
 export default async function EventDetailPage({ params }: { params: { id: string } }) {
   const resolvedParams = await Promise.resolve(params);
@@ -30,6 +32,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
 
   let userRegistration = null;
   let isUserLecturer = false;
+  let isUserCreator = false;
   
   if (userId) {
     userRegistration = await getUserRegistration(event.id, userId);
@@ -37,6 +40,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
     isUserLecturer = event.lecturers.some(
       (l: { lecturer: { id: string } }) => l.lecturer.id === userId
     );
+    isUserCreator = event.createdBy === userId;
   }
 
   const isStaffReviewer = token.role === 'STAFF' && event.reviewedBy === userId;
@@ -86,14 +90,14 @@ export default async function EventDetailPage({ params }: { params: { id: string
             <p>{dateString}</p>
             <p>{timeString}</p>
             <p>{event.location}</p>
-            <Link
-              href={`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.name)}&dates=${startDate.toISOString().replace(/[-:]/g, '').split('.')[0]}/${endDate.toISOString().replace(/[-:]/g, '').split('.')[0]}&location=${encodeURIComponent(event.location)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 underline"
-            >
-              Google Calendar – ICS
-            </Link>
+            <div className="mt-4">
+              {/* Replace the simple link with our new component */}
+              <CalendarSubscription 
+                eventId={event.id} 
+                variant="outline" 
+                buttonText="Add to Calendar" 
+              />
+            </div>
           </div>
 
           <div className="md:col-span-2 space-y-6">
@@ -119,7 +123,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
 
             {event.lecturers.length > 0 && (
               <div className="space-y-8">
-                {event.lecturers.map((l, index) => (
+                {event.lecturers.map((l: { lecturer: { firstName: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; lastName: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; expertise: any; }; }, index: Key | null | undefined) => (
                   <div key={index}>
                     <h2 className="text-lg font-semibold mb-2">
                       About {l.lecturer.firstName} {l.lecturer.lastName}:
@@ -184,6 +188,8 @@ export default async function EventDetailPage({ params }: { params: { id: string
             <EventMaterialsUpload 
               eventId={event.id} 
               isLoggedIn={!!userId}
+              isUserLecturer={isUserLecturer}
+              isUserCreator={isUserCreator}
               existingMaterials={materials.map(material => ({
                 id: material.id,
                 fileName: material.fileName,

@@ -3,8 +3,9 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest) {
-  // Skip all checks for verifyEmail path
-  if (req.nextUrl.pathname.startsWith("/verifyEmail")) {
+  // Skip all checks for verifyEmail and resetPassword paths
+  if (req.nextUrl.pathname.startsWith("/verifyEmail") || 
+      req.nextUrl.pathname.startsWith("/resetPassword")) {
     return NextResponse.next();
   }
 
@@ -33,5 +34,6 @@ export const config = {
     "/roleManagement/:path*",
     "/verifyEmail/:path*",
     "/lounge/:path*",
+    "/resetPassword/:path*",
   ],
 };

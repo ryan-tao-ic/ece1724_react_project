@@ -134,10 +134,10 @@ export default async function DashboardPage() {
                 {role === "LECTURER" && (
                   <>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Ready to contribute a lecture or event?
+                      Ready to contribute an event?
                     </p>
                     <Button className="mt-4" asChild>
-                      <Link href="/events/create">Submit an Event</Link>
+                      <Link href="/events/create">Apply for an Event</Link>
                     </Button>
                   </>
                 )}
@@ -181,7 +181,7 @@ function Section({ title, events, type }: { title: string; events: any[]; type: 
                     Event Details
                   </Link>
                 </Button>
-                {isUpcoming && reg.status === 'REGISTERED' && (
+                {isUpcoming && reg.status === 'REGISTERED' && reg.event.status !== 'CANCELLED' && (
                   <>
                     <Button variant="outline" size="sm" asChild>
                       <Link href={`/events/${reg.event.id}/register`}>
@@ -210,6 +210,10 @@ function Section({ title, events, type }: { title: string; events: any[]; type: 
                       Add to Calendar
                     </a>
                   </>
+                )}
+
+                {isUpcoming && reg.event.status === 'CANCELLED' && (
+                  <p className="text-sm text-red-600 font-medium">This event has been cancelled.</p>
                 )}
               </div>
             </div>
