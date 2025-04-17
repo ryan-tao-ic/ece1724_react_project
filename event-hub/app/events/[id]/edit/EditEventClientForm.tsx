@@ -12,6 +12,17 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert'; 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { updateEvent, deleteEventAction } from '@/app/actions';
 import { EventStatus } from '@prisma/client';
 
@@ -79,6 +90,10 @@ export default function EditEventClientForm({
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventSchema),
     defaultValues,
@@ -100,6 +115,8 @@ export default function EditEventClientForm({
     data: EventFormValues,
     status?: EventStatus
   ) => {
+    setError("");
+    setSuccess("");
     setLoading(true);
     try {
       const formattedQuestions = data.customizedQuestion?.map((q) => q.question) || [];
@@ -108,19 +125,44 @@ export default function EditEventClientForm({
         customizedQuestion: formattedQuestions,
         status: (status ?? data.status) as "DRAFT" | "PENDING_REVIEW" | "APPROVED" | undefined,
       });
-      alert("Event updated successfully.");
+      setSuccess("Event updated successfully.");
       router.push('/dashboard');
     } catch (err) {
-      alert('Failed to update event.');
+      setError('Failed to update event.');
       console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
+  const handleDeleteEvent = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("eventId", eventId);
+      formData.append("userId", userId);
+      await deleteEventAction(formData);
+      router.push("/dashboard");
+    } catch (err) {
+      setError('Failed to delete event.');
+      console.error(err);
+    }
+  };
+
   return (
     <div className="max-w-2xl mx-auto py-12 space-y-10">
       <h1 className="text-4xl font-bold leading-tight tracking-tight">Edit Event</h1>
+
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {success && (
+        <Alert className="mb-4">
+          <AlertDescription>{success}</AlertDescription>
+        </Alert>
+      )}
   
       {wasRejected && reviewComment && (
         <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 p-4 rounded">
@@ -227,21 +269,31 @@ export default function EditEventClientForm({
             <Button
               type="button"
               variant="destructive"
-              onClick={async () => {
-                if (confirm("Are you sure you want to permanently delete this event and all associated data?")) {
-                  const formData = new FormData();
-                  formData.append("eventId", eventId);
-                  formData.append("userId", userId);
-                  await deleteEventAction(formData);
-                  router.push("/dashboard");
-                }
-              }}
+              onClick={() => setDeleteDialogOpen(true)}
             >
               Delete Event
             </Button>
           )}
         </div>
       </form>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the event
+              and all associated data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteEvent} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

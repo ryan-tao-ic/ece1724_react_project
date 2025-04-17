@@ -134,10 +134,10 @@ export default async function DashboardPage() {
                 {role === "LECTURER" && (
                   <>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Ready to contribute a lecture or event?
+                      Ready to contribute an event?
                     </p>
                     <Button className="mt-4" asChild>
-                      <Link href="/events/create">{t("dashboard.createEvent")}</Link>
+                      <Link href="/events/create">Apply for an Event</Link>
                     </Button>
                   </>
                 )}

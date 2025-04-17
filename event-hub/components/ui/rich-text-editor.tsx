@@ -1,8 +1,8 @@
 'use client';
 
-import dynamic from 'next/dynamic';
-import Quill from 'quill';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
+import type Quill from 'quill';
 
 // Define the ref type for the RichTextEditor component
 export type RichTextEditorHandle = {
@@ -15,16 +15,13 @@ interface RichTextEditorProps {
   onChange?: (content: string) => void;
 }
 
-// Global instance reference
-let globalQuillInstance: Quill | null = null;
-let globalEditorElement: HTMLDivElement | null = null;
-let initializationInProgress = false;
-let initializationTimeout: NodeJS.Timeout | null = null;
-
-const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({ initialContent, onChange }, ref) => {
+// The actual component implementation
+const RichTextEditorComponent = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({ initialContent, onChange }, ref) => {
   const editorRef = useRef<HTMLDivElement>(null);
+  const quillInstanceRef = useRef<any>(null);
   const componentId = useRef(Math.random().toString(36).substr(2, 9));
   const [isReady, setIsReady] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Memoize the Quill configuration
   const quillConfig = useMemo(() => ({
@@ -45,27 +42,28 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({ 
   const cleanupQuill = useCallback(() => {
     console.log(`[${componentId.current}] Cleaning up Quill instance...`);
     
-    // Remove all toolbars from the document
-    const toolbars = document.querySelectorAll('.ql-toolbar');
-    console.log(`[${componentId.current}] Found ${toolbars.length} toolbars to remove`);
-    toolbars.forEach(toolbar => {
-      console.log(`[${componentId.current}] Removing toolbar:`, toolbar);
-      toolbar.remove();
-    });
+    if (typeof document !== 'undefined') {
+      // Remove all toolbars from the document
+      const toolbars = document.querySelectorAll('.ql-toolbar');
+      console.log(`[${componentId.current}] Found ${toolbars.length} toolbars to remove`);
+      toolbars.forEach(toolbar => {
+        console.log(`[${componentId.current}] Removing toolbar:`, toolbar);
+        toolbar.remove();
+      });
+    }
 
-    if (globalQuillInstance) {
+    if (quillInstanceRef.current) {
       console.log(`[${componentId.current}] Destroying Quill instance`);
-      globalQuillInstance = null;
+      quillInstanceRef.current = null;
     }
 
-    if (globalEditorElement) {
+    if (editorRef.current) {
       console.log(`[${componentId.current}] Cleaning up editor container`);
-      const container = globalEditorElement.querySelector('.ql-container');
+      const container = editorRef.current.querySelector('.ql-container');
       if (container) container.remove();
-      globalEditorElement.innerHTML = '';
-      globalEditorElement = null;
+      editorRef.current.innerHTML = '';
     }
-    initializationInProgress = false;
+    
     setIsReady(false);
   }, []);
 
@@ -76,48 +74,42 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({ 
       return;
     }
 
-    // If we already have a Quill instance and it's attached to this editor, skip initialization
-    if (globalQuillInstance && globalEditorElement === editorRef.current) {
+    // If we already have a Quill instance for this editor, skip initialization
+    if (quillInstanceRef.current) {
       console.log(`[${componentId.current}] Quill already initialized for this editor, skipping...`);
       return;
     }
 
-    // If initialization is already in progress, wait for it to complete
-    if (initializationInProgress) {
-      console.log(`[${componentId.current}] Initialization already in progress, skipping...`);
-      return;
-    }
-
     // Clear any existing timeout
-    if (initializationTimeout) {
-      clearTimeout(initializationTimeout);
-      initializationTimeout = null;
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
 
     // Debounce initialization
-    initializationTimeout = setTimeout(async () => {
+    timeoutRef.current = setTimeout(async () => {
       console.log(`[${componentId.current}] Starting Quill initialization...`);
-      initializationInProgress = true;
       
       try {
         // Clean up any existing instance
         cleanupQuill();
 
+        // Dynamically import Quill
+        const Quill = (await import('quill')).default;
         await import('quill/dist/quill.snow.css');
 
         console.log(`[${componentId.current}] Creating new Quill instance`);
         if (editorRef.current) {
-          globalQuillInstance = new Quill(editorRef.current, quillConfig);
-          globalEditorElement = editorRef.current;
+          quillInstanceRef.current = new Quill(editorRef.current, quillConfig);
 
           if (initialContent) {
             console.log(`[${componentId.current}] Setting initial content`);
-            globalQuillInstance.root.innerHTML = initialContent;
+            quillInstanceRef.current.root.innerHTML = initialContent;
           }
 
-          globalQuillInstance.on('text-change', () => {
-            if (onChange && globalQuillInstance) {
-              onChange(globalQuillInstance.root.innerHTML);
+          quillInstanceRef.current.on('text-change', () => {
+            if (onChange && quillInstanceRef.current) {
+              onChange(quillInstanceRef.current.root.innerHTML);
             }
           });
 
@@ -127,8 +119,6 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({ 
       } catch (error) {
         console.error(`[${componentId.current}] Error during Quill initialization:`, error);
         cleanupQuill();
-      } finally {
-        initializationInProgress = false;
       }
     }, 100); // 100ms debounce
   }, [cleanupQuill, initialContent, onChange, quillConfig]);
@@ -139,35 +129,44 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({ 
 
     return () => {
       console.log(`[${componentId.current}] Component unmounting, cleaning up...`);
-      if (initializationTimeout) {
-        clearTimeout(initializationTimeout);
-        initializationTimeout = null;
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
       }
-      // Only clean up if this is the editor that owns the Quill instance
-      if (globalEditorElement === editorRef.current) {
-        cleanupQuill();
-      }
+      cleanupQuill();
     };
   }, [initQuill, cleanupQuill]);
 
   useImperativeHandle(ref, () => ({
     getContent: () => {
-      if (globalQuillInstance) {
-        return globalQuillInstance.root.innerHTML;
+      if (quillInstanceRef.current) {
+        return quillInstanceRef.current.root.innerHTML;
       }
       return '';
     },
     setContent: (content: string) => {
-      if (globalQuillInstance) {
-        globalQuillInstance.root.innerHTML = content;
+      if (quillInstanceRef.current) {
+        quillInstanceRef.current.root.innerHTML = content;
       }
     },
   }));
 
   return (
-    <div className="border rounded-md">
-      <div ref={editorRef} className="min-h-[200px] max-h-[400px]" />
+    <div className="border rounded-md w-full overflow-hidden">
+      <div ref={editorRef} className="min-h-[200px] max-h-[400px] w-full" />
       <style jsx global>{`
+        .ql-editor {
+          width: 100%;
+          max-width: 100%;
+        }
+        .ql-toolbar {
+          width: 100%;
+          max-width: 100%;
+        }
+        .ql-container {
+          width: 100%;
+          max-width: 100%;
+        }
         .ql-editor a {
           color: #2563eb;
           text-decoration: underline;
@@ -180,8 +179,11 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({ 
   );
 });
 
-RichTextEditor.displayName = 'RichTextEditor';
+RichTextEditorComponent.displayName = 'RichTextEditor';
 
-export default dynamic(() => Promise.resolve(RichTextEditor), { 
+// Export with dynamic import to avoid SSR
+const RichTextEditor = dynamic(() => Promise.resolve(RichTextEditorComponent), { 
   ssr: false 
 });
+
+export default RichTextEditor;
