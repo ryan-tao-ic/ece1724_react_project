@@ -1,6 +1,9 @@
 // app/profile/page.tsx
-// This is a client component that allows users to view and edit their profile information.
 
+/**
+ * This file represents the profile page component.
+ * It is used to display the user's profile information.
+ */
 "use client";
 
 import { MainLayout } from "@/components/layout/main-layout";
@@ -18,6 +21,7 @@ import {
   FormItem,
   FormLabel,
 } from "@/components/ui/form";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import RichTextEditor, { RichTextEditorHandle } from "@/components/ui/rich-text-editor";
 import { getProfile } from "@/lib/profile/profile";
 import { updateProfile } from "@/lib/profile/update";
@@ -51,6 +55,9 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState<any>(null);
   const richTextEditorRef = useRef<RichTextEditorHandle>(null);
+  const [error, setError] = useState(""); 
+  const [success, setSuccess] = useState("");
+
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -79,6 +86,9 @@ export default function ProfilePage() {
   }, [form]);
 
   async function onSubmit(data: ProfileFormValues) {
+    setError("");
+    setSuccess("");
+
     try {
       const bioContent = richTextEditorRef.current?.getContent() || "";
       const result = await updateProfile({ ...data, bio: bioContent });
@@ -87,13 +97,13 @@ export default function ProfilePage() {
       setIsEditing(false);
 
       if (refreshed.role === "LECTURER") {
-        alert("Profile updated. You are now a Lecturer!");
+        setSuccess("Profile updated. You are now a Lecturer!");
       } else {
-        alert("Profile updated successfully.");
+        setSuccess("Profile updated successfully.");
       }
     } catch (err) {
       console.error(err);
-      alert("Failed to update profile.");
+      setError("Failed to update profile.");
     }
   }
 
@@ -129,6 +139,18 @@ export default function ProfilePage() {
               )}
             </CardHeader>
             <CardContent>
+              {error && (
+                <Alert variant="destructive" className="mb-4">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
+              {success && (
+                <Alert className="mb-4">
+                  <AlertDescription>{success}</AlertDescription>
+                </Alert>
+              )}
+              
               {isEditing && profile ? (
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">

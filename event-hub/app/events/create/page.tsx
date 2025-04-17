@@ -15,6 +15,7 @@ import { getCategories, createEventAction } from '@/app/actions';
 import { useSession } from 'next-auth/react';
 import { MainLayout } from "@/components/layout/main-layout";
 import { Container } from "@/components/ui/container";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const eventSchema = z.object({
   name: z.string().min(1, 'Title is required'),
@@ -68,19 +69,25 @@ export default function CreateEventPage() {
     getCategories().then(setCategories);
   }, []);
 
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
   const onSubmit = async (data: EventFormValues, status: 'DRAFT' | 'PENDING_REVIEW') => {
+    setError("");
+    setSuccess("");
+
     if (!userId) {
-      alert("You must be logged in to create an event.");
+      setError("You must be logged in to create an event.");
       return;
     }
     setLoading(true);
     try {
       const formattedQuestions = data.customizedQuestion?.map((q) => q.question) || [];
       await createEventAction({ ...data, customizedQuestion: formattedQuestions, status, createdBy: userId });
-      alert("Event submitted successfully.");
+      setSuccess("Event submitted successfully.");
       router.push('/dashboard');
     } catch (err) {
-      alert('Failed to create event.');
+      setError('Failed to create event.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -92,6 +99,18 @@ export default function CreateEventPage() {
       <Container>
         <div className="max-w-2xl mx-auto py-12 space-y-10">
           <h1 className="text-4xl font-bold leading-tight tracking-tight">Create an Event</h1>
+
+          {error && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+          
+          {success && (
+            <Alert className="mb-4">
+              <AlertDescription>{success}</AlertDescription>
+            </Alert>
+          )}
 
           <form className="space-y-6" onSubmit={form.handleSubmit((data) => onSubmit(data, 'PENDING_REVIEW'))}>
 

@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { reviewEventAction } from '@/app/actions';
 
 const reviewSchema = z.object({
@@ -44,6 +45,9 @@ export default function ReviewEventClientForm({
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [missingCommentError, setMissingCommentError] = useState(false);
 
   const form = useForm<ReviewFormValues>({
     resolver: zodResolver(reviewSchema),
@@ -56,8 +60,20 @@ export default function ReviewEventClientForm({
   });
 
   const onReviewSubmit = async (newStatus: 'APPROVED' | 'PUBLISHED' | 'DRAFT' | undefined) => {
+    setError("");
+    setSuccess("");
+    setMissingCommentError(false);
+
     const data = form.getValues();
     const formattedQuestions = data.customizedQuestion?.map((q) => q.question) || [];
+
+    if (newStatus === "DRAFT") {
+      const comment = data.reviewComment?.trim();
+      if (!comment) {
+        setMissingCommentError(true);
+        return;
+      }
+    }
 
     try {
       setLoading(true);
@@ -68,10 +84,10 @@ export default function ReviewEventClientForm({
         status: newStatus || status, // keep same status for Save
         reviewerId,
       });
-      alert("Event updated.");
+      setSuccess("Event updated.");
       router.push("/dashboard");
     } catch (err) {
-      alert("Failed to update event.");
+      setError("Failed to update event.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -81,6 +97,24 @@ export default function ReviewEventClientForm({
   return (
     <div className="max-w-2xl mx-auto py-12 space-y-10">
       <h1 className="text-4xl font-bold leading-tight tracking-tight">Review Event</h1>
+
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {success && (
+        <Alert className="mb-4">
+          <AlertDescription>{success}</AlertDescription>
+        </Alert>
+      )}
+
+      {missingCommentError && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>Please provide a review comment when rejecting the event.</AlertDescription>
+        </Alert>
+      )}
   
       <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
   
@@ -144,7 +178,11 @@ export default function ReviewEventClientForm({
                 : "Optional comment for publishing"
             }
             rows={3}
+            className={missingCommentError ? "border-red-500" : ""}
           />
+          {missingCommentError && (
+            <p className="text-sm text-red-500 mt-1">Review comment is required when rejecting an event.</p>
+          )}
         </div>
   
         {/* Custom Questions */}
@@ -200,14 +238,7 @@ export default function ReviewEventClientForm({
                 type="button"
                 disabled={loading}
                 variant="destructive"
-                onClick={() => {
-                  const comment = form.getValues("reviewComment")?.trim();
-                  if (!comment) {
-                    alert("Please provide a review comment when rejecting the event.");
-                    return;
-                  }
-                  onReviewSubmit("DRAFT");
-                }}
+                onClick={() => onReviewSubmit("DRAFT")}
               >
                 Reject
               </Button>
