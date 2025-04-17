@@ -1,6 +1,8 @@
+// // app/(auth)/register/page.tsx
+
 "use client";
 
-import Link from "next/link";
+import { MainLayout } from "@/components/layout/main-layout";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,10 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { Container } from "@/components/ui/container";
 import {
   Form,
   FormControl,
@@ -22,9 +21,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { MainLayout } from "@/components/layout/main-layout";
-import { Container } from "@/components/ui/container";
+import { Input } from "@/components/ui/input";
 import { signup } from "@/lib/auth/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+
 
 // Simple validation schema for registration
 const registerSchema = z
@@ -54,22 +58,24 @@ export default function RegisterPage() {
     },
   });
 
-  function onSubmit(data: RegisterFormValues) {
-    // This would be implemented in a real application
+  async function onSubmit(data: RegisterFormValues) {
     console.log(data);
-    signup(data)
-      .then((result) => {
-        if (result.success) {
-          alert("Successfully registered!");
-          window.location.href = "/";
-        } else {
-          alert(`Registration failed: ${result.message}`);
-        }
-      })
-      .catch((error) => {
-        console.error("Registration error:", error);
-        alert("An error occurred during registration. Please try again.");
-      });
+    try {
+      const result = await signup(data);
+      if (result.success) {
+        alert(
+          "Registration successful!\n\n" +
+          "We've sent a verification email to your inbox. " +
+          "Please check your email and click the verification link to activate your account."
+        );
+        window.location.href = "/login?message=check-email";
+      } else {
+        alert(`Registration failed: ${result.message}`);
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      alert("An error occurred during registration. Please try again.");
+    }
   }
 
   return (
