@@ -1,10 +1,15 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const categories = ["CONFERENCE", "WORKSHOP", "SEMINAR", "LECTURE", "OTHER"] as const;
-
+  const categories = [
+    "CONFERENCE",
+    "WORKSHOP",
+    "SEMINAR",
+    "LECTURE",
+    "OTHER",
+  ] as const;
   for (const cat of categories) {
     await prisma.eventCategory.upsert({
       where: { name: cat },

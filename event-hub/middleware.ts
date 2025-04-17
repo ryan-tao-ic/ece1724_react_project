@@ -14,7 +14,6 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // ✅ Forward token manually so `auth()` can decode it later
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-auth-token", JSON.stringify(token));
 
@@ -32,6 +31,7 @@ export const config = {
     "/api/profile/:path*",
     "/profile/:path*",
     "/roleManagement/:path*",
-    "/verifyEmail/:path*"
+    "/verifyEmail/:path*",
+    "/lounge/:path*",
   ],
 };

@@ -126,6 +126,9 @@ npm run prisma:generate
 
 # Apply schema changes to the database
 npm run prisma:migrate
+
+# add seed to the database
+npm run prisma:seed
 ```
 
 ### Component Development
