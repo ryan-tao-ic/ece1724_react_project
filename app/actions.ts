@@ -1,17 +1,16 @@
 "use server";
 
-import prisma from '@/lib/db/prisma';
-import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
-import { registerToEventInDb, cancelRegistration } from '@/lib/db/registration';
-import { redirect } from 'next/navigation';
 import { getTokenForServerComponent } from '@/lib/auth/auth';
-import { sendConfirmationEmail } from '@/lib/email/sendConfirmationEmail';  
 import { createEventMaterial, detachEventMaterial } from "@/lib/db/materials";
-import { uploadFileToStorage, getSignedUrl } from "@/lib/file-storage";
+import prisma from '@/lib/db/prisma';
+import { cancelRegistration, registerToEventInDb } from '@/lib/db/registration';
+import { sendCancelNoticeEmails } from '@/lib/email/sendCancelNoticeEmails';
+import { getSignedUrl, uploadFileToStorage } from "@/lib/file-storage";
 import { StorageError } from "@/lib/file-storage/errors";
 import { UploadResult } from "@/lib/types";
-import { sendCancelNoticeEmails } from '@/lib/email/sendCancelNoticeEmails';
+import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
+import { z } from 'zod';
 
 const eventSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -416,7 +415,7 @@ export async function cancelEventAction(formData: FormData) {
   }
 
   const isReviewedByUser = event.reviewedBy === userId;
-  const isLecturedByUser = event.lecturers.some((l) => l.lecturerId === userId);
+  const isLecturedByUser = event.lecturers.some((l: { lecturerId: string; }) => l.lecturerId === userId);
 
   if (!isReviewedByUser && !isLecturedByUser) {
     throw new Error("You are not authorized to cancel this event.");
