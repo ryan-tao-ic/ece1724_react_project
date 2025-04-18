@@ -1,13 +1,13 @@
 // app/events/page.tsx
-import { getEvents } from '@/lib/db/events';
 import { MainLayout } from '@/components/layout/main-layout';
-import { Container } from '@/components/ui/container';
-import EventsClient from './events-client';
-import t from '@/lib/i18n';
-import { getTokenForServerComponent } from '@/lib/auth/auth';
-import prisma from '@/lib/db/prisma';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { Container } from '@/components/ui/container';
+import { getTokenForServerComponent } from '@/lib/auth/auth';
+import { getEvents } from '@/lib/db/events';
+import prisma from '@/lib/db/prisma';
+import t from '@/lib/i18n';
+import Link from 'next/link';
+import EventsClient from './events-client';
 
 export default async function EventsPage() {
   const events = (await getEvents()).map((event) => ({
@@ -39,31 +39,31 @@ export default async function EventsPage() {
         <div className="flex flex-col gap-10">
 
           {/* Header section with Submit button */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-            <div className="space-y-2">
-              <h1 className="text-4xl font-bold leading-snug tracking-tight">
-                {t('events.title')}
-              </h1>
-              <p className="text-muted-foreground text-base leading-relaxed tracking-wide">
-                {t('events.description')}
-              </p>
-            </div>
+          <div className="bg-white rounded-lg border p-8 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+              <div className="space-y-3">
+                <h1 className="text-3xl font-bold text-gray-900 leading-tight">
+                  {t('events.title')}
+                </h1>
+                <p className="text-gray-600 max-w-2xl">
+                  {t('events.description')}
+                </p>
+              </div>
 
-            <div className="w-full sm:w-auto sm:text-right ml-auto space-y-2 sm:space-y-3">
-              <h2 className="text-2xl font-bold text-gray-900">
-                Is your event not listed?
-              </h2>
-              <Link
-                href={
-                  userRole === 'LECTURER' || userRole === 'STAFF'
-                    ? '/events/create'
-                    : '/not-authorized'
-                }
-              >
-                <Button className="bg-primary text-white hover:bg-primary/90 px-6 py-2 text-base font-semibold shadow">
-                  {t("home.cta.submitEvent")}
-                </Button>
-              </Link>
+              <div className="w-full sm:w-auto flex flex-col items-start sm:items-end space-y-3">
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Is your event not listed?
+                </h2>
+                <Link
+                  href={
+                    '/events/create'
+                  }
+                >
+                  <Button className="px-6 py-2 text-sm font-semibold">
+                    {t("home.cta.submitEvent")}
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
 

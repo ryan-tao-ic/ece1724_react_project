@@ -8,6 +8,10 @@ export const config = {
     bodyParser: false,
   },
 };
+const roomUsers: Record<
+  string,
+  Map<string, { name: string; role: string }>
+> = {};
 
 type NextApiResponseWithSocket = NextApiResponse & {
   socket: NetSocket & {
@@ -48,9 +52,24 @@ export default function handler(
         console.log(`User ${socket.id} left room ${room}`);
       });
 
-      socket.on("join-room", (roomId) => {
+      socket.on("join-room", ({ roomId, userId, fullName, role }) => {
         socket.join(roomId);
-        console.log(`User ${socket.id} joined room ${roomId}`);
+        console.log(
+          `User ${fullName} (${userId}, ${role}) joined room ${roomId}`
+        );
+
+        if (!roomUsers[roomId]) {
+          roomUsers[roomId] = new Map();
+        }
+
+        // Save user data by ID
+        roomUsers[roomId].set(userId, { name: fullName, role });
+
+        // Broadcast updated user list
+        const usersInRoom = Array.from(roomUsers[roomId].entries()).map(
+          ([id, { name, role }]) => ({ id, name, role })
+        );
+        io.to(roomId).emit("room-users", usersInRoom);
       });
 
       socket.on("load-messages", async (roomId) => {

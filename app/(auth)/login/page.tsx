@@ -8,27 +8,28 @@
 import { MainLayout } from "@/components/layout/main-layout";
 
 import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Container,
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  Input,
+    Button,
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+    Container,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+    Input,
 } from "@/components/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 // Simple validation schema for login
@@ -40,7 +41,8 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -51,8 +53,7 @@ export default function LoginPage() {
   });
 
   async function onSubmit(data: LoginFormValues) {
-    setError(null);
-    console.log(data);
+    setIsLoading(true);
 
     try {
       const result = await signIn("credentials", {
@@ -62,22 +63,36 @@ export default function LoginPage() {
       });
 
       if (result?.ok) {
-        alert("Successfully logged in!");
-        // Redirect to home page or previous page
-        window.location.href = "/";
+        setLoginSuccess(true);
+        toast.success("Successfully logged in!", {
+          description: "Welcome back! Redirecting to dashboard...",
+        });
+        
+        // Brief delay for the toast to be visible before redirect
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 1500);
       } else {
         // Check if the error is related to account activation
         if (result?.error?.includes("Account not activated")) {
-          setError(
-            "Your account is not activated yet. Please check your email for the activation link."
-          );
+          toast.error("Account not activated", {
+            description: "Please check your email for the activation link."
+          });
         } else {
-          setError(result?.error || "Login failed");
+          toast.error("Login failed", {
+            description: result?.error || "Please check your credentials and try again."
+          });
         }
       }
     } catch (error) {
       console.error("Login error:", error);
-      setError("An error occurred during login. Please try again.");
+      toast.error("Login error", {
+        description: "An unexpected error occurred. Please try again later."
+      });
+    } finally {
+      if (!loginSuccess) {
+        setIsLoading(false);
+      }
     }
   }
 
@@ -96,13 +111,8 @@ export default function LoginPage() {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4"
+                  className={`space-y-4 ${loginSuccess ? 'opacity-60 pointer-events-none' : ''}`}
                 >
-                  {error && (
-                    <div className="p-3 text-sm text-white bg-red-500 rounded">
-                      {error}
-                    </div>
-                  )}
                   <FormField
                     control={form.control}
                     name="email"
@@ -110,7 +120,7 @@ export default function LoginPage() {
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="email@domain.com" {...field} />
+                          <Input placeholder="email@domain.com" {...field} disabled={isLoading || loginSuccess} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -127,19 +137,24 @@ export default function LoginPage() {
                             type="password"
                             placeholder="••••••••"
                             {...field}
+                            disabled={isLoading || loginSuccess}
                           />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" className="w-full">
-                    Login
+                  <Button 
+                    type="submit" 
+                    className="w-full"
+                    disabled={isLoading || loginSuccess}
+                  >
+                    {loginSuccess ? "Logged in successfully!" : isLoading ? "Logging in..." : "Login"}
                   </Button>
                 </form>
               </Form>
             </CardContent>
-            <CardFooter className="flex flex-col items-center">
+            <CardFooter className={`flex flex-col items-center ${loginSuccess ? 'opacity-60 pointer-events-none' : ''}`}>
               <div className="text-sm text-muted-foreground">
                 <Button
                   variant="link"
@@ -147,7 +162,9 @@ export default function LoginPage() {
                   onClick={async () => {
                     const email = form.getValues("email");
                     if (!email) {
-                      alert("Please enter your email address first");
+                      toast.error("Email required", {
+                        description: "Please enter your email address first"
+                      });
                       return;
                     }
 
@@ -161,11 +178,9 @@ export default function LoginPage() {
                       });
 
                       if (response.ok) {
-                        alert(
-                          "Password reset requested!\n\n" +
-                            "We've sent a password reset link to your email. " +
-                            "Please check your inbox and click the link to reset your password."
-                        );
+                        toast.success("Password reset requested", {
+                          description: "We've sent a password reset link to your email. Please check your inbox."
+                        });
                       } else {
                         const data = await response.json();
                         throw new Error(
@@ -173,13 +188,14 @@ export default function LoginPage() {
                         );
                       }
                     } catch (error) {
-                      alert(
-                        error instanceof Error
+                      toast.error("Reset request failed", {
+                        description: error instanceof Error
                           ? error.message
                           : "Failed to send reset email"
-                      );
+                      });
                     }
                   }}
+                  disabled={isLoading || loginSuccess}
                 >
                   Forgot your password?
                 </Button>
