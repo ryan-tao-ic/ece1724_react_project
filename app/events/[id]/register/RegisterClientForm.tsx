@@ -1,6 +1,7 @@
 "use client";
 
 import { cancelRegistrationAction, registerToEvent } from "@/app/actions";
+import CalendarSubscription from "@/components/calendar/CalendarSubscription";
 import CancelledRedirect from "@/components/cancelled-redirect";
 import QrCode from "@/components/qr-code";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import CheckinListener from "./CheckInListener";
-import CalendarSubscription from "@/components/calendar/CalendarSubscription";
 
 export default function RegisterClientForm({
   user,
@@ -87,7 +87,7 @@ export default function RegisterClientForm({
             <div className="flex justify-center">
               <QrCode value={qrCode} />
             </div>
-
+            <CheckinListener qrCode={registration.qrCode} eventId={event.id} />
             <div className="flex justify-center mt-4">
               <CalendarSubscription eventId={event.id} />
             </div>
