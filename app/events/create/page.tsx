@@ -2,20 +2,20 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { getCategories, createEventAction } from '@/app/actions';
-import { useSession } from 'next-auth/react';
+import { createEventAction, getCategories } from '@/app/actions';
 import { MainLayout } from "@/components/layout/main-layout";
-import { Container } from "@/components/ui/container";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from '@/components/ui/button';
+import { Container } from "@/components/ui/container";
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const eventSchema = z.object({
   name: z.string().min(1, 'Title is required'),
@@ -118,18 +118,27 @@ export default function CreateEventPage() {
             <div className="space-y-1.5">
               <Label className="text-sm font-medium text-gray-700">Title</Label>
               <Input {...form.register('name')} />
+              {form.formState.errors.name && (
+                <p className="text-sm text-red-500">{form.formState.errors.name.message}</p>
+              )}
             </div>
 
             {/* Description */}
             <div className="space-y-1.5">
               <Label className="text-sm font-medium text-gray-700">Description</Label>
               <Textarea {...form.register('description')} rows={4} />
+              {form.formState.errors.description && (
+                <p className="text-sm text-red-500">{form.formState.errors.description.message}</p>
+              )}
             </div>
 
             {/* Location */}
             <div className="space-y-1.5">
               <Label className="text-sm font-medium text-gray-700">Location</Label>
               <Input {...form.register('location')} />
+              {form.formState.errors.location && (
+                <p className="text-sm text-red-500">{form.formState.errors.location.message}</p>
+              )}
             </div>
 
             {/* Category */}
@@ -141,6 +150,9 @@ export default function CreateEventPage() {
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>
+              {form.formState.errors.categoryId && (
+                <p className="text-sm text-red-500">{form.formState.errors.categoryId.message}</p>
+              )}
             </div>
 
             {/* Time */}
@@ -148,10 +160,16 @@ export default function CreateEventPage() {
               <div className="flex-1 space-y-1.5">
                 <Label className="text-sm font-medium text-gray-700">Start Time</Label>
                 <Input type="datetime-local" {...form.register('eventStartTime')} />
+                {form.formState.errors.eventStartTime && (
+                  <p className="text-sm text-red-500">{form.formState.errors.eventStartTime.message}</p>
+                )}
               </div>
               <div className="flex-1 space-y-1.5">
                 <Label className="text-sm font-medium text-gray-700">End Time</Label>
                 <Input type="datetime-local" {...form.register('eventEndTime')} />
+                {form.formState.errors.eventEndTime && (
+                  <p className="text-sm text-red-500">{form.formState.errors.eventEndTime.message}</p>
+                )}
               </div>
             </div>
 
@@ -159,6 +177,9 @@ export default function CreateEventPage() {
             <div className="space-y-1.5">
               <Label className="text-sm font-medium text-gray-700">Available Seats</Label>
               <Input type="number" {...form.register('availableSeats', { valueAsNumber: true })} />
+              {form.formState.errors.availableSeats && (
+                <p className="text-sm text-red-500">{form.formState.errors.availableSeats.message}</p>
+              )}
             </div>
 
             {/* Waitlist */}
