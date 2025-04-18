@@ -1,5 +1,5 @@
-const { PrismaClient, UserRole, CategoryType, EventStatus, RegistrationStatus } = require('@prisma/client');
-const bcrypt = require('bcrypt'); // Using bcrypt to match the app's authentication
+import { CategoryType, EventStatus, PrismaClient, RegistrationStatus, UserRole } from '@prisma/client';
+import { hash } from 'bcrypt'; // Using bcrypt to match the app's authentication
 
 const prisma = new PrismaClient();
 
@@ -10,7 +10,7 @@ async function main() {
   console.log('Creating users...');
   
   // Create admin/staff user similar to the one created by init function
-  const adminPassword = await bcrypt.hash('password123', 10);
+  const adminPassword = await hash('password123', 10);
   const adminUser = await prisma.user.upsert({
     where: { email: 'admin@example.com' },
     update: {},
@@ -28,7 +28,7 @@ async function main() {
   console.log(`Admin user created: ${adminUser.id}`);
 
   // Create a regular user
-  const userPassword = await bcrypt.hash('password123', 10);
+  const userPassword = await hash('password123', 10);
   const regularUser = await prisma.user.upsert({
     where: { email: 'user@example.com' },
     update: {},
@@ -47,7 +47,7 @@ async function main() {
   console.log(`Regular user created: ${regularUser.id}`);
 
   // Create a lecturer user
-  const lecturerPassword = await bcrypt.hash('password123', 10);
+  const lecturerPassword = await hash('password123', 10);
   const lecturerUser = await prisma.user.upsert({
     where: { email: 'lecturer@example.com' },
     update: {},
@@ -97,6 +97,10 @@ async function main() {
   
   const nextMonth = new Date();
   nextMonth.setDate(nextMonth.getDate() + 30);
+  
+  // Past date (last month)
+  const lastMonth = new Date();
+  lastMonth.setDate(lastMonth.getDate() - 30);
 
   // Event 1: Conference (Published)
   const event1 = await prisma.event.create({
@@ -161,6 +165,26 @@ async function main() {
   });
   console.log(`Created event (Lecture - Draft): ${event3.id}`);
 
+  // Event 4: Past Seminar (Completed)
+  const event4 = await prisma.event.create({
+    data: {
+      name: 'Data Analysis Seminar',
+      description: 'A comprehensive seminar on modern data analysis techniques.',
+      location: 'Room 202, Science Building',
+      eventStartTime: new Date(lastMonth.setHours(10, 0, 0, 0)),
+      eventEndTime: new Date(lastMonth.setHours(15, 0, 0, 0)),
+      availableSeats: 50,
+      categoryId: categories[CategoryType.SEMINAR].id,
+      status: EventStatus.PUBLISHED,
+      waitlistCapacity: 10,
+      createdBy: lecturerUser.id,
+      reviewedBy: adminUser.id,
+      createdAt: new Date(lastMonth.setDate(lastMonth.getDate() - 14)), // Created two weeks before the event
+      updatedAt: new Date(lastMonth)
+    }
+  });
+  console.log(`Created event (Past Seminar): ${event4.id}`);
+
   // ----- Assign Lecturers to Events -----
   console.log('Assigning lecturers to events...');
   
@@ -210,9 +234,23 @@ async function main() {
     }
   });
   console.log(`Registered regular user for Workshop`);
+  
+  // Register regular user for Past Seminar with ATTENDED status
+  await prisma.eventUserRegistration.create({
+    data: {
+      eventId: event4.id,
+      userId: regularUser.id,
+      status: RegistrationStatus.ATTENDED,
+      qrCode: `QR-${event4.id.substring(0, 8)}-${regularUser.id.substring(0, 8)}`,
+      registrationTime: new Date(lastMonth.setDate(lastMonth.getDate() - 7)), // Registered a week before
+      checkInTime: new Date(lastMonth.setHours(10, 15, 0, 0)), // Checked in 15 minutes after start
+      checkOutTime: new Date(lastMonth.setHours(14, 45, 0, 0)) // Checked out 15 minutes before end
+    }
+  });
+  console.log(`Registered regular user for Past Seminar with ATTENDED status`);
 
   // Create a waitlisted user for Conference
-  const waitlistedPassword = await bcrypt.hash('password123', 10);
+  const waitlistedPassword = await hash('password123', 10);
   const waitlistedUser = await prisma.user.upsert({
     where: { email: 'waitlist@example.com' },
     update: {},

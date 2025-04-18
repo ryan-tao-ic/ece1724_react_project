@@ -1,5 +1,4 @@
-
-const { PrismaClient } = require('@prisma/client');
+import { CategoryType, PrismaClient } from '@prisma/client';
 
 const db = new PrismaClient();
 
@@ -7,17 +6,9 @@ async function main() {
 
   console.log('Starting database seed...');
   
-  // Seed categories with enum values
-  const categories = [
-    'CONFERENCE',
-    'WORKSHOP',
-    'SEMINAR',
-    'LECTURE',
-    'OTHER'
-  ];
-  
+  // Use proper enum values from CategoryType
   console.log('Seeding categories...');
-  for (const categoryName of categories) {
+  for (const categoryName of Object.values(CategoryType)) {
     try {
       const category = await db.eventCategory.upsert({
         where: { name: categoryName },
