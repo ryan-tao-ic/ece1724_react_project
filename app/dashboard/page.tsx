@@ -1,18 +1,17 @@
 // app/dashboard/page.tsx
 
-import Link from "next/link";
-import { MainLayout } from "@/components/layout/main-layout";
-import t from "@/lib/i18n";
-import { Button, Container } from "@/components/ui";
-import { radius, spacing, text } from "@/lib/theme";
-import { getTokenForServerComponent } from '@/lib/auth/auth';
-import { notFound, redirect } from "next/navigation";
-import { getUserRegistrations } from "@/lib/db/registration";
-import { getCreatedEvents, getPendingReviewEvents, getApprovedEventsByReviewer, getPublishedEventsByReviewer, getCancelledEventsByReviewer } from "@/lib/db/events";
-import { getUserById } from "@/lib/db/users";
-import { formatDate, createCalendarLink } from "@/lib/utils";
-import { CalendarIcon, ExternalLinkIcon, QrCodeIcon, XCircleIcon } from "lucide-react";
 import { cancelRegistrationAction } from "@/app/actions";
+import { MainLayout } from "@/components/layout/main-layout";
+import { Button, Container } from "@/components/ui";
+import { getTokenForServerComponent } from '@/lib/auth/auth';
+import { getApprovedEventsByReviewer, getCancelledEventsByReviewer, getCreatedEvents, getPendingReviewEvents, getPublishedEventsByReviewer } from "@/lib/db/events";
+import { getUserRegistrations } from "@/lib/db/registration";
+import { getUserById } from "@/lib/db/users";
+import t from "@/lib/i18n";
+import { createCalendarLink, formatDate } from "@/lib/utils";
+import { CalendarIcon, ExternalLinkIcon, MapPin, QrCodeIcon, Tag, XCircleIcon } from "lucide-react";
+import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
 
 export default async function DashboardPage() {
   const token = await getTokenForServerComponent();
@@ -51,13 +50,13 @@ export default async function DashboardPage() {
 
   return (
     <MainLayout>
-      <Container className="py-10">
+      <Container className="py-12">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className={`font-bold tracking-tight ${text["3xl"]}`}>
+        <div className="bg-white rounded-lg border p-8 shadow-sm mb-10">
+          <h1 className="text-3xl font-bold text-gray-900 leading-tight mb-2">
             {t("dashboard.title")}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-gray-600 max-w-2xl">
             {role === "STAFF"
               ? "Review, manage, and publish events submitted by lecturers."
               : t("dashboard.description")}
@@ -77,63 +76,78 @@ export default async function DashboardPage() {
         {/* My Created Events */}
         {(role === "LECTURER" || role === "STAFF") && (
           <div className="mt-12">
-            <h2 className={`font-semibold mb-4 ${text.xl}`}>
-              {role === "STAFF" ? "Events You are Reviewing or Reviewed" : "My Created Events"}
-            </h2>
+            <div className="flex items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">
+                {role === "STAFF" ? "Events You are Reviewing or Reviewed" : "My Created Events"}
+              </h2>
+            </div>
             {visibleCreatedEvents.length > 0 ? (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {visibleCreatedEvents.map(event => (
-                  <div key={event.id} className="border rounded-lg p-5 bg-white shadow-sm">
-                    <div className="flex justify-between items-start mb-3">
-                      <h3 className="font-medium truncate">{event.name}</h3>
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        event.status === 'DRAFT' ? 'bg-gray-100 text-gray-800' :
-                        event.status === 'PENDING_REVIEW' ? 'bg-amber-100 text-amber-800' :
-                        event.status === 'APPROVED' ? 'bg-blue-100 text-blue-800' :
-                        event.status === 'PUBLISHED' ? 'bg-green-100 text-green-800' :
-                        event.status === 'CANCELLED' ? 'bg-red-100 text-red-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {event.status}
-                      </span>
-                    </div>
-                    <div className="text-sm text-muted-foreground space-y-1 mb-4">
-                      <div><strong>Date:</strong> {formatDate(event.eventStartTime)}</div>
-                      <div><strong>Location:</strong> {event.location}</div>
-                      <div><strong>Category:</strong> {event.category.name}</div>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href={`/events/${event.id}`}>View Details</Link>
-                      </Button>
-
-                      {/* LECTURER can edit all but published */}
-                      {role === "LECTURER" && event.status !== "PUBLISHED" && (
-                        <Button variant="secondary" size="sm" asChild>
-                          <Link href={`/events/${event.id}/edit`}>Continue Editing</Link>
+                  <div key={event.id} className="bg-white border rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-300">
+                    <div className="border-l-4 border-primary p-6 space-y-4">
+                      <div className="flex justify-between items-start">
+                        <h3 className="text-xl font-semibold text-gray-900 line-clamp-1">{event.name}</h3>
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${event.status === 'DRAFT' ? 'bg-gray-100 text-gray-800' :
+                            event.status === 'PENDING_REVIEW' ? 'bg-amber-100 text-amber-800' :
+                              event.status === 'APPROVED' ? 'bg-blue-100 text-blue-800' :
+                                event.status === 'PUBLISHED' ? 'bg-green-100 text-green-800' :
+                                  event.status === 'CANCELLED' ? 'bg-red-100 text-red-800' :
+                                    'bg-red-100 text-red-800'
+                          }`}>
+                          {event.status}
+                        </span>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-center text-gray-600">
+                          <span className="text-lg mr-2 flex-shrink-0" aria-hidden="true">🗓️</span>
+                          <CalendarIcon className="h-4 w-4 mr-2 flex-shrink-0 text-gray-400" />
+                          <span className="text-sm">{formatDate(event.eventStartTime)}</span>
+                        </div>
+                        <div className="flex items-center text-gray-600">
+                          <span className="text-lg mr-2 flex-shrink-0" aria-hidden="true">📍</span>
+                          <MapPin className="h-4 w-4 mr-2 flex-shrink-0 text-gray-400" />
+                          <span className="text-sm truncate">{event.location}</span>
+                        </div>
+                        <div className="flex items-center text-gray-600">
+                          <span className="text-lg mr-2 flex-shrink-0" aria-hidden="true">🏷️</span>
+                          <Tag className="h-4 w-4 mr-2 flex-shrink-0 text-gray-400" />
+                          <span className="text-sm">{event.category.name}</span>
+                        </div>
+                      </div>
+                      <div className="flex gap-2 pt-2">
+                        <Button variant="outline" size="sm" asChild className="flex-1">
+                          <Link href={`/events/${event.id}`}>View Details</Link>
                         </Button>
-                      )}
 
-                      {/* STAFF logic: */}
-                      {role === "STAFF" && ["PENDING_REVIEW", "APPROVED"].includes(event.status || "") && (
-                        <Button variant="secondary" size="sm" asChild>
-                          <Link href={`/events/${event.id}/review`}>Review Event</Link>
-                        </Button>
-                      )}
+                        {/* LECTURER can edit all but published */}
+                        {role === "LECTURER" && event.status !== "PUBLISHED" && (
+                          <Button variant="secondary" size="sm" asChild className="flex-1">
+                            <Link href={`/events/${event.id}/edit`}>Continue Editing</Link>
+                          </Button>
+                        )}
+
+                        {/* STAFF logic: */}
+                        {role === "STAFF" && ["PENDING_REVIEW", "APPROVED"].includes(event.status || "") && (
+                          <Button variant="secondary" size="sm" asChild className="flex-1">
+                            <Link href={`/events/${event.id}/review`}>Review Event</Link>
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className={`border border-dashed p-8 text-center ${radius.lg}`}>
-                <h3 className={`font-medium ${text.lg}`}>
+              <div className="rounded-lg border border-dashed p-8 text-center bg-gray-50">
+                <h3 className="text-lg font-medium text-gray-900">
                   {role === "STAFF"
                     ? "No events available for review."
-                    : "You haven’t created any events yet."}
+                    : "You haven't created any events yet."}
                 </h3>
                 {role === "LECTURER" && (
                   <>
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <p className="mt-1 text-sm text-gray-500">
                       Ready to contribute an event?
                     </p>
                     <Button className="mt-4" asChild>
@@ -155,76 +169,98 @@ function Section({ title, events, type }: { title: string; events: any[]; type: 
   const isUpcoming = type === "upcoming";
   return (
     <div className="mb-10">
-      <h2 className={`font-semibold mb-4 ${text.xl}`}>{title}</h2>
+      <div className="flex items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
+      </div>
       {events.length > 0 ? (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {events.map(reg => (
-            <div key={reg.id} className="border rounded-lg p-5 bg-white">
-              <div className="flex justify-between items-start mb-3">
-                <h3 className="font-medium truncate">{reg.event.name}</h3>
-                <span className={`text-xs px-2 py-1 rounded-full ${
-                  reg.status === 'REGISTERED' ? 'bg-green-100 text-green-800' :
-                  reg.status === 'WAITLISTED' ? 'bg-yellow-100 text-yellow-800' :
-                  reg.status === 'ATTENDED' ? 'bg-blue-100 text-blue-800' :
-                  'bg-gray-100 text-gray-800'
-                }`}>{reg.status}</span>
-              </div>
-              <div className="text-sm text-muted-foreground space-y-1 mb-4">
-                <div><strong>Date:</strong> {formatDate(reg.event.eventStartTime)}</div>
-                <div><strong>Location:</strong> {reg.event.location}</div>
-                <div><strong>Category:</strong> {reg.event.category.name}</div>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <Button variant="outline" size="sm" asChild>
-                  <Link href={`/events/${reg.event.id}`}>
-                    <ExternalLinkIcon className="h-3.5 w-3.5 mr-1" />
-                    Event Details
-                  </Link>
-                </Button>
-                {isUpcoming && reg.status === 'REGISTERED' && reg.event.status !== 'CANCELLED' && (
-                  <>
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href={`/events/${reg.event.id}/register`}>
-                        <QrCodeIcon className="h-3.5 w-3.5 mr-1" />
-                        View QR Code
-                      </Link>
-                    </Button>
-                    <form action={cancelRegistrationAction}>
-                      <input type="hidden" name="eventId" value={reg.event.id} />
-                      <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50" type="submit">
-                        <XCircleIcon className="h-3.5 w-3.5 mr-1" />
-                        Cancel Registration
+            <div key={reg.id} className="bg-white border rounded-lg overflow-hidden hover:shadow-md transition-shadow duration-300">
+              <div className="border-l-4 border-primary p-6 space-y-4">
+                <div className="flex justify-between items-start">
+                  <h3 className="text-xl font-semibold text-gray-900 line-clamp-1">{reg.event.name}</h3>
+                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${reg.status === 'REGISTERED' ? 'bg-green-100 text-green-800' :
+                      reg.status === 'WAITLISTED' ? 'bg-yellow-100 text-yellow-800' :
+                        reg.status === 'ATTENDED' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-100 text-gray-800'
+                    }`}>{reg.status}</span>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center text-gray-600">
+                    <span className="text-lg mr-2 flex-shrink-0" aria-hidden="true">🗓️</span>
+                    <CalendarIcon className="h-4 w-4 mr-2 flex-shrink-0 text-gray-400" />
+                    <span className="text-sm">{formatDate(reg.event.eventStartTime)}</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <span className="text-lg mr-2 flex-shrink-0" aria-hidden="true">📍</span>
+                    <MapPin className="h-4 w-4 mr-2 flex-shrink-0 text-gray-400" />
+                    <span className="text-sm truncate">{reg.event.location}</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <span className="text-lg mr-2 flex-shrink-0" aria-hidden="true">🏷️</span>
+                    <Tag className="h-4 w-4 mr-2 flex-shrink-0 text-gray-400" />
+                    <span className="text-sm">{reg.event.category.name}</span>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <Button variant="outline" size="sm" asChild className="flex-grow-0">
+                    <Link href={`/events/${reg.event.id}`}>
+                      <ExternalLinkIcon className="h-3.5 w-3.5 mr-1" />
+                      Event Details
+                    </Link>
+                  </Button>
+                  {isUpcoming && reg.status === 'REGISTERED' && reg.event.status !== 'CANCELLED' && (
+                    <>
+                      <Button variant="outline" size="sm" asChild className="flex-grow-0">
+                        <Link href={`/events/${reg.event.id}/register`}>
+                          <QrCodeIcon className="h-3.5 w-3.5 mr-1" />
+                          View QR Code
+                        </Link>
                       </Button>
-                    </form>
-                    <a
-                      href={createCalendarLink({
-                        name: reg.event.name,
-                        location: reg.event.location,
-                        eventStartTime: reg.event.eventStartTime.toString(),
-                        eventEndTime: reg.event.eventEndTime.toString(),
-                      })}
-                      target="_blank"
-                      className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
-                    >
-                      <CalendarIcon className="h-3.5 w-3.5 mr-1" />
-                      Add to Calendar
-                    </a>
-                  </>
-                )}
+                      <div className="flex w-full gap-2 mt-2">
+                        <form action={cancelRegistrationAction} className="flex-grow">
+                          <input type="hidden" name="eventId" value={reg.event.id} />
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-500 hover:text-red-700 hover:bg-red-50 w-full justify-center"
+                            type="submit"
+                          >
+                            <XCircleIcon className="h-3.5 w-3.5 mr-1" />
+                            Cancel Registration
+                          </Button>
+                        </form>
+                        <a
+                          href={createCalendarLink({
+                            name: reg.event.name,
+                            location: reg.event.location,
+                            eventStartTime: reg.event.eventStartTime.toString(),
+                            eventEndTime: reg.event.eventEndTime.toString(),
+                          })}
+                          target="_blank"
+                          className="flex items-center justify-center text-sm text-blue-600 hover:text-blue-800 border border-blue-200 rounded-md px-3 py-1 hover:bg-blue-50 transition-colors"
+                        >
+                          <CalendarIcon className="h-3.5 w-3.5 mr-1" />
+                          Add to Calendar
+                        </a>
+                      </div>
+                    </>
+                  )}
 
-                {isUpcoming && reg.event.status === 'CANCELLED' && (
-                  <p className="text-sm text-red-600 font-medium">This event has been cancelled.</p>
-                )}
+                  {isUpcoming && reg.event.status === 'CANCELLED' && (
+                    <p className="text-sm text-red-600 font-medium mt-2 w-full">This event has been cancelled.</p>
+                  )}
+                </div>
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <div className={`border border-dashed p-8 text-center ${radius.lg}`}>
-          <h3 className={`font-medium ${text.lg}`}>
+        <div className="rounded-lg border border-dashed p-8 text-center bg-gray-50">
+          <h3 className="text-lg font-medium text-gray-900">
             {isUpcoming ? t("dashboard.upcomingEvents.empty.title") : t("dashboard.pastEvents.empty.title")}
           </h3>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-gray-500">
             {isUpcoming ? t("dashboard.upcomingEvents.empty.description") : t("dashboard.pastEvents.empty.description")}
           </p>
           {isUpcoming && (

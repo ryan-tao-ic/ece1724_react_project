@@ -1,8 +1,7 @@
 'use client';
 
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
-import type Quill from 'quill';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 
 // Define the ref type for the RichTextEditor component
 export type RichTextEditorHandle = {
@@ -13,10 +12,11 @@ export type RichTextEditorHandle = {
 interface RichTextEditorProps {
   initialContent?: string;
   onChange?: (content: string) => void;
+  disabled?: boolean;
 }
 
 // The actual component implementation
-const RichTextEditorComponent = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({ initialContent, onChange }, ref) => {
+const RichTextEditorComponent = forwardRef<RichTextEditorHandle, RichTextEditorProps>(({ initialContent, onChange, disabled = false }, ref) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const quillInstanceRef = useRef<any>(null);
   const componentId = useRef(Math.random().toString(36).substr(2, 9));
@@ -137,6 +137,13 @@ const RichTextEditorComponent = forwardRef<RichTextEditorHandle, RichTextEditorP
     };
   }, [initQuill, cleanupQuill]);
 
+  // Add effect to handle disabled state
+  useEffect(() => {
+    if (quillInstanceRef.current) {
+      quillInstanceRef.current.enable(!disabled);
+    }
+  }, [disabled]);
+
   useImperativeHandle(ref, () => ({
     getContent: () => {
       if (quillInstanceRef.current) {
@@ -152,7 +159,7 @@ const RichTextEditorComponent = forwardRef<RichTextEditorHandle, RichTextEditorP
   }));
 
   return (
-    <div className="border rounded-md w-full overflow-hidden">
+    <div className={`border rounded-md w-full overflow-hidden ${disabled ? 'opacity-70' : ''}`}>
       <div ref={editorRef} className="min-h-[200px] max-h-[400px] w-full" />
       <style jsx global>{`
         .ql-editor {

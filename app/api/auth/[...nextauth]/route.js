@@ -22,32 +22,55 @@ const fullAuth = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
-
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
-
-        if (!user || !user.passwordHash) return null;
-
-        const isValid = await compare(
-          credentials.password,
-          user.passwordHash,
-        );
-        if (!isValid) return null;
-
-        // Check if account is activated
-        if (!user.isActivated) {
-          throw new Error("Account not activated. Please check your email for activation link.");
+        if (!credentials?.email || !credentials?.password) {
+          console.log("No credentials provided");
+          throw new Error("Email and password are required");
         }
 
-        return {
-          id: user.id,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          role: user.role, 
-        };
+        try {
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email },
+          });
+
+          if (!user) {
+            console.log(`User not found: ${credentials.email}`);
+            throw new Error("Invalid email or password");
+          }
+
+          if (!user.passwordHash) {
+            console.log(`User has no password hash: ${credentials.email}`);
+            throw new Error("Invalid account configuration");
+          }
+
+          console.log(`Comparing password for: ${credentials.email}`);
+          const isValid = await compare(
+            credentials.password,
+            user.passwordHash,
+          );
+          
+          if (!isValid) {
+            console.log(`Password invalid for: ${credentials.email}`);
+            throw new Error("Invalid email or password");
+          }
+
+          // Check if account is activated
+          if (!user.isActivated) {
+            console.log(`Account not activated: ${credentials.email}`);
+            throw new Error("Account not activated. Please check your email for activation link.");
+          }
+
+          console.log(`Authentication successful for: ${credentials.email}`);
+          return {
+            id: user.id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role, 
+          };
+        } catch (error) {
+          console.error("Auth error:", error);
+          throw error;
+        }
       },
     }),
   ],

@@ -8,20 +8,20 @@
 
 import { MainLayout } from "@/components/layout/main-layout";
 import { Button, Container, Input } from "@/components/ui";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
 } from "@/components/ui/form";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import RichTextEditor, { RichTextEditorHandle } from "@/components/ui/rich-text-editor";
 import { getProfile } from "@/lib/profile/profile";
 import { updateProfile } from "@/lib/profile/update";
@@ -30,6 +30,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const profileSchema = z.object({
@@ -57,6 +58,8 @@ export default function ProfilePage() {
   const richTextEditorRef = useRef<RichTextEditorHandle>(null);
   const [error, setError] = useState(""); 
   const [success, setSuccess] = useState("");
+  const [isEnhancing, setIsEnhancing] = useState(false);
+  const [isProfessionalizing, setIsProfessionalizing] = useState(false);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -181,12 +184,186 @@ export default function ProfilePage() {
                       if (field.name === "bio") {
                         return (
                           <FormItem key={field.name} className="bg-white p-3 rounded-md">
-                            <FormLabel className="text-sm font-medium text-gray-900 uppercase tracking-wider mb-1 border-l-4 border-[#002D72] pl-2">{field.label}</FormLabel>
+                            <div className="flex items-center justify-between">
+                              <FormLabel className="text-sm font-medium text-gray-900 uppercase tracking-wider mb-1 border-l-4 border-[#002D72] pl-2">{field.label}</FormLabel>
+                              <div className="flex flex-col items-end">
+                                <div className="flex gap-2">
+                                  <Button 
+                                    type="button"
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-8 gap-1 text-xs"
+                                    disabled={isEnhancing || isProfessionalizing}
+                                    onClick={async () => {
+                                      try {
+                                        // Get current content from rich text editor
+                                        const currentContent = richTextEditorRef.current?.getContent() || "";
+                                        
+                                        if (!currentContent.trim()) {
+                                          toast.warning("Empty bio", {
+                                            description: "Please add some content to your bio first."
+                                          });
+                                          return;
+                                        }
+                                        
+                                        // Set enhancing state to true
+                                        setIsEnhancing(true);
+                                        
+                                        toast.info("Enhancing bio...", {
+                                          description: "Using AI to improve your bio, please wait..."
+                                        });
+                                        
+                                        // Send to API endpoint
+                                        const response = await fetch("/api/enhance-bio", {
+                                          method: "POST",
+                                          headers: {
+                                            "Content-Type": "application/json",
+                                          },
+                                          body: JSON.stringify({
+                                            content: currentContent,
+                                          }),
+                                        });
+                                        
+                                        if (!response.ok) {
+                                          const error = await response.json();
+                                          throw new Error(error.error || "Failed to enhance bio");
+                                        }
+                                        
+                                        const { enhancedContent } = await response.json();
+                                        
+                                        // Update the rich text editor with enhanced content
+                                        if (richTextEditorRef.current) {
+                                          richTextEditorRef.current.setContent(enhancedContent);
+                                          
+                                          // Also update the form value
+                                          form.setValue("bio", enhancedContent);
+                                        }
+                                        
+                                        toast.success("Bio enhanced!", {
+                                          description: "Your bio has been professionally improved."
+                                        });
+                                      } catch (error) {
+                                        console.error("Error enhancing bio:", error);
+                                        toast.error("Enhancement failed", {
+                                          description: error instanceof Error 
+                                            ? error.message 
+                                            : "Failed to enhance bio. Please try again."
+                                        });
+                                      } finally {
+                                        // Reset enhancing state
+                                        setIsEnhancing(false);
+                                      }
+                                    }}
+                                  >
+                                    {isEnhancing ? (
+                                      <>
+                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Enhancing...
+                                      </>
+                                    ) : (
+                                      <>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-sparkles"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/></svg>
+                                        Enhance Bio
+                                      </>
+                                    )}
+                                  </Button>
+                                  
+                                  <Button 
+                                    type="button"
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-8 gap-1 text-xs"
+                                    disabled={isEnhancing || isProfessionalizing}
+                                    onClick={async () => {
+                                      try {
+                                        // Get current content from rich text editor
+                                        const currentContent = richTextEditorRef.current?.getContent() || "";
+                                        
+                                        if (!currentContent.trim()) {
+                                          toast.warning("Empty bio", {
+                                            description: "Please add some content to your bio first."
+                                          });
+                                          return;
+                                        }
+                                        
+                                        // Set professionalizing state to true
+                                        setIsProfessionalizing(true);
+                                        
+                                        toast.info("Making professional...", {
+                                          description: "Using AI to make your bio more professional, please wait..."
+                                        });
+                                        
+                                        // Send to API endpoint with mode parameter
+                                        const response = await fetch("/api/enhance-bio", {
+                                          method: "POST",
+                                          headers: {
+                                            "Content-Type": "application/json",
+                                          },
+                                          body: JSON.stringify({
+                                            content: currentContent,
+                                            mode: "professional"
+                                          }),
+                                        });
+                                        
+                                        if (!response.ok) {
+                                          const error = await response.json();
+                                          throw new Error(error.error || "Failed to professionalize bio");
+                                        }
+                                        
+                                        const { enhancedContent } = await response.json();
+                                        
+                                        // Update the rich text editor with enhanced content
+                                        if (richTextEditorRef.current) {
+                                          richTextEditorRef.current.setContent(enhancedContent);
+                                          
+                                          // Also update the form value
+                                          form.setValue("bio", enhancedContent);
+                                        }
+                                        
+                                        toast.success("Bio professionalized!", {
+                                          description: "Your bio now has a more professional tone."
+                                        });
+                                      } catch (error) {
+                                        console.error("Error professionalizing bio:", error);
+                                        toast.error("Professionalization failed", {
+                                          description: error instanceof Error 
+                                            ? error.message 
+                                            : "Failed to make your bio professional. Please try again."
+                                        });
+                                      } finally {
+                                        // Reset professionalizing state
+                                        setIsProfessionalizing(false);
+                                      }
+                                    }}
+                                  >
+                                    {isProfessionalizing ? (
+                                      <>
+                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Processing...
+                                      </>
+                                    ) : (
+                                      <>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-briefcase"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                                        Make Professional
+                                      </>
+                                    )}
+                                  </Button>
+                                </div>
+                                <span className="text-xs text-gray-500 italic mt-1">powered by deepseek</span>
+                              </div>
+                            </div>
                             <FormControl>
                               <RichTextEditor
                                 ref={richTextEditorRef}
                                 initialContent={form.getValues("bio")}
                                 onChange={(content) => form.setValue("bio", content)}
+                                disabled={isEnhancing || isProfessionalizing}
                               />
                             </FormControl>
                           </FormItem>

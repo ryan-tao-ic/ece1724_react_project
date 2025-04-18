@@ -1,10 +1,10 @@
 // app/components/ui/index.ts
 
 // Form components
+export * from "./button";
 export * from "./form";
 export * from "./input";
 export * from "./label";
-export * from "./button";
 
 // Layout components
 export * from "./card";
