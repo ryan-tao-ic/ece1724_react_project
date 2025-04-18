@@ -2,14 +2,14 @@
 // This file is a server component that handles the editing process for an event.
 // It retrieves the event details, user information, and categories for the event.
 
-import { getEventById } from "@/lib/db/events"; 
-import { getCategories } from "@/app/actions"; 
-import { notFound, redirect } from "next/navigation"; 
-import EditEventClientForm from "./EditEventClientForm";
-import { getTokenForServerComponent } from '@/lib/auth/auth';
-import { getUserById } from "@/lib/db/users";
+import { getCategories } from "@/app/actions";
 import { MainLayout } from "@/components/layout/main-layout";
 import { Container } from "@/components/ui/container";
+import { getTokenForServerComponent } from '@/lib/auth/auth';
+import { getEventById } from "@/lib/db/events";
+import { getUserById } from "@/lib/db/users";
+import { notFound, redirect } from "next/navigation";
+import EditEventClientForm from "./EditEventClientForm";
 
 export default async function EditEventPage({
   params, 
@@ -48,7 +48,7 @@ export default async function EditEventPage({
         : [{ question: event.customizedQuestion }];
     } 
     else if (Array.isArray(event.customizedQuestion)) {
-      formattedQuestions = event.customizedQuestion.map(q => {
+      formattedQuestions = event.customizedQuestion.map((q: any) => {
         if (q && typeof q === 'object' && 'question' in q) {
           return q;
         }
