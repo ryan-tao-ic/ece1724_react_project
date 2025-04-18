@@ -1,20 +1,21 @@
 // app/events/[id]/page.tsx 
 
-import { getEventById } from '@/lib/db/events';
-import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { format } from 'date-fns';
-import { getTokenForServerComponent } from '@/lib/auth/auth';
-import { getUserRegistration } from '@/lib/db/registration';
-import { InfoIcon } from 'lucide-react';
-import { EventMaterialsUpload } from '@/components/event-materials-upload';
-import { getEventMaterials } from '@/lib/db/materials';
-import { cancelEventAction} from '@/app/actions';
-import { MainLayout } from "@/components/layout/main-layout";
-import { Container } from "@/components/ui/container";
+import { cancelEventAction } from '@/app/actions';
 import CalendarSubscription from '@/components/calendar/CalendarSubscription';
-import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, Key } from 'react';
+import { EventMaterialsUpload } from '@/components/event-materials-upload';
+import { LoungeAccessButton } from '@/components/events/lounge-access-button';
+import { MainLayout } from "@/components/layout/main-layout";
+import { Button } from '@/components/ui/button';
+import { Container } from "@/components/ui/container";
+import { getTokenForServerComponent } from '@/lib/auth/auth';
+import { getEventById } from '@/lib/db/events';
+import { getEventMaterials } from '@/lib/db/materials';
+import { getUserRegistration } from '@/lib/db/registration';
+import { format } from 'date-fns';
+import { InfoIcon } from 'lucide-react';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal } from 'react';
 
 export default async function EventDetailPage({ params }: { params: { id: string } }) {
   const resolvedParams = await Promise.resolve(params);
@@ -158,9 +159,9 @@ export default async function EventDetailPage({ params }: { params: { id: string
               </div>
             )}
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-wrap gap-4">
               {showRegisterButton && !isCancelled && (
-                <Button asChild>
+                <Button asChild className="h-10">
                   <Link href={userId ? `/events/${event.id}/register` : "/login"}>
                     {registerButtonText}
                   </Link>
@@ -168,18 +169,32 @@ export default async function EventDetailPage({ params }: { params: { id: string
               )}
 
               {canCancelEvent && (
-                <form action={cancelEventAction}>
-                  <input type="hidden" name="eventId" value={event.id} />
-                  <input type="hidden" name="userId" value={userId} />
-                  <Button type="submit" variant="destructive">
-                    Cancel Event
-                  </Button>
-                </form>
+                <div className="inline-flex">
+                  <form action={cancelEventAction} className="m-0 p-0">
+                    <input type="hidden" name="eventId" value={event.id} />
+                    <input type="hidden" name="userId" value={userId} />
+                    <Button type="submit" variant="destructive" className="h-10 px-4">
+                      Cancel Event
+                    </Button>
+                  </form>
+                </div>
               )}
 
-              <Button asChild variant="outline">
-                <Link href="/events">Back to Events</Link>
-              </Button>
+              <div className="inline-flex">
+                  <LoungeAccessButton
+                    eventId={event.id}
+                    eventLecturerIds={event.lecturers.map(
+                      (l: { lecturer: { id: string } }) => l.lecturer.id
+                    )}
+                    eventStatus={event.status}
+                  />
+              </div>
+              
+              <div className="inline-flex">
+                <Button asChild variant="outline" className="h-10 px-4">
+                  <Link href="/events">Back to Events</Link>
+                </Button>
+              </div>
             </div>
           </div>
           

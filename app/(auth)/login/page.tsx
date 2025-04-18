@@ -68,7 +68,9 @@ export default function LoginPage() {
       } else {
         // Check if the error is related to account activation
         if (result?.error?.includes("Account not activated")) {
-          setError("Your account is not activated yet. Please check your email for the activation link.");
+          setError(
+            "Your account is not activated yet. Please check your email for the activation link."
+          );
         } else {
           setError(result?.error || "Login failed");
         }
@@ -161,15 +163,21 @@ export default function LoginPage() {
                       if (response.ok) {
                         alert(
                           "Password reset requested!\n\n" +
-                          "We've sent a password reset link to your email. " +
-                          "Please check your inbox and click the link to reset your password."
+                            "We've sent a password reset link to your email. " +
+                            "Please check your inbox and click the link to reset your password."
                         );
                       } else {
                         const data = await response.json();
-                        throw new Error(data.message || "Failed to send reset email");
+                        throw new Error(
+                          data.message || "Failed to send reset email"
+                        );
                       }
                     } catch (error) {
-                      alert(error instanceof Error ? error.message : "Failed to send reset email");
+                      alert(
+                        error instanceof Error
+                          ? error.message
+                          : "Failed to send reset email"
+                      );
                     }
                   }}
                 >
@@ -178,7 +186,10 @@ export default function LoginPage() {
               </div>
               <div className="mt-4 text-sm text-muted-foreground">
                 Don't have an account?{" "}
-                <Link href="/register" className="text-primary hover:underline cursor-pointer">
+                <Link
+                  href="/register"
+                  className="text-primary hover:underline cursor-pointer"
+                >
                   Sign up
                 </Link>
               </div>
