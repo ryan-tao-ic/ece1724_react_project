@@ -57,8 +57,9 @@ export async function POST(req) {
   const now = new Date();
   const start = new Date(registration.event.eventStartTime);
   const end = new Date(registration.event.eventEndTime);
-
-  if (now < start || now > end) {
+  const oneHourBeforeStart = new Date(start.getTime() - 60 * 60 * 1000); // subtract 1 hour
+  
+  if (now < oneHourBeforeStart || now > end) {
     return NextResponse.json(
       { error: "QR code not valid at this time" },
       { status: 400 }
