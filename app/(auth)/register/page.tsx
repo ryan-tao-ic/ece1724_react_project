@@ -25,10 +25,10 @@ import { Input } from "@/components/ui/input";
 import { signup } from "@/lib/auth/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
-
-
 
 // Simple validation schema for registration
 const registerSchema = z
@@ -47,6 +47,9 @@ const registerSchema = z
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [registerSuccess, setRegisterSuccess] = useState(false);
+
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -59,22 +62,33 @@ export default function RegisterPage() {
   });
 
   async function onSubmit(data: RegisterFormValues) {
-    console.log(data);
+    setIsLoading(true);
     try {
       const result = await signup(data);
       if (result.success) {
-        alert(
-          "Registration successful!\n\n" +
-          "We've sent a verification email to your inbox. " +
-          "Please check your email and click the verification link to activate your account."
-        );
-        window.location.href = "/login?message=check-email";
+        setRegisterSuccess(true);
+        toast.success("Registration successful!", {
+          description: "We've sent a verification email to your inbox. Please check your email and click the verification link to activate your account."
+        });
+
+        // Brief delay for the toast to be visible before redirect
+        setTimeout(() => {
+          window.location.href = "/login?message=check-email";
+        }, 2000);
       } else {
-        alert(`Registration failed: ${result.message}`);
+        toast.error("Registration failed", {
+          description: result.message || "Please check your information and try again."
+        });
       }
     } catch (error) {
       console.error("Registration error:", error);
-      alert("An error occurred during registration. Please try again.");
+      toast.error("Registration error", {
+        description: "An unexpected error occurred. Please try again later."
+      });
+    } finally {
+      if (!registerSuccess) {
+        setIsLoading(false);
+      }
     }
   }
 
@@ -95,7 +109,7 @@ export default function RegisterPage() {
               <Form {...form}>
                 <form
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-4"
+                  className={`space-y-4 ${registerSuccess ? 'opacity-60 pointer-events-none' : ''}`}
                 >
                   <div className="grid grid-cols-2 gap-4">
                     <FormField
@@ -105,7 +119,7 @@ export default function RegisterPage() {
                         <FormItem>
                           <FormLabel>First Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="First Name" {...field} />
+                            <Input placeholder="First Name" {...field} disabled={isLoading || registerSuccess} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -118,7 +132,7 @@ export default function RegisterPage() {
                         <FormItem>
                           <FormLabel>Last Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Last Name" {...field} />
+                            <Input placeholder="Last Name" {...field} disabled={isLoading || registerSuccess} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -132,7 +146,7 @@ export default function RegisterPage() {
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="email@domain.com" {...field} />
+                          <Input placeholder="email@domain.com" {...field} disabled={isLoading || registerSuccess} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -149,6 +163,7 @@ export default function RegisterPage() {
                             type="password"
                             placeholder="••••••••"
                             {...field}
+                            disabled={isLoading || registerSuccess}
                           />
                         </FormControl>
                         <FormMessage />
@@ -166,19 +181,20 @@ export default function RegisterPage() {
                             type="password"
                             placeholder="••••••••"
                             {...field}
+                            disabled={isLoading || registerSuccess}
                           />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" className="w-full">
-                    Create Account
+                  <Button type="submit" className="w-full" disabled={isLoading || registerSuccess}>
+                    {registerSuccess ? "Account created!" : isLoading ? "Creating account..." : "Create Account"}
                   </Button>
                 </form>
               </Form>
             </CardContent>
-            <CardFooter className="flex justify-center">
+            <CardFooter className={`flex justify-center ${registerSuccess ? 'opacity-60 pointer-events-none' : ''}`}>
               <div className="text-sm text-muted-foreground">
                 Already have an account?{" "}
                 <Link href="/login" className="text-primary hover:underline">

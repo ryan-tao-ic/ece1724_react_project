@@ -1,7 +1,9 @@
 import { CategoryType } from "@prisma/client";
 import { prisma } from "../prisma";
+
 async function main() {
   console.log("Starting database seed...");
+
 
   // Seed categories with enum values
   const categories = [

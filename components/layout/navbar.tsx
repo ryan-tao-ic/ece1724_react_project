@@ -6,17 +6,20 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import t from "@/lib/i18n";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
+// Define a default avatar image path
+const DEFAULT_AVATAR_PATH = "/default-avatar.png";
 
 export function Navbar() {
   const router = useRouter();
@@ -25,6 +28,16 @@ export function Navbar() {
   const handleLogout = async () => {
     await signOut({ redirect: false });
     router.push("/");
+  };
+
+  // Generate a default avatar with user's initials if available
+  const getUserInitials = () => {
+    if (!session?.user) return "";
+    
+    const firstName = session.user.firstName || "";
+    const lastName = session.user.lastName || "";
+    
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
 
   return (
@@ -77,23 +90,25 @@ export function Navbar() {
                   >
                     <Avatar>
                       <AvatarImage
-                        // src={session?.user?.image || undefined}
+                        src={DEFAULT_AVATAR_PATH}
                         alt={`${session?.user?.firstName || ""} ${session?.user?.lastName || ""}`.trim() || "User avatar"}
                       />
                       <AvatarFallback>
-                        <svg
-                          className="size-4 text-muted-foreground"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <circle cx="12" cy="8" r="5" />
-                          <path d="M20 21a8 8 0 1 0-16 0" />
-                        </svg>
+                        {getUserInitials() || (
+                          <svg
+                            className="size-4 text-muted-foreground"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <circle cx="12" cy="8" r="5" />
+                            <path d="M20 21a8 8 0 1 0-16 0" />
+                          </svg>
+                        )}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
