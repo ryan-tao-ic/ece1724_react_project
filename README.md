@@ -14,12 +14,12 @@ Below is the Video demo for our project: https://youtu.be/PDvRscMN_tI
 
 ## Motivation
 
-The main purpose of EventHub is to make academic event management easy and organized. The organizing of academic events envisaged as Master's and PhD defenses, conferences, seminars, and guest lectures, takes place using a cumbersome manual process. Most of the time, event organizers appeal to generic forms or email registrations, which do not have the functionalities of real-time attendance tracking, nor effective management tools. This leads to:
+The primary purpose of EventHub is to simplify and organize academic event management. The organization of academic events, including Master's and Phd defences, conferences, seminars, and guest lectures, is currently conducted using a cumbersome manual process. Most of the time, event organizers rely on generic forms or email registrations, which lack the functionalities of real-time attendance tracking and effective management tools. This leads to:
 
 - Enhanced administrative workloads
 - Inefficient management of participants' data
 - Disrupted connectivity due to multiple systems used by organizers and attendees
-- Ineffective organization of important event staff in dealing with case load
+- Ineffective organization of important event staff in dealing with the case load
 - Slow consideration of messages in real-time during events
 
 Our platform addresses these pain points by providing a comprehensive solution that transforms fragmented manual processes into a seamless, automated workflow.
@@ -34,11 +34,11 @@ The primary objectives of EventHub are:
    - Provide efficient event creation and management tools
    - Enable staff to review and approve event requests
    - Allow lecturers to submit activity requests and upload materials
-   - Implement comprehensive event cancellation workflow
+   - Implement a comprehensive event cancellation workflow
 
 2. **Enhanced User Experience**
    - Simplify the registration process for attendees
-   - Implement QR code-based check-in system
+   - Implement a QR code-based check-in system
    - Enable real-time interaction through virtual lounges
    - Provide intuitive event browsing with filtering and search
    - Support calendar integration for event scheduling
@@ -57,7 +57,7 @@ The primary objectives of EventHub are:
    - Ensure high performance and reliability
    - Implement modern web development best practices
    - Leverage WebSockets for real-time communication
-   - Integrate with external services (Google Calendar, Cloud Storage)
+   - Integrate with external services (ICS file support, Cloud Storage)
    - Ensure type safety and robust data handling
    - Design a secure and user-friendly authentication system using NextAuth.js
 
@@ -71,14 +71,14 @@ The primary objectives of EventHub are:
 - **Deployment**: Docker, Google Cloud Run, Google Cloud SQL
 - **File Storage**: Google Cloud Storage
 - **Email Service**: Custom email templates and sending system
-- **Calendar Integration**: Google Calendar API
+- **Calendar Integration**: ICS (iCalendar) standard support
 
 ## Features
 
 EventHub offers a comprehensive set of features designed to streamline academic event management. Here's how they fulfill our course requirements and achieve our project objectives:
 
 1. **User Authentication and Authorization**
-   - Built on NextAuth.js for secure and streamlined user experience
+   - Built on NextAuth.js for a secure and streamlined user experience
    - Standard email and password login flow with email verification
    - Role-based access control (Regular Users, Lecturers, Staff)
    - Password reset functionality with secure email links
