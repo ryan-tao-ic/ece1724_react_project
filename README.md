@@ -7,6 +7,11 @@
 - **Ruoxi Yu** - Student Number: 1010110201 - ruoxi.yu@mail.utoronto.ca
 - **Yige Tao** - Student Number: 1000741094 - Email: yige.tao@mail.utoronto.ca
 
+
+## Video Demo
+Below is the Video demo for our project:
+
+
 ## Motivation
 
 The main purpose of EventHub is to make academic event management easy and organized. The organizing of academic events envisaged as Master's and PhD defenses, conferences, seminars, and guest lectures, takes place using a cumbersome manual process. Most of the time, event organizers appeal to generic forms or email registrations, which do not have the functionalities of real-time attendance tracking, nor effective management tools. This leads to:
@@ -723,10 +728,16 @@ The authentication system includes:
 ## Individual Contributions
 
 ### Ruoming Ren
+- Backend of the Authentication System
+- Link Between QR Code Check-in and Virtual Lounge Room
+- Virtual Lounge Room
 
 
 ### Zhaoyi Cheng
-
+- Frontend of the Authentication System
+- Email Verification
+- User Role management
+- User Profile and editing
 
 ### Ruoxi Yu
 
