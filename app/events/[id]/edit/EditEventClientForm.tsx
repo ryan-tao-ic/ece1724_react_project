@@ -38,31 +38,31 @@ const eventSchema = z.object({
   customizedQuestion: z.array(z.object({ question: z.string().min(1) })).optional(),
   status: z.enum(['DRAFT', 'PENDING_REVIEW', 'APPROVED']).optional(),
 })
-.refine((data) => {
-  const now = new Date();
-  const start = new Date(data.eventStartTime);
-  return start > now;
-}, {
-  message: 'Start time must be in the future.',
-  path: ['eventStartTime'],
-})
-.refine((data) => {
-  const start = new Date(data.eventStartTime);
-  const end = new Date(data.eventEndTime);
-  return start < end;
-}, {
-  message: 'Start time must be before end time.',
-  path: ['eventEndTime'],
-})
-.refine((data) => {
-  const start = new Date(data.eventStartTime);
-  const end = new Date(data.eventEndTime);
-  const oneHourInMs = 60 * 60 * 1000;
-  return end.getTime() - start.getTime() >= oneHourInMs;
-}, {
-  message: 'Event must last at least 1 hour.',
-  path: ['eventEndTime'],
-});
+  .refine((data) => {
+    const now = new Date();
+    const start = new Date(data.eventStartTime);
+    return start > now;
+  }, {
+    message: 'Start time must be in the future.',
+    path: ['eventStartTime'],
+  })
+  .refine((data) => {
+    const start = new Date(data.eventStartTime);
+    const end = new Date(data.eventEndTime);
+    return start < end;
+  }, {
+    message: 'Start time must be before end time.',
+    path: ['eventEndTime'],
+  })
+  .refine((data) => {
+    const start = new Date(data.eventStartTime);
+    const end = new Date(data.eventEndTime);
+    const oneHourInMs = 60 * 60 * 1000;
+    return end.getTime() - start.getTime() >= oneHourInMs;
+  }, {
+    message: 'Event must last at least 1 hour.',
+    path: ['eventEndTime'],
+  });
 
 export type EventFormValues = z.infer<typeof eventSchema>;
 
@@ -107,7 +107,7 @@ export default function EditEventClientForm({
   const currentStatus = defaultValues?.status || 'DRAFT';
 
   const canDeleteEvent =
-    userRole === "LECTURER" &&
+    ["LECTURER", "STAFF"].includes(userRole) &&
     createdBy === userId &&
     !["PUBLISHED", "CANCELLED"].includes(rawStatus);
 
@@ -163,30 +163,30 @@ export default function EditEventClientForm({
           <AlertDescription>{success}</AlertDescription>
         </Alert>
       )}
-  
+
       {wasRejected && reviewComment && (
         <div className="bg-yellow-50 border border-yellow-300 text-yellow-800 p-4 rounded">
           <p className="font-semibold">This event was reviewed and sent back by staff.</p>
           <p className="mt-2 whitespace-pre-line">{reviewComment}</p>
         </div>
       )}
-  
+
       <form className="space-y-6">
         <div className="space-y-1.5">
           <Label className="text-sm font-medium text-gray-700">Title</Label>
           <Input {...form.register('name')} />
         </div>
-  
+
         <div className="space-y-1.5">
           <Label className="text-sm font-medium text-gray-700">Description</Label>
           <Textarea {...form.register('description')} rows={4} />
         </div>
-  
+
         <div className="space-y-1.5">
           <Label className="text-sm font-medium text-gray-700">Location</Label>
           <Input {...form.register('location')} />
         </div>
-  
+
         <div className="space-y-1.5">
           <Label className="text-sm font-medium text-gray-700">Category</Label>
           <select {...form.register('categoryId')} className="w-full h-10 rounded border border-gray-300 px-3">
@@ -196,7 +196,7 @@ export default function EditEventClientForm({
             ))}
           </select>
         </div>
-  
+
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1 space-y-1.5">
             <Label className="text-sm font-medium text-gray-700">Start Time</Label>
@@ -207,17 +207,17 @@ export default function EditEventClientForm({
             <Input type="datetime-local" {...form.register('eventEndTime')} />
           </div>
         </div>
-  
+
         <div className="space-y-1.5">
           <Label className="text-sm font-medium text-gray-700">Available Seats</Label>
           <Input type="number" {...form.register('availableSeats', { valueAsNumber: true })} />
         </div>
-  
+
         <div className="space-y-1.5">
           <Label className="text-sm font-medium text-gray-700">Waitlist Capacity</Label>
           <Input type="number" {...form.register('waitlistCapacity', { valueAsNumber: true })} />
         </div>
-  
+
         <div className="space-y-2 p-4 border rounded-md bg-gray-50">
           <Label className="text-sm font-semibold text-gray-800">Custom Questions (Optional)</Label>
           <div className="space-y-2">
@@ -236,7 +236,7 @@ export default function EditEventClientForm({
             </Button>
           </div>
         </div>
-  
+
         <div className="flex flex-col sm:flex-row justify-end gap-4 pt-6">
           <Button
             type="button"
@@ -256,7 +256,7 @@ export default function EditEventClientForm({
               Submit for Review
             </Button>
           )}
-  
+
           <Button
             type="button"
             variant="outline"
@@ -264,7 +264,7 @@ export default function EditEventClientForm({
           >
             Save
           </Button>
-  
+
           {canDeleteEvent && (
             <Button
               type="button"
