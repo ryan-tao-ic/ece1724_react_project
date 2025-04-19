@@ -4,7 +4,6 @@
 
 import { createEventAction, getCategories } from '@/app/actions';
 import { MainLayout } from "@/components/layout/main-layout";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from '@/components/ui/button';
 import { Container } from "@/components/ui/container";
 import { Input } from '@/components/ui/input';
@@ -77,14 +76,9 @@ export default function CreateEventPage() {
     getCategories().then(setCategories);
   }, []);
 
-  const [error, setError] = useState("");
-
   const onSubmit = async (data: EventFormValues, status: 'DRAFT' | 'PENDING_REVIEW') => {
-    setError("");
-
     if (!userId) {
       const msg = "You must be logged in to create an event.";
-      setError(msg);
       toast.error(msg);
       return;
     }
@@ -100,7 +94,6 @@ export default function CreateEventPage() {
       router.push('/dashboard');
     } catch (err) {
       const errorMessage = 'Failed to create event.';
-      setError(errorMessage);
       toast.error(errorMessage);
       console.error(err);
     } finally {
@@ -113,19 +106,6 @@ export default function CreateEventPage() {
       <Container>
         <div className="max-w-2xl mx-auto py-12 space-y-10">
           <h1 className="text-4xl font-bold leading-tight tracking-tight">Create an Event</h1>
-
-          {error && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          {success && (
-            <Alert className="mb-4">
-              <AlertDescription>{success}</AlertDescription>
-            </Alert>
-          )}
-
           <form className="space-y-6" onSubmit={form.handleSubmit((data) => onSubmit(data, 'PENDING_REVIEW'))}>
 
             {/* Title */}
