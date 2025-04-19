@@ -21,7 +21,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
   const resolvedParams = await Promise.resolve(params);
   const id = resolvedParams.id;
   if (!id) return notFound();
-  
+
   const event = await getEventById(id);
   if (!event) return notFound();
 
@@ -34,10 +34,10 @@ export default async function EventDetailPage({ params }: { params: { id: string
   let userRegistration = null;
   let isUserLecturer = false;
   let isUserCreator = false;
-  
+
   if (userId) {
     userRegistration = await getUserRegistration(event.id, userId);
-    
+
     isUserLecturer = event.lecturers.some(
       (l: { lecturer: { id: string } }) => l.lecturer.id === userId
     );
@@ -57,7 +57,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
   let registerButtonText = "Register";
   let showRegisterButton = token.role !== "STAFF";
   let registrationMessage = null;
-  
+
   if (!userId) {
     registerButtonText = "Login to Register";
   } else if (isUserLecturer) {
@@ -69,7 +69,7 @@ export default async function EventDetailPage({ params }: { params: { id: string
   } else if (userRegistration) {
     showRegisterButton = true;
     registerButtonText = "Manage Registration";
-    
+
     if (userRegistration.status === "REGISTERED") {
       registrationMessage = {
         type: "success",
@@ -93,10 +93,10 @@ export default async function EventDetailPage({ params }: { params: { id: string
             <p>{event.location}</p>
             <div className="mt-4">
               {/* Replace the simple link with our new component */}
-              <CalendarSubscription 
-                eventId={event.id} 
-                variant="outline" 
-                buttonText="Add to Calendar" 
+              <CalendarSubscription
+                eventId={event.id}
+                variant="outline"
+                buttonText="Add to Calendar"
               />
             </div>
           </div>
@@ -129,9 +129,10 @@ export default async function EventDetailPage({ params }: { params: { id: string
                     <h2 className="text-lg font-semibold mb-2">
                       About {l.lecturer.firstName} {l.lecturer.lastName}:
                     </h2>
-                    <p className="text-sm text-gray-700 whitespace-pre-line">
-                      {l.lecturer.expertise || "No biography available."}
-                    </p>
+                    <div
+                      className="prose max-w-none text-sm text-gray-700 [&_a]:text-blue-600 [&_a]:underline [&_a:hover]:text-blue-800 [&_h1]:text-2xl [&_h1]:font-bold [&_p]:mb-3 [&_ul]:list-disc [&_ul]:ml-6 [&_ol]:list-decimal [&_ol]:ml-6"
+                      dangerouslySetInnerHTML={{ __html: l.lecturer.expertise || "<p>No biography available.</p>" }}
+                    />
                   </div>
                 ))}
               </div>
@@ -147,11 +148,10 @@ export default async function EventDetailPage({ params }: { params: { id: string
             )}
 
             {registrationMessage && (
-              <div className={`p-3 rounded-md ${
-                registrationMessage.type === "success" ? "bg-green-50 text-green-700 border border-green-200" :
+              <div className={`p-3 rounded-md ${registrationMessage.type === "success" ? "bg-green-50 text-green-700 border border-green-200" :
                 registrationMessage.type === "warning" ? "bg-amber-50 text-amber-700 border border-amber-200" :
-                "bg-blue-50 text-blue-700 border border-blue-200"
-              }`}>
+                  "bg-blue-50 text-blue-700 border border-blue-200"
+                }`}>
                 <div className="flex items-center gap-2">
                   <InfoIcon className="h-4 w-4" />
                   <p className="text-sm font-medium">{registrationMessage.text}</p>
@@ -181,15 +181,15 @@ export default async function EventDetailPage({ params }: { params: { id: string
               )}
 
               <div className="inline-flex">
-                  <LoungeAccessButton
-                    eventId={event.id}
-                    eventLecturerIds={event.lecturers.map(
-                      (l: { lecturer: { id: string } }) => l.lecturer.id
-                    )}
-                    eventStatus={event.status}
-                  />
+                <LoungeAccessButton
+                  eventId={event.id}
+                  eventLecturerIds={event.lecturers.map(
+                    (l: { lecturer: { id: string } }) => l.lecturer.id
+                  )}
+                  eventStatus={event.status}
+                />
               </div>
-              
+
               <div className="inline-flex">
                 <Button asChild variant="outline" className="h-10 px-4">
                   <Link href="/events">Back to Events</Link>
@@ -197,11 +197,11 @@ export default async function EventDetailPage({ params }: { params: { id: string
               </div>
             </div>
           </div>
-          
+
           {/* Event Materials Upload Section - full width */}
           <div className="md:col-span-3">
-            <EventMaterialsUpload 
-              eventId={event.id} 
+            <EventMaterialsUpload
+              eventId={event.id}
               isLoggedIn={!!userId}
               isUserLecturer={isUserLecturer}
               isUserCreator={isUserCreator}
