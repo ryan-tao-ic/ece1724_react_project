@@ -3,8 +3,8 @@
 "use client";
 
 import { ReactNode } from "react";
-import { Navbar } from "./navbar";
 import { Footer } from "./footer";
+import { Navbar } from "./navbar";
 
 export function MainLayout({ children }: { children: ReactNode }) {
   return (
