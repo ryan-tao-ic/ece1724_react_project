@@ -3,7 +3,7 @@
 ## Team Information
 
 - **Ruoming Ren** - Student Number: [To be filled] - Email: luke.ren@mail.utoronto.ca
-- **Zhaoyi Cheng** - Student Number: [To be filled] - Email: zhaoyi.cheng@mail.utoronto.ca
+- **Zhaoyi Cheng** - Student Number: 1005727411 - Email: zhaoyi.cheng@mail.utoronto.ca
 - **Ruoxi Yu** - Student Number: [To be filled] - ruoxi.yu@mail.utoronto.ca
 - **Yige Tao** - Student Number: [To be filled] - Email: yige.tao@mail.utoronto.ca
 
@@ -114,50 +114,199 @@ The primary objectives of EventHub are:
 
 ## User Guide
 
-### For Event Organizers
+### Authentication and Account Management
+
+#### Registration Process
+1. **Initial Sign Up**
+   - Click the "Sign Up" button in the top right corner
+   - Fill in your details:
+     - Email address
+     - Password (minimum 6 characters)
+     - First and Last Name
+   - Click "Create Account", the system will send you an email verification.
+
+2. **Email Verification**
+   - Check your email for a verification link
+   - Click the verification link to activate your account
+   - You'll be redirected to the login page
+
+3. **Login**
+   - Enter your email and password
+   - Click "Sign In"
+   - Upon successful login, you'll be redirected to your dashboard
+
+4. **Password Reset**
+   - If forget your password, click "Forgot Password" on the login page
+   - Enter your email address
+   - Check your email for a password reset link
+   - Follow the link to create a new password
+
+### Dashboard Overview
+
+The dashboard provides a centralized view of your events and activities based on your role:
+
+1. **For Regular Users**
+   - View upcoming events you've registered for
+   - Access past event history
+   - View event details and materials
+   - Manage your registrations
+
+2. **For Lecturers**
+   - Create and manage your events
+   - Track event status (Draft, Pending Review, Approved, Published)
+   - Edit unpublished events
+   - View event analytics
+   - Access event materials
+
+3. **For Staff Members**
+   - Review pending events
+   - Manage event approvals
+   - Track published events
+   - Access QR scanner for check-ins
+   - Manage user roles
+   - View event analytics
+
+### Profile Management
+
+1. **Accessing Your Profile**
+   - Click your name in the top right corner
+   - Select "Profile" from the dropdown menu
+   - View and edit your personal information
+
+2. **Profile Information**
+   - Basic Information:
+     - First Name
+     - Last Name
+     - Email (read-only)
+   - Professional Details:
+     - Affiliation
+     - Occupation
+     - Personal Bio (rich text editor)
+
+3. **Updating Your Profile**
+   - Click "Edit Profile" to make changes
+   - Fill in required fields
+   - Use the rich text editor for your bio
+   - AI Enhancement Features:
+     - Click "Enhance Bio" to improve your bio with AI assistance
+     - Click "Make Professional" to get a more professional tone
+     - Both features are powered by deepseek AI
+     - The enhanced content will be automatically updated in the editor
+   - Click "Update Profile" to save changes
+
+### Event Management
+
+#### For Event Organizers
 
 1. **Creating an Event**
-   - Log in to your account
-   - Navigate to the Dashboard
-   - Click "Create Event"
-   - Fill in event details (title, description, date, time, capacity)
-   - Set registration requirements
+   - Navigate to Dashboard → "Create Event"
+   - Fill in event details:
+     - Event Title
+     - Description
+     - Date and Time
+     - Location (Physical/Virtual)
+     - Capacity
+     - Registration Requirements
+   - Upload any relevant materials
+   - Set registration deadline
    - Submit for approval (if required)
 
 2. **Managing Events**
-   - View event registrations
-   - Monitor attendance
-   - Upload event materials
+   - View event dashboard for:
+     - Registration statistics
+     - Attendee list
+     - Check-in status
+     - Q&A sessions
+   - Upload additional materials
    - Send notifications to attendees
-   - Manage Q&A sessions
-
-3. **Accessing Event Lounge**
-   - Open the event page
-   - Click "Enter Lounge"
    - Monitor real-time attendance
-   - Manage Q&A sessions
-   - Upload materials
 
-### For Attendees
+3. **Event Modifications**
+   - Edit event details
+   - Update capacity
+   - Change registration requirements
+   - Cancel event (with notification system)
 
-1. **Registering for Events**
+#### For Attendees
+
+1. **Event Registration**
    - Browse available events
    - Click "Register" on desired event
-   - Fill in registration form
+   - Fill in required information
    - Receive confirmation email
-   - Add to calendar
+   - Add to calendar (optional)
 
-2. **Checking In**
-   - Open confirmation email
-   - Present QR code at event
-   - Get scanned by staff
-   - Access event lounge
+2. **Pre-Event Preparation**
+   - Check email for event updates
+   - Download event materials
+   - Save QR code for check-in
+   - Review event details
 
-3. **Participating in Events**
-   - Join event lounge
-   - Participate in Q&A
-   - Access event materials
-   - View real-time updates
+### Virtual Lounge System
+
+1. **Accessing the Lounge**
+   - Staff can enter anytime via event management
+   - Attendees can enter after QR code check-in
+   - Lecturers can enter 30 minutes before start time
+
+2. **Lounge Features**
+   - Real-time participant list
+   - Role-based visibility
+   - Q&A functionality
+   - Material access
+   - Chat system
+
+3. **Check-in Process**
+   - Present QR code to staff
+   - Staff scans code using the app
+   - Automatic lounge access granted
+   - Attendance recorded in system
+
+### File Management
+
+1. **Uploading Materials**
+   - Navigate to event management
+   - Click "Upload Materials"
+   - Select files (PDF, DOC, PPT supported)
+   - Add descriptions
+   - Set access permissions
+
+2. **Accessing Materials**
+   - View in event details page
+   - Download for offline access
+   - Preview in browser (PDF)
+   - Share with other attendees
+
+### Calendar Integration
+
+1. **Syncing with Calendar**
+   - Click "Add to Calendar" on event page
+   - Choose calendar service (Google, Outlook, etc.)
+   - Confirm event details
+   - Save to calendar
+
+2. **Calendar Features**
+   - Automatic updates for changes
+   - Reminder notifications
+   - Location details
+   - Material links
+
+### Role-Specific Features
+
+#### For Staff Members
+- Event approval workflow
+- Attendee management
+- Check-in system access
+- Analytics dashboard
+- Report generation
+
+#### For Lecturers
+- Material upload and management
+- Q&A moderation
+- Presentation tools
+- Attendance tracking
+- Event feedback collection
+
 
 ## Development Guide
 
