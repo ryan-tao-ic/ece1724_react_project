@@ -415,8 +415,7 @@ event-hub/
 - Node.js 18.0.0 or later
 - PostgreSQL 13 or later
 - npm or yarn package manager
-- Docker and Docker Compose (optional, for containerized deployment)
-- Google Cloud account (for cloud storage and deployment)
+- Google Cloud account (for cloud storage)
 
 #### Installation Steps
 
