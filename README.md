@@ -396,8 +396,8 @@ event-hub/
 │   └── utils.ts            # General utilities
 ├── locales/                # Internationalization files
 │   └── en/                 # English translations
-├── pages/                  # Legacy pages directory
-│   └── api/                # Legacy API routes
+├── pages/                  
+│   └── api/                
 │       └── socket.ts       # Socket.io API endpoint
 ├── prisma/                 # Prisma ORM configuration
 │   └── schema.prisma       # Database schema
