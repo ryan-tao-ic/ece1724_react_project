@@ -120,24 +120,39 @@ export default function CreateEventPage() {
             </Alert>
           )}
 
+          {success && (
+            <Alert className="mb-4">
+              <AlertDescription>{success}</AlertDescription>
+            </Alert>
+          )}
+
           <form className="space-y-6" onSubmit={form.handleSubmit((data) => onSubmit(data, 'PENDING_REVIEW'))}>
 
             {/* Title */}
             <div className="space-y-1.5">
               <Label className="text-sm font-medium text-gray-700">Title</Label>
               <Input {...form.register('name')} />
+              {form.formState.errors.name && (
+                <p className="text-sm text-red-500">{form.formState.errors.name.message}</p>
+              )}
             </div>
 
             {/* Description */}
             <div className="space-y-1.5">
               <Label className="text-sm font-medium text-gray-700">Description</Label>
               <Textarea {...form.register('description')} rows={4} />
+              {form.formState.errors.description && (
+                <p className="text-sm text-red-500">{form.formState.errors.description.message}</p>
+              )}
             </div>
 
             {/* Location */}
             <div className="space-y-1.5">
               <Label className="text-sm font-medium text-gray-700">Location</Label>
               <Input {...form.register('location')} />
+              {form.formState.errors.location && (
+                <p className="text-sm text-red-500">{form.formState.errors.location.message}</p>
+              )}
             </div>
 
             {/* Category */}
@@ -149,6 +164,9 @@ export default function CreateEventPage() {
                   <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>
+              {form.formState.errors.categoryId && (
+                <p className="text-sm text-red-500">{form.formState.errors.categoryId.message}</p>
+              )}
             </div>
 
             {/* Time */}
@@ -167,6 +185,9 @@ export default function CreateEventPage() {
             <div className="space-y-1.5">
               <Label className="text-sm font-medium text-gray-700">Available Seats</Label>
               <Input type="number" {...form.register('availableSeats', { valueAsNumber: true })} />
+              {form.formState.errors.availableSeats && (
+                <p className="text-sm text-red-500">{form.formState.errors.availableSeats.message}</p>
+              )}
             </div>
 
             {/* Waitlist */}
