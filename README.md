@@ -216,7 +216,6 @@ The dashboard provides a centralized view of your events and activities based on
      - Capacity
      - Registration Requirements
    - Upload any relevant materials
-   - Set registration deadline
    - Submit for approval (if required)
 
 2. **Managing Events**
@@ -238,15 +237,15 @@ The dashboard provides a centralized view of your events and activities based on
 #### For Attendees
 1. **Event Registration**
    - Browse available events
-   - Click "Register" on desired event
-   - Fill in required information
-   - Receive confirmation email
+   - Click "Register" on the desired event
+   - Fill in the registration form
+   - Receive a confirmation email with a QR Code ticket 
    - Add to calendar (optional)
 
 2. **Pre-Event Preparation**
    - Check email for event updates
    - Download event materials
-   - Save QR code for check-in
+   - Save QR code ticket for check-in
    - Review event details
 
 ### Virtual Lounge System
@@ -262,10 +261,10 @@ The dashboard provides a centralized view of your events and activities based on
    - Chat system
 
 3. **Check-in Process**
-   - Present QR code to staff
+   - Present the QR code to the staff
    - Staff scans code using the app
    - Automatic lounge access granted
-   - Attendance recorded in system
+   - Attendance recorded in the system
 
 ### File Management
 
@@ -285,7 +284,7 @@ The dashboard provides a centralized view of your events and activities based on
 ### Calendar Integration
 
 1. **Syncing with Calendar**
-   - Click "Add to Calendar" on event page
+   - Click "Add to Calendar" on the event page
    - Confirm event details
    - Save to calendar
 
@@ -306,7 +305,6 @@ The dashboard provides a centralized view of your events and activities based on
 - Q&A moderation
 - Attendance tracking
 - Event feedback collection
-
 
 ## Development Guide
 
