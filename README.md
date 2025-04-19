@@ -705,4 +705,4 @@ Building EventHub has been an intense but incredibly rewarding experience for al
 
 This project gave us a chance to apply what we've learned in a real-world setting, and more importantly, to collaborate, adapt, and ship something we're genuinely proud of. It's been a great opportunity to explore cutting-edge tools like Next.js App Router, Prisma, PostgreSQL, and Google Cloud, all while learning how to build scalable, maintainable, and user-friendly software.
 
-We're really grateful for the chance to work on this as a team. Even as this project is wrapping up, the lessons and memories we've gained will stay with us long after. And who knows? This might just be the beginning for EventHub. :3
+We're really grateful for the chance to work on this as a team. Even as this project is wrapping up, the lessons and memories we've gained will stay with us long after. And who knows? This might just be the beginning for EventHub. 
