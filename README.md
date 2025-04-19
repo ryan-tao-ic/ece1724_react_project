@@ -69,19 +69,22 @@ The primary objectives of EventHub are:
 
 ## Features
 
+EventHub offers a comprehensive set of features designed to streamline academic event management. Here's how they fulfill our course requirements and achieve our project objectives:
+
 1. **User Authentication and Authorization**
-   - Secure user registration with email verification
+   - Built on NextAuth.js for secure and streamlined user experience
+   - Standard email and password login flow with email verification
    - Role-based access control (Regular Users, Lecturers, Staff)
-   - Password reset functionality
+   - Password reset functionality with secure email links
    - Staff invitation system for privileged access
 
 2. **Event Management System**
    - Event creation and approval workflow
    - Detailed event information management
    - Registration settings and capacity control
-   - Event cancellation workflow
+   - Event cancellation workflow with automatic notifications
    - Material upload and management
-   - Calendar integration
+   - Calendar integration with Google Calendar API
 
 3. **Registration and Check-in**
    - Customizable registration forms
@@ -134,9 +137,10 @@ The primary objectives of EventHub are:
    - Enter your email and password
    - Click "Sign In"
    - Upon successful login, you'll be redirected to your dashboard
+   - The navigation bar will update to display your name and role
 
 4. **Password Reset**
-   - If forget your password, click "Forgot Password" on the login page
+   - If you forget your password, click "Forgot Password" on the login page
    - Enter your email address
    - Check your email for a password reset link
    - Follow the link to create a new password
@@ -197,7 +201,6 @@ The dashboard provides a centralized view of your events and activities based on
 ### Event Management
 
 #### For Event Organizers
-
 1. **Creating an Event**
    - Navigate to Dashboard → "Create Event"
    - Fill in event details:
@@ -228,7 +231,6 @@ The dashboard provides a centralized view of your events and activities based on
    - Cancel event (with notification system)
 
 #### For Attendees
-
 1. **Event Registration**
    - Browse available events
    - Click "Register" on desired event
@@ -281,13 +283,11 @@ The dashboard provides a centralized view of your events and activities based on
 
 1. **Syncing with Calendar**
    - Click "Add to Calendar" on event page
-   - Choose calendar service (Google, Outlook, etc.)
    - Confirm event details
    - Save to calendar
 
 2. **Calendar Features**
    - Automatic updates for changes
-   - Reminder notifications
    - Location details
    - Material links
 
@@ -295,15 +295,12 @@ The dashboard provides a centralized view of your events and activities based on
 
 #### For Staff Members
 - Event approval workflow
-- Attendee management
+- User role management
 - Check-in system access
-- Analytics dashboard
-- Report generation
 
 #### For Lecturers
 - Material upload and management
 - Q&A moderation
-- Presentation tools
 - Attendance tracking
 - Event feedback collection
 
@@ -739,59 +736,30 @@ The authentication system includes:
 
 ## Lessons Learned and Concluding Remarks
 
-### Technical Insights
-1. **Next.js App Router**
-   - Learned the benefits of server components for performance optimization
-   - Gained experience with server actions for form handling
-   - Implemented efficient data fetching strategies
+### Technical Journey
+Our journey with EventHub has been a deep dive into modern web technologies. Working with Next.js App Router was particularly enlightening - we discovered the power of server components for performance optimization, mastered server actions for seamless form handling, and developed efficient data fetching strategies that significantly improved our application's responsiveness.
 
-2. **Real-time Features**
-   - Successfully implemented WebSocket-based communication
-   - Learned to handle concurrent connections efficiently
-   - Developed strategies for real-time data synchronization
+The real-time features presented both challenges and opportunities. Implementing WebSocket-based communication required careful consideration of concurrent connections and data synchronization. Through trial and error, we developed robust strategies that now power our live event features, from real-time attendance tracking to instant Q&A sessions.
 
-3. **Database Management**
-   - Gained experience with Prisma ORM and PostgreSQL
-   - Implemented efficient database schemas
-   - Learned to handle complex relationships and queries
+Our database architecture evolved significantly throughout the project. Working with Prisma ORM and PostgreSQL, we designed and refined our database schemas to handle complex relationships efficiently. The experience taught us valuable lessons about data modeling and query optimization that will serve us well in future projects.
 
-4. **Cloud Integration**
-   - Successfully integrated multiple Google Cloud services
-   - Learned to manage cloud resources efficiently
-   - Implemented secure file storage solutions
+Cloud integration was another area of significant learning. We successfully integrated multiple Google Cloud services, developing efficient resource management strategies and implementing secure file storage solutions. This experience gave us practical insights into cloud architecture and security best practices.
 
-### Project Management Lessons
-1. **Team Collaboration**
-   - Effective use of Git for version control
-   - Regular code reviews improved code quality
-   - Clear communication channels enhanced productivity
+### Team Experience
+Collaboration was at the heart of our success. We established effective Git workflows that kept our development process smooth, implemented regular code reviews that improved our code quality, and maintained clear communication channels that enhanced our productivity. These practices became the foundation of our team's workflow.
 
-2. **Development Process**
-   - Agile methodology proved effective for feature development
-   - Continuous integration improved code stability
-   - Regular testing prevented major issues
+Our development process was guided by agile methodology, which proved particularly effective for feature development. Continuous integration helped us maintain code stability, while regular testing prevented major issues from reaching production. This systematic approach allowed us to deliver features reliably while maintaining high code quality.
 
-3. **Documentation**
-   - Comprehensive documentation aided onboarding
-   - Clear guidelines improved code consistency
-   - Regular updates maintained documentation relevance
+Documentation played a crucial role in our project's success. We created comprehensive documentation that helped new team members get up to speed quickly, established clear guidelines that maintained code consistency, and kept our documentation updated to reflect the project's evolution. This attention to documentation proved invaluable for both development and maintenance.
 
-### Future Improvements
-1. **Technical Enhancements**
-   - Implement more advanced caching strategies
-   - Add more comprehensive testing coverage
-   - Enhance real-time features with additional functionality
+### Looking Ahead
+While we're proud of what we've accomplished, we see many opportunities for improvement. On the technical side, we're planning to implement more advanced caching strategies, expand our test coverage, and enhance our real-time features with additional functionality.
 
-2. **User Experience**
-   - Add more customization options
-   - Implement advanced analytics
-   - Enhance mobile responsiveness
-
-3. **Infrastructure**
-   - Implement more robust monitoring
-   - Add automated scaling capabilities
-   - Enhance security measures
+User experience remains a priority, with plans to add more customization options, implement advanced analytics, and further improve mobile responsiveness. We're also focusing on infrastructure improvements, including more robust monitoring, automated scaling capabilities, and enhanced security measures.
 
 ### Final Thoughts
-The EventHub project has been a valuable learning experience, combining modern web technologies with practical event management solutions. The team successfully implemented a comprehensive platform that addresses the challenges of academic event management. The project demonstrates the effectiveness of using Next.js, Prisma, and modern web technologies to create scalable, maintainable applications. The lessons learned during development will continue to inform future projects and improvements to the platform.
+Building EventHub has been an intense but incredibly rewarding experience for all four of us. With only a short amount of time, we came together, learned fast, and built a fully functional platform from scratch using a modern, production-ready tech stack. It wasn't always easy—juggling real-time features, cloud integration, and a growing codebase—but every challenge pushed us to grow as developers and teammates.
 
+This project gave us a chance to apply what we've learned in a real-world setting, and more importantly, to collaborate, adapt, and ship something we're genuinely proud of. It's been a great opportunity to explore cutting-edge tools like Next.js App Router, Prisma, PostgreSQL, and Google Cloud, all while learning how to build scalable, maintainable, and user-friendly software.
+
+We're really grateful for the chance to work on this as a team. Even as this project is wrapping up, the lessons and memories we've gained will stay with us long after. And who knows? This might just be the beginning for EventHub. :3
