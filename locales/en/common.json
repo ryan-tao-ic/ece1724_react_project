@@ -1,0 +1,82 @@
+{
+  "app": {
+    "name": "EventHub"
+  },
+  "navbar": {
+    "browseEvents": "Browse Events",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "signUp": "Sign Up",
+    "myAccount": "My Account",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "footer": {
+    "copyright": "© {year} EventHub. All rights reserved.",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "contact": "Contact"
+  },
+  "home": {
+    "hero": {
+      "title": "All-In-One",
+      "titleHighlight": "Event Management",
+      "description": "EventHub streamlines the management of academic events, from registration to check-in, making it easier for organizers and attendees alike."
+    },
+    "features": {
+      "eventManagement": {
+        "title": "Event Management",
+        "description": "Create and manage events with ease. Track registrations, attendance, and more."
+      },
+      "qrCode": {
+        "title": "QR Code Check-in",
+        "description": "Streamline the check-in process with QR codes. No more paper tickets or manual check-ins."
+      },
+      "realTime": {
+        "title": "Real-time Communication",
+        "description": "Engage with event participants in real-time through our virtual lounge and Q&A system."
+      }
+    },
+    "cta": {
+      "browseEvents": "Browse Events",
+      "createAccount": "Create Account",
+      "submitEvent": "Submit New Event"
+    }
+  },
+  "events": {
+    "title": "Events",
+    "description": "Browse and register for upcoming academic events",
+    "search": "Search events...",
+    "filters": {
+      "allCategories": "All Categories",
+      "anyDate": "Any Date",
+      "today": "Today",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month"
+    },
+    "empty": {
+      "title": "No events found",
+      "description": "Events will appear here once they're added to the system.",
+      "action": "Go to Dashboard"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "description": "Manage your registrations and view your event history",
+    "upcomingEvents": {
+      "title": "Upcoming Events",
+      "empty": {
+        "title": "No upcoming events",
+        "description": "You haven't registered for any upcoming events.",
+        "action": "Browse Events"
+      }
+    },
+    "pastEvents": {
+      "title": "Past Events",
+      "empty": {
+        "title": "No past events",
+        "description": "You haven't attended any events yet."
+      }
+    }
+  }
+}
