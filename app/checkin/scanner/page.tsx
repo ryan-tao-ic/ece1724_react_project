@@ -123,7 +123,7 @@ export default function ScannerPage() {
     }, 1000); // Longer delay to ensure DOM is ready
 
     return () => clearTimeout(initializeScanner);
-  }, [status, session, showScanner, scanning]);
+  }, [status, session, showScanner, scanning, socket]);
 
   const restartScanner = () => {
     if (scannerInstance.current) {
