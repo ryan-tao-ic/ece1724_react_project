@@ -59,6 +59,7 @@ The primary objectives of EventHub are:
    - Leverage WebSockets for real-time communication
    - Integrate with external services (Google Calendar, Cloud Storage)
    - Ensure type safety and robust data handling
+   - Design a secure and user-friendly authentication system using NextAuth.js
 
 ## Technical Stack
 
@@ -66,7 +67,7 @@ The primary objectives of EventHub are:
 - **Backend**: Next.js Server Components, API Routes, and Server Actions
 - **Database**: PostgreSQL with Prisma ORM
 - **Real-time Communication**: Socket.io
-- **Authentication**: Custom auth system
+- **Authentication**: NextAuth.js
 - **Deployment**: Docker, Google Cloud Run, Google Cloud SQL
 - **File Storage**: Google Cloud Storage
 - **Email Service**: Custom email templates and sending system
