@@ -68,7 +68,6 @@ The primary objectives of EventHub are:
 - **Database**: PostgreSQL with Prisma ORM
 - **Real-time Communication**: Socket.io
 - **Authentication**: NextAuth.js
-- **Deployment**: Docker, Google Cloud Run, Google Cloud SQL
 - **File Storage**: Google Cloud Storage
 - **Email Service**: Custom email templates and sending system
 - **Calendar Integration**: ICS (iCalendar) standard support
