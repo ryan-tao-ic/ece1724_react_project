@@ -252,15 +252,13 @@ The dashboard provides a centralized view of your events and activities based on
 ### Virtual Lounge System
 
 1. **Accessing the Lounge**
-   - Staff can enter anytime via event management
+   - Staff and lecturers could enter 1 hour before the start time via event management
    - Attendees can enter after QR code check-in
-   - Lecturers can enter 30 minutes before start time
 
 2. **Lounge Features**
    - Real-time participant list
    - Role-based visibility
    - Q&A functionality
-   - Material access
    - Chat system
 
 3. **Check-in Process**
@@ -427,7 +425,6 @@ event-hub/
 1. Clone the repository:
 ```bash
 git clone https://github.com/ryan-tao-ic/ece1724_react_project.git
-cd event-hub
 ```
 
 2. Install dependencies:
@@ -440,27 +437,6 @@ Create a `.env.local` file in the root directory with the following variables:
 ```bash
 # Database Configuration
 DATABASE_URL="postgresql://yourdatabase:yourpassword@localhost:5432/event_hub?schema=public"
-
-# Authentication
-NEXTAUTH_SECRET="your-secret-key"
-NEXTAUTH_URL="http://localhost:3000"
-
-# Email Configuration
-EMAIL_SERVER_HOST="smtp.example.com"
-EMAIL_SERVER_PORT=587
-EMAIL_SERVER_USER="your-email@example.com"
-EMAIL_SERVER_PASSWORD="your-email-password"
-EMAIL_FROM="noreply@example.com"
-
-# Google Cloud Storage
-GOOGLE_CLOUD_PROJECT_ID="your-project-id"
-GOOGLE_CLOUD_BUCKET_NAME="your-bucket-name"
-GOOGLE_CLOUD_CLIENT_EMAIL="your-service-account-email"
-GOOGLE_CLOUD_PRIVATE_KEY="your-private-key"
-
-# Google Calendar API
-GOOGLE_CALENDAR_CLIENT_ID="your-client-id"
-GOOGLE_CALENDAR_CLIENT_SECRET="your-client-secret"
 ```
 
 ### 3. Database Initialization
@@ -475,12 +451,7 @@ createdb event_hub
 npx prisma migrate dev
 ```
 
-3. Generate Prisma client:
-```bash
-npx prisma generate
-```
-
-4. Seed the database with initial data:
+3. Seed the database with initial data:
 ```bash
 npm run prisma:seed
 ```
@@ -510,29 +481,14 @@ npm run dev
    - Open [http://localhost:3000](http://localhost:3000) in your browser
    - The application should be running in development mode
 
-3. Run tests:
-```bash
-# Run unit tests
-npm test
-
-# Run end-to-end tests
-npm run test:e2e
-
-# Run linting
-npm run lint
-
-# Format code
-npm run format
-```
-
-4. Development Workflow:
+3. Development Workflow:
    - Use feature branches for development
    - Follow the project's code style guidelines
    - Write tests for new features
    - Update documentation as needed
    - Submit pull requests for review
 
-5. Debugging:
+4. Debugging:
    - Use browser developer tools for frontend debugging
    - Check server logs in the terminal
    - Use Prisma Studio for database inspection:
@@ -556,8 +512,6 @@ npm run format
 #### Database Schema Changes
 After modifying the Prisma schema, run the following commands to update the database:
 ```bash
-# Generate Prisma client (optional)
-npm run prisma:generate
 
 # Apply schema changes to the database
 npm run prisma:migrate
@@ -574,33 +528,8 @@ npm run prisma:seed
 - Create reusable components in the `components` directory
 - Use TypeScript for type safety
 
-### 7. Internationalization (i18n)
 
-The project uses a simple i18n solution with JSON-based locale files:
-
-#### Structure
-- Locale files are stored in the `locales/{language}` directory
-- The main English locale file is at `locales/en/common.json`
-- Text strings are organized in a nested structure by component/page
-
-#### Usage
-To use translations in your components:
-```tsx
-import t from '@/lib/i18n';
-
-// Simple text translation
-<h1>{t('dashboard.title')}</h1>
-
-// With parameters
-<p>{t('footer.copyright', { year: 2023 })}</p>
-```
-
-#### Adding New Translations
-1. Add new strings to the `locales/en/common.json` file in the appropriate section
-2. Use nested keys that reflect the component hierarchy
-3. Use the `t()` function in your components to reference these keys
-
-### 8. UI Component Organization
+### 7. UI Component Organization
 
 #### Shadcn/UI Components
 The project uses shadcn/ui as its component library, which provides a set of accessible, customizable components. These components are imported directly into the project, allowing for full customization.
@@ -628,7 +557,7 @@ import { text, spacing, radius } from "@/lib/theme";
 </div>;
 ```
 
-### 9. Data Fetching Architecture
+### 8. Data Fetching Architecture
 
 The project follows Next.js 13+ App Router best practices for data management:
 
@@ -698,7 +627,7 @@ export function EventForm() {
 }
 ```
 
-### 10. Authentication System
+### 9. Authentication System
 
 The project implements a robust authentication system:
 
