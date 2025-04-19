@@ -105,7 +105,7 @@ export default function CreateEventPage() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-          
+
           {success && (
             <Alert className="mb-4">
               <AlertDescription>{success}</AlertDescription>
