@@ -132,7 +132,7 @@ EventHub offers a comprehensive set of features designed to streamline academic 
      - Email address
      - Password (minimum 6 characters)
      - First and Last Name
-   - Click "Create Account", the system will send you an email verification.
+   - Click "Create Account", and the system will send you an email verification.
 
 2. **Email Verification**
    - Check your email for a verification link
@@ -166,13 +166,13 @@ The dashboard provides a centralized view of your events and activities based on
    - Track event status (Draft, Pending Review, Approved, Published)
    - Edit unpublished events
    - View event analytics
-   - Access event materials
+   - Manage your event materials
 
 3. **For Staff Members**
    - Review pending events
    - Manage event approvals
    - Track published events
-   - Access QR scanner for check-ins
+   - Access the QR scanner for check-ins
    - Manage user roles
    - View event analytics
 
@@ -195,12 +195,12 @@ The dashboard provides a centralized view of your events and activities based on
 
 3. **Updating Your Profile**
    - Click "Edit Profile" to make changes
-   - Fill in required fields
+   - Fill in the required fields
    - Use the rich text editor for your bio
    - AI Enhancement Features:
      - Click "Enhance Bio" to improve your bio with AI assistance
      - Click "Make Professional" to get a more professional tone
-     - Both features are powered by deepseek AI
+     - Both features are powered by Deepseek AI
      - The enhanced content will be automatically updated in the editor
    - Click "Update Profile" to save changes
 
