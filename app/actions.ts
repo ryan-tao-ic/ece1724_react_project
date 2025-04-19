@@ -8,6 +8,7 @@ import { sendCancelNoticeEmails } from '@/lib/email/sendCancelNoticeEmails';
 import { getSignedUrl, uploadFileToStorage } from "@/lib/file-storage";
 import { StorageError } from "@/lib/file-storage/errors";
 import { UploadResult } from "@/lib/types";
+import { fromZonedTime } from 'date-fns-tz';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
@@ -26,7 +27,17 @@ const eventSchema = z.object({
   categoryId: z.string(),
 });
 
-type EventFormData = z.infer<typeof eventSchema>;
+// type EventFormData = z.infer<typeof eventSchema>; // Removed unused type
+
+const torontoTimeZone = 'America/Toronto';
+
+// Helper function to convert local datetime string (assumed Toronto) to UTC Date
+const parseLocalToUtc = (dateTimeString: string): Date => {
+  // Parse the string, assuming it represents a date/time in the Toronto timezone
+  // This gives us a Date object representing the equivalent UTC time
+  const utcDate = fromZonedTime(dateTimeString, torontoTimeZone);
+  return utcDate;
+};
 
 /**
  * Helper function to get the authenticated user or redirect to login
@@ -119,8 +130,8 @@ export async function createEventAction(data: {
       description: data.description,
       location: data.location,
       categoryId: parseInt(data.categoryId, 10),
-      eventStartTime: new Date(data.eventStartTime),
-      eventEndTime: new Date(data.eventEndTime),
+      eventStartTime: parseLocalToUtc(data.eventStartTime),
+      eventEndTime: parseLocalToUtc(data.eventEndTime),
       availableSeats: data.availableSeats,
       waitlistCapacity: data.waitlistCapacity ?? 0,
       status: data.status,
@@ -194,8 +205,8 @@ export async function reviewEventAction(
         description,
         location,
         categoryId: parseInt(categoryId),
-        eventStartTime: new Date(eventStartTime),
-        eventEndTime: new Date(eventEndTime),
+        eventStartTime: parseLocalToUtc(eventStartTime),
+        eventEndTime: parseLocalToUtc(eventEndTime),
         availableSeats,
         waitlistCapacity: waitlistCapacity ?? 0,
         customizedQuestion: formattedQuestions,
@@ -232,8 +243,8 @@ export async function updateEvent(id: string, data: {
       description: data.description,
       location: data.location,
       categoryId: parseInt(data.categoryId, 10),
-      eventStartTime: new Date(data.eventStartTime),
-      eventEndTime: new Date(data.eventEndTime),
+      eventStartTime: parseLocalToUtc(data.eventStartTime),
+      eventEndTime: parseLocalToUtc(data.eventEndTime),
       availableSeats: data.availableSeats,
       waitlistCapacity: data.waitlistCapacity ?? 0,
       customizedQuestion: data.customizedQuestion,

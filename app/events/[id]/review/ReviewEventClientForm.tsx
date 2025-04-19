@@ -3,6 +3,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { format, toZonedTime } from 'date-fns-tz';
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -14,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 const reviewSchema = z.object({
   name: z.string().min(1),
@@ -48,8 +50,13 @@ export default function ReviewEventClientForm({
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [missingCommentError, setMissingCommentError] = useState(false);
+
+  // Calculate the minimum allowed date/time (now in Toronto)
+  const torontoTimeZone = 'America/Toronto';
+  const nowInToronto = toZonedTime(new Date(), torontoTimeZone);
+  // Format for datetime-local input: YYYY-MM-DDTHH:mm
+  const minDateTime = format(nowInToronto, "yyyy-MM-dd'T'HH:mm");
 
   const form = useForm<ReviewFormValues>({
     resolver: zodResolver(reviewSchema),
@@ -65,7 +72,6 @@ export default function ReviewEventClientForm({
     newStatus: "APPROVED" | "PUBLISHED" | "DRAFT" | undefined
   ) => {
     setError("");
-    setSuccess("");
     setMissingCommentError(false);
 
     const data = form.getValues();
@@ -89,10 +95,18 @@ export default function ReviewEventClientForm({
         status: newStatus || status, // keep same status for Save
         reviewerId,
       });
-      setSuccess("Event updated.");
+      // Determine success message based on action
+      let successMessage = "Event saved successfully.";
+      if (newStatus === "APPROVED") successMessage = "Event approved successfully.";
+      else if (newStatus === "PUBLISHED") successMessage = "Event published successfully.";
+      else if (newStatus === "DRAFT") successMessage = "Event rejected successfully.";
+
+      toast.success(successMessage);
       router.push("/dashboard");
     } catch (err) {
-      setError("Failed to update event.");
+      const errorMessage = "Failed to update event.";
+      setError(errorMessage); // Keep state for potential inline display
+      toast.error(errorMessage);
       console.error(err);
     } finally {
       setLoading(false);
@@ -108,12 +122,6 @@ export default function ReviewEventClientForm({
       {error && (
         <Alert variant="destructive" className="mb-4">
           <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      {success && (
-        <Alert className="mb-4">
-          <AlertDescription>{success}</AlertDescription>
         </Alert>
       )}
 
@@ -163,13 +171,21 @@ export default function ReviewEventClientForm({
             <Label className="text-sm font-medium text-gray-700">
               Start Time
             </Label>
-            <Input type="datetime-local" {...form.register("eventStartTime")} />
+            <Input
+              type="datetime-local"
+              {...form.register("eventStartTime")}
+              min={minDateTime}
+            />
           </div>
           <div className="flex-1 space-y-1.5">
             <Label className="text-sm font-medium text-gray-700">
               End Time
             </Label>
-            <Input type="datetime-local" {...form.register("eventEndTime")} />
+            <Input
+              type="datetime-local"
+              {...form.register("eventEndTime")}
+              min={minDateTime}
+            />
           </div>
         </div>
 
