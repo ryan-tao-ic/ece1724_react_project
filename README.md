@@ -5,7 +5,7 @@
 - **Ruoming Ren** - Student Number: 1005889013 - Email: luke.ren@mail.utoronto.ca
 - **Zhaoyi Cheng** - Student Number: 1005727411 - Email: zhaoyi.cheng@mail.utoronto.ca
 - **Ruoxi Yu** - Student Number: 1010110201 - ruoxi.yu@mail.utoronto.ca
-- **Yige Tao** - Student Number: [To be filled] - Email: yige.tao@mail.utoronto.ca
+- **Yige Tao** - Student Number: 1000741094 - Email: yige.tao@mail.utoronto.ca
 
 ## Motivation
 
