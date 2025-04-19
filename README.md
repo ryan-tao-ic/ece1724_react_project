@@ -88,9 +88,9 @@ EventHub offers a comprehensive set of features designed to streamline academic 
    - Event creation and approval workflow
    - Detailed event information management
    - Registration settings and capacity control
-   - Event cancellation workflow with automatic notifications
+   - Event cancellation workflow with automatic email notifications
    - Material upload and management
-   - Calendar integration with Google Calendar API
+   - Calendar integration with iCalendar (ICS) standard, supporting multiple calendar systems
 
 3. **Registration and Check-in**
    - Customizable registration forms
@@ -107,8 +107,8 @@ EventHub offers a comprehensive set of features designed to streamline academic 
    - Automatic lounge closure
 
 5. **User Dashboard**
-   - Centralized event management
-   - Upcoming and past event tracking
+   - Centralized event management for organizers
+   - Upcoming and past event registration tracking
    - Registration management
    - Material access
    - Event lounge access
