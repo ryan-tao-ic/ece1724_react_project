@@ -14,15 +14,13 @@ Below is the Video demo for our project: https://youtu.be/PDvRscMN_tI
 
 ## Motivation
 
-The primary purpose of EventHub is to simplify and organize academic event management. The organization of academic events, including Master's and Phd defences, conferences, seminars, and guest lectures, is currently conducted using a cumbersome manual process. Most of the time, event organizers rely on generic forms or email registrations, which lack the functionalities of real-time attendance tracking and effective management tools. This leads to:
+Organizing academic events—like Master’s and PhD defences, seminars, guest lectures, and conferences—can be surprisingly tedious. Most institutions still rely on email signups or generic forms, which quickly become hard to manage as events scale. There’s often no unified way to track attendance, manage roles, or handle real-time changes, and that creates extra work for organizers and a disjointed experience for participants.
 
-- Enhanced administrative workloads
-- Inefficient management of participants' data
-- Disrupted connectivity due to multiple systems used by organizers and attendees
-- Ineffective organization of important event staff in dealing with the case load
-- Slow consideration of messages in real-time during events
+We built EventHub to solve this. It’s a web application designed specifically for academic event management, with tools that simplify everything from registration to real-time check-in. With features like automated ticket generation, QR code-based entry, and role-based access control, our platform streamlines the entire workflow—saving organizers time and making the experience smoother for attendees.
 
-Our platform addresses these pain points by providing a comprehensive solution that transforms fragmented manual processes into a seamless, automated workflow.
+What makes this project worth pursuing is the opportunity to bring all the scattered, manual processes into one cohesive system. It’s tailored for the needs of academic staff, lecturers, and admin teams, while also improving the experience for students, faculty, and guests. Instead of juggling spreadsheets, inboxes, and last-minute updates, organizers can focus on what matters: hosting meaningful, well-run events.
+
+While tools like Google Forms and email invites offer some basic support, they fall short when it comes to integrated event management. EventHub fills that gap—with features designed specifically for the academic environment, from real-time check-ins to archival tools for event records.
 
 ## Objectives
 
