@@ -14,11 +14,11 @@ Below is the Video demo for our project: https://youtu.be/PDvRscMN_tI
 
 ## Motivation
 
-Organizing academic events—like Master’s and PhD defences, seminars, guest lectures, and conferences—can be surprisingly tedious. Most institutions still rely on email signups or generic forms, which quickly become hard to manage as events scale. There’s often no unified way to track attendance, manage roles, or handle real-time changes, and that creates extra work for organizers and a disjointed experience for participants.
+Organizing academic events—like Master's and PhD defences, seminars, guest lectures, and conferences—can be surprisingly tedious. Most institutions still rely on email signups or generic forms, which quickly become hard to manage as events scale. There's often no unified way to track attendance, manage roles, or handle real-time changes, and that creates extra work for organizers and a disjointed experience for participants.
 
-We built EventHub to solve this. It’s a web application designed specifically for academic event management, with tools that simplify everything from registration to real-time check-in. With features like automated ticket generation, QR code-based entry, and role-based access control, our platform streamlines the entire workflow—saving organizers time and making the experience smoother for attendees.
+We built EventHub to solve this. It's a web application designed specifically for academic event management, with tools that simplify everything from registration to real-time check-in. With features like automated ticket generation, QR code-based entry, and role-based access control, our platform streamlines the entire workflow—saving organizers time and making the experience smoother for attendees.
 
-What makes this project worth pursuing is the opportunity to bring all the scattered, manual processes into one cohesive system. It’s tailored for the needs of academic staff, lecturers, and admin teams, while also improving the experience for students, faculty, and guests. Instead of juggling spreadsheets, inboxes, and last-minute updates, organizers can focus on what matters: hosting meaningful, well-run events.
+What makes this project worth pursuing is the opportunity to bring all the scattered, manual processes into one cohesive system. It's tailored for the needs of academic staff, lecturers, and admin teams, while also improving the experience for students, faculty, and guests. Instead of juggling spreadsheets, inboxes, and last-minute updates, organizers can focus on what matters: hosting meaningful, well-run events.
 
 While tools like Google Forms and email invites offer some basic support, they fall short when it comes to integrated event management. EventHub fills that gap—with features designed specifically for the academic environment, from real-time check-ins to archival tools for event records.
 
@@ -61,7 +61,7 @@ The primary objectives of EventHub are:
 
 ## Technical Stack
 
-- **Frontend**: React with Next.js 13+, styled using Tailwind CSS and shadcn/ui
+- **Frontend**: React with Next.js 15, styled using Tailwind CSS and shadcn/ui
 - **Backend**: Next.js Server Components, API Routes, and Server Actions
 - **Database**: PostgreSQL with Prisma ORM
 - **Real-time Communication**: Socket.io
@@ -218,7 +218,7 @@ The dashboard provides a centralized view of your events and activities based on
 4. **Pre-Publish Edits**
    - While in **DRAFT**, **PENDING_REVIEW**, or **APPROVED**, the Creators can:
      - Edit the event.
-     - Delete the event (only if it’s not published or cancelled).
+     - Delete the event (only if it's not published or cancelled).
 
 5. **Publication**
    - Only `Staff` can **publish** → Status becomes **PUBLISHED**.
@@ -314,19 +314,14 @@ event-hub/
 │   ├── checkin/             # QR code check-in functionality
 │   ├── contact/             # Contact page
 │   ├── dashboard/           # User dashboard
-│   │   └── page.tsx         # Dashboard main page
 │   ├── events/              # Event management
-│   │   ├── create/          # Event creation
-│   │   ├── [id]/           # Dynamic event routes
-│   │   ├── page.tsx        # Events listing
-│   │   └── events-client.tsx # Client-side event components
 │   ├── lounge/              # Virtual lounge for events
 │   ├── not-authorized/      # Access denied page
 │   ├── profile/             # User profile management
 │   ├── resetPassword/       # Password reset functionality
 │   ├── roleManagement/      # Role management pages
 │   ├── verifyEmail/         # Email verification
-│   ├── actions.ts          # Server actions (496 lines)
+│   ├── actions.ts          # Server actions
 │   ├── globals.css         # Global styles
 │   ├── layout.tsx          # Root layout
 │   ├── page.tsx            # Home page
@@ -356,6 +351,8 @@ event-hub/
 │   │   ├── scroll-area.tsx # Scroll area component
 │   │   ├── sonner.tsx      # Toast notifications
 │   │   └── textarea.tsx    # Textarea component
+│   ├── events/             # Event-related components
+│   │   └── lounge-access-button.tsx # Lounge access button component
 │   ├── cancelled-redirect.tsx # Cancellation redirect
 │   ├── event-materials-upload.tsx # Event materials upload
 │   └── qr-code.tsx         # QR code generation
@@ -365,6 +362,11 @@ event-hub/
 │   ├── auth/               # Authentication utilities
 │   │   └── auth.ts         # Auth implementation
 │   ├── db/                 # Database utilities
+│   │   ├── registration.ts # Registration database operations
+│   │   ├── users.ts        # User database operations
+│   │   ├── materials.ts    # Material database operations
+│   │   ├── prisma.ts       # Prisma client configuration
+│   │   └── events.ts       # Event database operations
 │   ├── email/              # Email functionality
 │   │   ├── sendConfirmationEmail.ts # Event confirmation
 │   │   ├── sendCancelNoticeEmails.ts # Cancellation notices
@@ -373,11 +375,18 @@ event-hub/
 │   │   ├── verificationEmailTemplate.ts # Email verification
 │   │   └── resetPasswordEmailTemplate.ts # Password reset
 │   ├── events/             # Event-related utilities
+│   │   └── fetchEvent.ts   # Event fetching utility
 │   ├── file-storage/       # File storage utilities
+│   │   ├── errors.ts       # Storage error handling
+│   │   ├── index.ts        # Storage interface
+│   │   └── service.ts      # Storage service implementation
 │   ├── i18n/               # Internationalization
 │   │   └── index.ts        # i18n configuration
 │   ├── profile/            # Profile management utilities
+│   │   ├── profile.ts      # Profile operations
+│   │   └── update.ts       # Profile update utilities
 │   ├── users/              # User management utilities
+│   │   └── users.ts        # User operations
 │   ├── utils/              # General utilities
 │   │   └── verificationToken.ts # Token management
 │   ├── init.ts             # Application initialization
@@ -389,18 +398,30 @@ event-hub/
 │   └── en/                 # English translations
 ├── pages/                  # Legacy pages directory
 │   └── api/                # Legacy API routes
+│       └── socket.ts       # Socket.io API endpoint
+├── prisma/                 # Prisma ORM configuration
+│   └── schema.prisma       # Database schema
+├── public/                 # Static assets
 ├── scripts/                # Utility scripts
 │   └── seed-events.js      # Database seeding script
 ├── types/                  # TypeScript type definitions
 │   ├── global.d.ts         # Global type declarations
 │   ├── json.d.ts           # JSON type declarations
 │   └── next-auth.d.ts      # NextAuth type declarations
-├── prisma/                 # Prisma ORM configuration
-│   └── schema.prisma       # Database schema
-├── public/                 # Static assets
-├── Dockerfile              # Docker configuration
-├── docker-compose.yml      # Docker Compose configuration
-└── cloudbuild.yaml         # Google Cloud Build configuration
+├── .vscode/               # VS Code configuration
+├── auth.config.ts         # Auth configuration
+├── auth.ts                # Auth utilities
+├── components.json        # shadcn/ui components configuration
+├── docker-compose.yml     # Docker Compose configuration
+├── Dockerfile             # Docker configuration
+├── docker-entrypoint.sh   # Docker entrypoint script
+├── eslint.config.mjs      # ESLint configuration
+├── middleware.ts          # Next.js middleware
+├── next.config.ts         # Next.js configuration
+├── postcss.config.mjs     # PostCSS configuration
+├── prisma.ts              # Prisma client configuration
+├── server.js              # Server configuration
+└── tsconfig.json          # TypeScript configuration
 ```
 
 ### 2. Environment Setup and Configuration
@@ -578,7 +599,7 @@ Building EventHub has been a crash course in modern web development. Next.js App
 Teamwork was central to everything. We kept development smooth with Git workflows, regular code reviews, and open communication. These habits helped us ship features fast without sacrificing code quality. Documentation played a crucial role in our project's success. We created comprehensive documentation that helped new team members get up to speed quickly, established clear guidelines that maintained code consistency, and kept our documentation updated to reflect the project's evolution. This attention to documentation proved invaluable for both development and maintenance.
 
 ### Looking Ahead
-We’re proud of how far we’ve come, but there’s still plenty of room to grow. Our next step is to deploy EventHub. While we didn’t have enough time to complete deployment within the course timeline, it’s something we’re excited to explore further—it’ll be a valuable opportunity to learn real-world deployment workflows. We're also looking into better caching, broader test coverage, and enhanced real-time features. On the UX side, more customization, deeper analytics, and improved mobile responsiveness are on our roadmap. Infrastructure-wise, we're considering better monitoring, autoscaling, and security enhancements to keep EventHub ready for the future.
+We're proud of how far we've come, but there's still plenty of room to grow. Our next step is to deploy EventHub. While we didn't have enough time to complete deployment within the course timeline, it's something we're excited to explore further—it'll be a valuable opportunity to learn real-world deployment workflows. We're also looking into better caching, broader test coverage, and enhanced real-time features. On the UX side, more customization, deeper analytics, and improved mobile responsiveness are on our roadmap. Infrastructure-wise, we're considering better monitoring, autoscaling, and security enhancements to keep EventHub ready for the future.
 
 ### Final Thoughts
 Building EventHub has been an intense but incredibly rewarding experience for all four of us. With only a short amount of time, we came together, learned fast, and built a fully functional platform from scratch using a modern, production-ready tech stack. It wasn't always easy—juggling real-time features, cloud integration, and a growing codebase—but every challenge pushed us to grow as developers and teammates.
@@ -586,3 +607,4 @@ Building EventHub has been an intense but incredibly rewarding experience for al
 This project gave us a chance to apply what we've learned in a real-world setting, and more importantly, to collaborate, adapt, and ship something we're genuinely proud of. It's been a great opportunity to explore cutting-edge tools like Next.js App Router, Prisma, PostgreSQL, and Google Cloud, all while learning how to build scalable, maintainable, and user-friendly software.
 
 We're really grateful for the chance to work on this as a team. Even as this project is wrapping up, the lessons and memories we've gained will stay with us long after. And who knows? This might just be the beginning for EventHub.
+
