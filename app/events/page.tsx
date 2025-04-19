@@ -56,7 +56,9 @@ export default async function EventsPage() {
                 </h2>
                 <Link
                   href={
-                    '/events/create'
+                    userRole === 'LECTURER' || userRole === 'STAFF'
+                      ? '/events/create'
+                      : '/not-authorized'
                   }
                 >
                   <Button className="px-6 py-2 text-sm font-semibold">
