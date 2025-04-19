@@ -9,7 +9,7 @@
 
 
 ## Video Demo
-Below is the Video demo for our project:
+Below is the Video demo for our project: https://youtu.be/PDvRscMN_tI
 
 
 ## Motivation
@@ -740,7 +740,10 @@ The authentication system includes:
 - User Profile and editing
 
 ### Ruoxi Yu
-
+- Event Creation Workflow
+- Event Review Workflow
+- QR Code Check-In System
+- Calendar Integration
 
 ### Yige Tao
 
