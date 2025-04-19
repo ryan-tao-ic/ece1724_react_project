@@ -14,15 +14,13 @@ Below is the Video demo for our project: https://youtu.be/PDvRscMN_tI
 
 ## Motivation
 
-The primary purpose of EventHub is to simplify and organize academic event management. The organization of academic events, including Master's and Phd defences, conferences, seminars, and guest lectures, is currently conducted using a cumbersome manual process. Most of the time, event organizers rely on generic forms or email registrations, which lack the functionalities of real-time attendance tracking and effective management tools. This leads to:
+Organizing academic events—like Master’s and PhD defences, seminars, guest lectures, and conferences—can be surprisingly tedious. Most institutions still rely on email signups or generic forms, which quickly become hard to manage as events scale. There’s often no unified way to track attendance, manage roles, or handle real-time changes, and that creates extra work for organizers and a disjointed experience for participants.
 
-- Enhanced administrative workloads
-- Inefficient management of participants' data
-- Disrupted connectivity due to multiple systems used by organizers and attendees
-- Ineffective organization of important event staff in dealing with the case load
-- Slow consideration of messages in real-time during events
+We built EventHub to solve this. It’s a web application designed specifically for academic event management, with tools that simplify everything from registration to real-time check-in. With features like automated ticket generation, QR code-based entry, and role-based access control, our platform streamlines the entire workflow—saving organizers time and making the experience smoother for attendees.
 
-Our platform addresses these pain points by providing a comprehensive solution that transforms fragmented manual processes into a seamless, automated workflow.
+What makes this project worth pursuing is the opportunity to bring all the scattered, manual processes into one cohesive system. It’s tailored for the needs of academic staff, lecturers, and admin teams, while also improving the experience for students, faculty, and guests. Instead of juggling spreadsheets, inboxes, and last-minute updates, organizers can focus on what matters: hosting meaningful, well-run events.
+
+While tools like Google Forms and email invites offer some basic support, they fall short when it comes to integrated event management. EventHub fills that gap—with features designed specifically for the academic environment, from real-time check-ins to archival tools for event records.
 
 ## Objectives
 
@@ -205,41 +203,37 @@ The dashboard provides a centralized view of your events and activities based on
 
 ### Event Management
 
-#### For Event Organizers
-1. **Creating an Event**
-   - Navigate to Dashboard → "Create Event"
-   - Fill in event details:
-     - Event Title
-     - Description
-     - Date and Time
-     - Location (Physical/Virtual)
-     - Capacity
-     - Registration Requirements
-   - Upload any relevant materials
-   - Submit for approval (if required)
+#### For Event Organizers 
+1. **Event Creation**
+   - `Lecturer` and `Staff` can create events.
+   - Events can be saved as **DRAFT**. This will only show in the Creators' dashboard.
 
-2. **Managing Events**
-   - View event dashboard for:
-     - Registration statistics
-     - Attendee list
-     - Check-in status
-     - Q&A sessions
-   - Upload additional materials
-   - Send notifications to attendees
-   - Monitor real-time attendance
+2. **Submission for Review**
+   - Creator submits DRAFT → Status becomes **PENDING_REVIEW** and will show in `Staff`'s dashboard.
 
-3. **Event Modifications**
-   - Edit event details
-   - Update capacity
-   - Change registration requirements
-   - Cancel event (with notification system)
+3. **Event Review (Staff Only)**
+   - Staff can **approve** → Status becomes **APPROVED**.
+   - Staff can **reject** → Event is sent back to **DRAFT** with comments.
+
+4. **Pre-Publish Edits**
+   - While in **DRAFT**, **PENDING_REVIEW**, or **APPROVED**, the Creators can:
+     - Edit the event.
+     - Delete the event (only if it’s not published or cancelled).
+
+5. **Publication**
+   - Only `Staff` can **publish** → Status becomes **PUBLISHED**.
+   - After publishing, event information is **read-only** and **cannot be deleted or edited**. The Creators can still upload materials.
+
+6. **Cancellation**
+   - After publishing, the event can only be **cancelled**.
+   - Only the **assigned Staff or Lecturer** can cancel the event. The status becomes **CANCELLED**, and registered users will be notified via email.
 
 #### For Attendees
 1. **Event Registration**
    - Browse available events
    - Click "Register" on the desired event
    - Fill in the registration form
-   - Receive a confirmation email with a QR Code ticket 
+   - Receive a confirmation email with a QR Code ticket and an ics link for event reminder.
    - Add to calendar (optional)
 
 2. **Pre-Event Preparation**
@@ -578,30 +572,17 @@ The authentication system includes:
 ## Lessons Learned and Concluding Remarks
 
 ### Technical Journey
-Our journey with EventHub has been a deep dive into modern web technologies. Working with Next.js App Router was particularly enlightening - we discovered the power of server components for performance optimization, mastered server actions for seamless form handling, and developed efficient data fetching strategies that significantly improved our application's responsiveness.
-
-The real-time features presented both challenges and opportunities. Implementing WebSocket-based communication required careful consideration of concurrent connections and data synchronization. Through trial and error, we developed robust strategies that now power our live event features, from real-time attendance tracking to instant Q&A sessions.
-
-Our database architecture evolved significantly throughout the project. Working with Prisma ORM and PostgreSQL, we designed and refined our database schemas to handle complex relationships efficiently. The experience taught us valuable lessons about data modeling and query optimization that will serve us well in future projects.
-
-Cloud integration was another area of significant learning. We successfully integrated multiple Google Cloud services, developing efficient resource management strategies and implementing secure file storage solutions. This experience gave us practical insights into cloud architecture and security best practices.
+Building EventHub has been a crash course in modern web development. Next.js App Router unlocked powerful server components and streamlined data fetching. Server actions made form handling much smoother, and we saw real performance gains from these choices. Real-time features pushed us to level up. WebSocket implementation took work—especially managing concurrent connections—but it now powers live attendance tracking and Q&A seamlessly. On the backend, Prisma and PostgreSQL taught us a lot about data modeling and optimization. Our schema evolved significantly as the project grew, and the lessons we learned will stick with us. We also got hands-on with Google Cloud, from secure file storage to resource management. It gave us a much clearer picture of how to build and maintain scalable cloud infrastructure.
 
 ### Team Experience
-Collaboration was at the heart of our success. We established effective Git workflows that kept our development process smooth, implemented regular code reviews that improved our code quality, and maintained clear communication channels that enhanced our productivity. These practices became the foundation of our team's workflow.
-
-Our development process was guided by agile methodology, which proved particularly effective for feature development. Continuous integration helped us maintain code stability, while regular testing prevented major issues from reaching production. This systematic approach allowed us to deliver features reliably while maintaining high code quality.
-
-Documentation played a crucial role in our project's success. We created comprehensive documentation that helped new team members get up to speed quickly, established clear guidelines that maintained code consistency, and kept our documentation updated to reflect the project's evolution. This attention to documentation proved invaluable for both development and maintenance.
+Teamwork was central to everything. We kept development smooth with Git workflows, regular code reviews, and open communication. These habits helped us ship features fast without sacrificing code quality. Documentation played a crucial role in our project's success. We created comprehensive documentation that helped new team members get up to speed quickly, established clear guidelines that maintained code consistency, and kept our documentation updated to reflect the project's evolution. This attention to documentation proved invaluable for both development and maintenance.
 
 ### Looking Ahead
-While we're proud of what we've accomplished, we see many opportunities for improvement. On the technical side, we're planning to implement more advanced caching strategies, expand our test coverage, and enhance our real-time features with additional functionality.
-
-User experience remains a priority, with plans to add more customization options, implement advanced analytics, and further improve mobile responsiveness. We're also focusing on infrastructure improvements, including more robust monitoring, automated scaling capabilities, and enhanced security measures.
+We’re proud of how far we’ve come, but there’s still plenty of room to grow. Our next step is to deploy EventHub. While we didn’t have enough time to complete deployment within the course timeline, it’s something we’re excited to explore further—it’ll be a valuable opportunity to learn real-world deployment workflows. We're also looking into better caching, broader test coverage, and enhanced real-time features. On the UX side, more customization, deeper analytics, and improved mobile responsiveness are on our roadmap. Infrastructure-wise, we're considering better monitoring, autoscaling, and security enhancements to keep EventHub ready for the future.
 
 ### Final Thoughts
 Building EventHub has been an intense but incredibly rewarding experience for all four of us. With only a short amount of time, we came together, learned fast, and built a fully functional platform from scratch using a modern, production-ready tech stack. It wasn't always easy—juggling real-time features, cloud integration, and a growing codebase—but every challenge pushed us to grow as developers and teammates.
 
 This project gave us a chance to apply what we've learned in a real-world setting, and more importantly, to collaborate, adapt, and ship something we're genuinely proud of. It's been a great opportunity to explore cutting-edge tools like Next.js App Router, Prisma, PostgreSQL, and Google Cloud, all while learning how to build scalable, maintainable, and user-friendly software.
 
-We're really grateful for the chance to work on this as a team. Even as this project is wrapping up, the lessons and memories we've gained will stay with us long after. And who knows? This might just be the beginning for EventHub. 
-
+We're really grateful for the chance to work on this as a team. Even as this project is wrapping up, the lessons and memories we've gained will stay with us long after. And who knows? This might just be the beginning for EventHub.

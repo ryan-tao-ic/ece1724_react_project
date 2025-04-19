@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface RoleManagementActionsProps {
   user: {
@@ -21,9 +22,14 @@ export function RoleManagementActions({
   onUnassign,
 }: RoleManagementActionsProps) {
   const handleSubmit = async (formData: FormData, action: (formData: FormData) => Promise<string>) => {
-    const result = await action(formData);
-    if (result) {
-      alert(result);
+    try {
+      const result = await action(formData);
+      if (result) {
+        toast.success(result);
+      }
+    } catch (error) {
+      console.error("Role action failed:", error);
+      toast.error("Failed to update role. Please try again.");
     }
   };
 
