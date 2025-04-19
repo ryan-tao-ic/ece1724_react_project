@@ -22,7 +22,7 @@ export default async function DashboardPage() {
   if (!user) return notFound();
   const role = user.role;
 
-  let createdEvents: { id: string; name: string; status?: string; eventStartTime: Date; location: string; category: { name: string } }[] = [];
+  let createdEvents: { id: string; name: string; status?: string; eventStartTime: Date; location: string; category: { name: string }; createdBy?: string }[] = [];
   if (role === 'LECTURER') {
     createdEvents = await getCreatedEvents(id);
   } else if (role === 'STAFF') {
@@ -43,7 +43,11 @@ export default async function DashboardPage() {
   const visibleCreatedEvents = role === "LECTURER"
     ? createdEvents
     : role === "STAFF"
-      ? createdEvents.filter(event => ["PENDING_REVIEW", "APPROVED", "PUBLISHED", "CANCELLED"].includes(event.status || ""))
+      ? createdEvents.filter(event =>
+        event.status === "DRAFT"
+          ? event.createdBy === id // Only show DRAFT events created by the logged-in user
+          : ["PENDING_REVIEW", "APPROVED", "PUBLISHED", "CANCELLED"].includes(event.status || "")
+      )
       : [];
 
   const { upcoming, past } = await getUserRegistrations(id);
@@ -89,11 +93,11 @@ export default async function DashboardPage() {
                       <div className="flex justify-between items-start">
                         <h3 className="text-xl font-semibold text-gray-900 line-clamp-1">{event.name}</h3>
                         <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${event.status === 'DRAFT' ? 'bg-gray-100 text-gray-800' :
-                            event.status === 'PENDING_REVIEW' ? 'bg-amber-100 text-amber-800' :
-                              event.status === 'APPROVED' ? 'bg-blue-100 text-blue-800' :
-                                event.status === 'PUBLISHED' ? 'bg-green-100 text-green-800' :
-                                  event.status === 'CANCELLED' ? 'bg-red-100 text-red-800' :
-                                    'bg-red-100 text-red-800'
+                          event.status === 'PENDING_REVIEW' ? 'bg-amber-100 text-amber-800' :
+                            event.status === 'APPROVED' ? 'bg-blue-100 text-blue-800' :
+                              event.status === 'PUBLISHED' ? 'bg-green-100 text-green-800' :
+                                event.status === 'CANCELLED' ? 'bg-red-100 text-red-800' :
+                                  'bg-red-100 text-red-800'
                           }`}>
                           {event.status}
                         </span>
@@ -120,12 +124,13 @@ export default async function DashboardPage() {
                           <Link href={`/events/${event.id}`}>View Details</Link>
                         </Button>
 
-                        {/* LECTURER can edit all but published */}
-                        {role === "LECTURER" && event.status !== "PUBLISHED" && (
-                          <Button variant="secondary" size="sm" asChild className="flex-1">
-                            <Link href={`/events/${event.id}/edit`}>Continue Editing</Link>
-                          </Button>
-                        )}
+                        {/* LECTURER can edit all but published & STAFF can edit and review his or her own events*/}
+                        {((role === "LECTURER" && event.status !== "PUBLISHED") ||
+                          (role === "STAFF" && event.createdBy === id && ["DRAFT", "APPROVED", "PENDING_REVIEW"].includes(event.status || ""))) && (
+                            <Button variant="secondary" size="sm" asChild className="flex-1">
+                              <Link href={`/events/${event.id}/edit`}>Continue Editing</Link>
+                            </Button>
+                          )}
 
                         {/* STAFF logic: */}
                         {role === "STAFF" && ["PENDING_REVIEW", "APPROVED"].includes(event.status || "") && (
@@ -180,9 +185,9 @@ function Section({ title, events, type }: { title: string; events: any[]; type: 
                 <div className="flex justify-between items-start">
                   <h3 className="text-xl font-semibold text-gray-900 line-clamp-1">{reg.event.name}</h3>
                   <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${reg.status === 'REGISTERED' ? 'bg-green-100 text-green-800' :
-                      reg.status === 'WAITLISTED' ? 'bg-yellow-100 text-yellow-800' :
-                        reg.status === 'ATTENDED' ? 'bg-blue-100 text-blue-800' :
-                          'bg-gray-100 text-gray-800'
+                    reg.status === 'WAITLISTED' ? 'bg-yellow-100 text-yellow-800' :
+                      reg.status === 'ATTENDED' ? 'bg-blue-100 text-blue-800' :
+                        'bg-gray-100 text-gray-800'
                     }`}>{reg.status}</span>
                 </div>
                 <div className="space-y-2">

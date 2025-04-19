@@ -4,17 +4,18 @@
 
 import { createEventAction, getCategories } from '@/app/actions';
 import { MainLayout } from "@/components/layout/main-layout";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from '@/components/ui/button';
 import { Container } from "@/components/ui/container";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { format, toZonedTime } from 'date-fns-tz';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 const eventSchema = z.object({
@@ -45,6 +46,12 @@ export default function CreateEventPage() {
   const userId = session?.user?.id;
   const router = useRouter();
 
+  // Calculate the minimum allowed date/time (now in Toronto)
+  const torontoTimeZone = 'America/Toronto';
+  const nowInToronto = toZonedTime(new Date(), torontoTimeZone);
+  // Format for datetime-local input: YYYY-MM-DDTHH:mm
+  const minDateTime = format(nowInToronto, "yyyy-MM-dd'T'HH:mm");
+
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
@@ -69,25 +76,25 @@ export default function CreateEventPage() {
     getCategories().then(setCategories);
   }, []);
 
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
   const onSubmit = async (data: EventFormValues, status: 'DRAFT' | 'PENDING_REVIEW') => {
-    setError("");
-    setSuccess("");
-
     if (!userId) {
-      setError("You must be logged in to create an event.");
+      const msg = "You must be logged in to create an event.";
+      toast.error(msg);
       return;
     }
     setLoading(true);
     try {
       const formattedQuestions = data.customizedQuestion?.map((q) => q.question) || [];
       await createEventAction({ ...data, customizedQuestion: formattedQuestions, status, createdBy: userId });
-      setSuccess("Event submitted successfully.");
+
+      const successMessage = status === 'DRAFT'
+        ? "Event saved as draft successfully."
+        : "Event submitted for review successfully.";
+      toast.success(successMessage);
       router.push('/dashboard');
     } catch (err) {
-      setError('Failed to create event.');
+      const errorMessage = 'Failed to create event.';
+      toast.error(errorMessage);
       console.error(err);
     } finally {
       setLoading(false);
@@ -99,19 +106,6 @@ export default function CreateEventPage() {
       <Container>
         <div className="max-w-2xl mx-auto py-12 space-y-10">
           <h1 className="text-4xl font-bold leading-tight tracking-tight">Create an Event</h1>
-
-          {error && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          {success && (
-            <Alert className="mb-4">
-              <AlertDescription>{success}</AlertDescription>
-            </Alert>
-          )}
-
           <form className="space-y-6" onSubmit={form.handleSubmit((data) => onSubmit(data, 'PENDING_REVIEW'))}>
 
             {/* Title */}
@@ -159,17 +153,11 @@ export default function CreateEventPage() {
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1 space-y-1.5">
                 <Label className="text-sm font-medium text-gray-700">Start Time</Label>
-                <Input type="datetime-local" {...form.register('eventStartTime')} />
-                {form.formState.errors.eventStartTime && (
-                  <p className="text-sm text-red-500">{form.formState.errors.eventStartTime.message}</p>
-                )}
+                <Input type="datetime-local" {...form.register('eventStartTime')} min={minDateTime} />
               </div>
               <div className="flex-1 space-y-1.5">
                 <Label className="text-sm font-medium text-gray-700">End Time</Label>
-                <Input type="datetime-local" {...form.register('eventEndTime')} />
-                {form.formState.errors.eventEndTime && (
-                  <p className="text-sm text-red-500">{form.formState.errors.eventEndTime.message}</p>
-                )}
+                <Input type="datetime-local" {...form.register('eventEndTime')} min={minDateTime} />
               </div>
             </div>
 
