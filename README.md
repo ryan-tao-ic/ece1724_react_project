@@ -203,41 +203,37 @@ The dashboard provides a centralized view of your events and activities based on
 
 ### Event Management
 
-#### For Event Organizers
-1. **Creating an Event**
-   - Navigate to Dashboard → "Create Event"
-   - Fill in event details:
-     - Event Title
-     - Description
-     - Date and Time
-     - Location (Physical/Virtual)
-     - Capacity
-     - Registration Requirements
-   - Upload any relevant materials
-   - Submit for approval (if required)
+#### For Event Organizers 
+1. **Event Creation**
+   - `Lecturer` and `Staff` can create events.
+   - Events can be saved as **DRAFT**. This will only show in the Creators' dashboard.
 
-2. **Managing Events**
-   - View event dashboard for:
-     - Registration statistics
-     - Attendee list
-     - Check-in status
-     - Q&A sessions
-   - Upload additional materials
-   - Send notifications to attendees
-   - Monitor real-time attendance
+2. **Submission for Review**
+   - Creator submits DRAFT → Status becomes **PENDING_REVIEW** and will show in `Staff`'s dashboard.
 
-3. **Event Modifications**
-   - Edit event details
-   - Update capacity
-   - Change registration requirements
-   - Cancel event (with notification system)
+3. **Event Review (Staff Only)**
+   - Staff can **approve** → Status becomes **APPROVED**.
+   - Staff can **reject** → Event is sent back to **DRAFT** with comments.
+
+4. **Pre-Publish Edits**
+   - While in **DRAFT**, **PENDING_REVIEW**, or **APPROVED**, the Creators can:
+     - Edit the event.
+     - Delete the event (only if it’s not published or cancelled).
+
+5. **Publication**
+   - Only `Staff` can **publish** → Status becomes **PUBLISHED**.
+   - After publishing, event information is **read-only** and **cannot be deleted or edited**. The Creators can still upload materials.
+
+6. **Cancellation**
+   - After publishing, the event can only be **cancelled**.
+   - Only the **assigned Staff or Lecturer** can cancel the event. The status becomes **CANCELLED**, and registered users will be notified via email.
 
 #### For Attendees
 1. **Event Registration**
    - Browse available events
    - Click "Register" on the desired event
    - Fill in the registration form
-   - Receive a confirmation email with a QR Code ticket 
+   - Receive a confirmation email with a QR Code ticket and an ics link for event reminder.
    - Add to calendar (optional)
 
 2. **Pre-Event Preparation**
