@@ -1,17 +1,61 @@
 # EventHub - Academic Event Management Platform
 
-EventHub is a comprehensive web application for managing academic events such as Master's and PhD defenses, conferences, seminars, and guest lectures. It streamlines the registration and check-in processes, making event management easier for organizers and providing a better experience for attendees.
+## Team Information
 
-## Features
+- **Ruoming Ren** - Student Number: [To be filled] - Email: luke.ren@mail.utoronto.ca
+- **Zhaoyi Cheng** - Student Number: [To be filled] - Email: zhaoyi.cheng@mail.utoronto.ca
+- **Ruoxi Yu** - Student Number: [To be filled] - ruoxi.yu@mail.utoronto.ca
+- **Yige Tao** - Student Number: [To be filled] - Email: yige.tao@mail.utoronto.ca
 
-- User authentication and role-based access control
-- Event creation, management, and browsing
-- Registration and QR code-based check-in
-- Real-time interaction through virtual lounges
-- Secure document storage
-- Waitlist management
+## Motivation
 
-## Tech Stack
+The main purpose of EventHub is to make academic event management easy and organized. The organizing of academic events envisaged as Master's and PhD defenses, conferences, seminars, and guest lectures, takes place using a cumbersome manual process. Most of the time, event organizers appeal to generic forms or email registrations, which do not have the functionalities of real-time attendance tracking, nor effective management tools. This leads to:
+
+- Enhanced administrative workloads
+- Inefficient management of participants' data
+- Disrupted connectivity due to multiple systems used by organizers and attendees
+- Ineffective organization of important event staff in dealing with case load
+- Slow consideration of messages in real-time during events
+
+Our platform addresses these pain points by providing a comprehensive solution that transforms fragmented manual processes into a seamless, automated workflow.
+
+## Objectives
+
+The primary objectives of EventHub are:
+
+1. **Streamlined Event Management**
+   - Create a unified platform for academic event organization
+   - Implement role-based access control for different user types
+   - Provide efficient event creation and management tools
+   - Enable staff to review and approve event requests
+   - Allow lecturers to submit activity requests and upload materials
+   - Implement comprehensive event cancellation workflow
+
+2. **Enhanced User Experience**
+   - Simplify the registration process for attendees
+   - Implement QR code-based check-in system
+   - Enable real-time interaction through virtual lounges
+   - Provide intuitive event browsing with filtering and search
+   - Support calendar integration for event scheduling
+   - Implement waitlist management with automatic notifications
+
+3. **Improved Administrative Efficiency**
+   - Automate attendance tracking
+   - Implement waitlist management
+   - Provide secure document storage for event materials
+   - Enable real-time Q&A sessions during events
+   - Track participant engagement and attendance
+   - Automate email notifications for various events
+
+4. **Technical Excellence**
+   - Build a scalable and maintainable application
+   - Ensure high performance and reliability
+   - Implement modern web development best practices
+   - Leverage WebSockets for real-time communication
+   - Integrate with external services (Google Calendar, Cloud Storage)
+   - Ensure type safety and robust data handling
+
+## Technical Stack
 
 - **Frontend**: React with Next.js 13+, styled using Tailwind CSS and shadcn/ui
 - **Backend**: Next.js Server Components, API Routes, and Server Actions
@@ -19,107 +63,347 @@ EventHub is a comprehensive web application for managing academic events such as
 - **Real-time Communication**: Socket.io
 - **Authentication**: Custom auth system
 - **Deployment**: Docker, Google Cloud Run, Google Cloud SQL
-- **File Storage**: Google Cloud Storage (planned)
+- **File Storage**: Google Cloud Storage
+- **Email Service**: Custom email templates and sending system
+- **Calendar Integration**: Google Calendar API
 
-## Prerequisites
+## Features
 
+1. **User Authentication and Authorization**
+   - Secure user registration with email verification
+   - Role-based access control (Regular Users, Lecturers, Staff)
+   - Password reset functionality
+   - Staff invitation system for privileged access
+
+2. **Event Management System**
+   - Event creation and approval workflow
+   - Detailed event information management
+   - Registration settings and capacity control
+   - Event cancellation workflow
+   - Material upload and management
+   - Calendar integration
+
+3. **Registration and Check-in**
+   - Customizable registration forms
+   - Waitlist management
+   - QR code-based check-in system
+   - Automatic email confirmations
+   - Calendar event integration
+
+4. **Virtual Lounge and Real-time Features**
+   - WebSocket-based real-time communication
+   - Live Q&A sessions
+   - Real-time attendance monitoring
+   - Participant tracking and logging
+   - Automatic lounge closure
+
+5. **User Dashboard**
+   - Centralized event management
+   - Upcoming and past event tracking
+   - Registration management
+   - Material access
+   - Event lounge access
+   - Role-specific privileges
+
+6. **File Management**
+   - Secure document storage
+   - Material upload and download
+   - PDF viewing capabilities
+   - File type validation
+   - Access control for materials
+
+## User Guide
+
+### For Event Organizers
+
+1. **Creating an Event**
+   - Log in to your account
+   - Navigate to the Dashboard
+   - Click "Create Event"
+   - Fill in event details (title, description, date, time, capacity)
+   - Set registration requirements
+   - Submit for approval (if required)
+
+2. **Managing Events**
+   - View event registrations
+   - Monitor attendance
+   - Upload event materials
+   - Send notifications to attendees
+   - Manage Q&A sessions
+
+3. **Accessing Event Lounge**
+   - Open the event page
+   - Click "Enter Lounge"
+   - Monitor real-time attendance
+   - Manage Q&A sessions
+   - Upload materials
+
+### For Attendees
+
+1. **Registering for Events**
+   - Browse available events
+   - Click "Register" on desired event
+   - Fill in registration form
+   - Receive confirmation email
+   - Add to calendar
+
+2. **Checking In**
+   - Open confirmation email
+   - Present QR code at event
+   - Get scanned by staff
+   - Access event lounge
+
+3. **Participating in Events**
+   - Join event lounge
+   - Participate in Q&A
+   - Access event materials
+   - View real-time updates
+
+## Development Guide
+
+### 1. Project Structure
+
+```
+event-hub/
+├── app/                      # Next.js app router
+│   ├── (auth)/              # Authentication routes
+│   │   ├── login/           # Login functionality
+│   │   └── register/        # Registration functionality
+│   ├── api/                 # API routes
+│   ├── checkin/             # QR code check-in functionality
+│   ├── contact/             # Contact page
+│   ├── dashboard/           # User dashboard
+│   │   └── page.tsx         # Dashboard main page
+│   ├── events/              # Event management
+│   │   ├── create/          # Event creation
+│   │   ├── [id]/           # Dynamic event routes
+│   │   ├── page.tsx        # Events listing
+│   │   └── events-client.tsx # Client-side event components
+│   ├── lounge/              # Virtual lounge for events
+│   ├── not-authorized/      # Access denied page
+│   ├── profile/             # User profile management
+│   ├── resetPassword/       # Password reset functionality
+│   ├── roleManagement/      # Role management pages
+│   ├── verifyEmail/         # Email verification
+│   ├── actions.ts          # Server actions (496 lines)
+│   ├── globals.css         # Global styles
+│   ├── layout.tsx          # Root layout
+│   ├── page.tsx            # Home page
+│   └── providers.tsx       # React context providers
+├── components/              # React components
+│   ├── calendar/           # Calendar-related components
+│   │   └── CalendarSubscription.tsx # Calendar subscription component
+│   ├── layout/             # Layout components
+│   │   ├── main-layout.tsx # Main layout wrapper
+│   │   ├── navbar.tsx      # Navigation bar
+│   │   └── footer.tsx      # Footer component
+│   ├── ui/                 # UI components from shadcn/ui
+│   │   ├── accordion.tsx   # Accordion component
+│   │   ├── alert.tsx       # Alert component
+│   │   ├── alert-dialog.tsx # Alert dialog component
+│   │   ├── avatar.tsx      # Avatar component
+│   │   ├── button.tsx      # Button component
+│   │   ├── card.tsx        # Card component
+│   │   ├── dropdown-menu.tsx # Dropdown menu
+│   │   ├── form.tsx        # Form components
+│   │   ├── input.tsx       # Input component
+│   │   ├── label.tsx       # Label component
+│   │   ├── pdf-viewer.tsx  # PDF viewer component
+│   │   ├── popover.tsx     # Popover component
+│   │   ├── radio-group.tsx # Radio group component
+│   │   ├── rich-text-editor.tsx # Rich text editor
+│   │   ├── scroll-area.tsx # Scroll area component
+│   │   ├── sonner.tsx      # Toast notifications
+│   │   └── textarea.tsx    # Textarea component
+│   ├── cancelled-redirect.tsx # Cancellation redirect
+│   ├── event-materials-upload.tsx # Event materials upload
+│   └── qr-code.tsx         # QR code generation
+├── hooks/                   # Custom React hooks
+│   └── useFileUpload.ts    # File upload hook
+├── lib/                     # Utility functions and shared code
+│   ├── auth/               # Authentication utilities
+│   │   └── auth.ts         # Auth implementation
+│   ├── db/                 # Database utilities
+│   ├── email/              # Email functionality
+│   │   ├── sendConfirmationEmail.ts # Event confirmation
+│   │   ├── sendCancelNoticeEmails.ts # Cancellation notices
+│   │   ├── sendEmail.ts    # Email sending utility
+│   │   ├── sendUpgradeEmail.ts # Role upgrade notifications
+│   │   ├── verificationEmailTemplate.ts # Email verification
+│   │   └── resetPasswordEmailTemplate.ts # Password reset
+│   ├── events/             # Event-related utilities
+│   ├── file-storage/       # File storage utilities
+│   ├── i18n/               # Internationalization
+│   │   └── index.ts        # i18n configuration
+│   ├── profile/            # Profile management utilities
+│   ├── users/              # User management utilities
+│   ├── utils/              # General utilities
+│   │   └── verificationToken.ts # Token management
+│   ├── init.ts             # Application initialization
+│   ├── socket.ts           # Socket.io configuration
+│   ├── theme.ts            # Theme configuration
+│   ├── types.ts            # Type definitions
+│   └── utils.ts            # General utilities
+├── locales/                # Internationalization files
+│   └── en/                 # English translations
+├── pages/                  # Legacy pages directory
+│   └── api/                # Legacy API routes
+├── scripts/                # Utility scripts
+│   └── seed-events.js      # Database seeding script
+├── types/                  # TypeScript type definitions
+│   ├── global.d.ts         # Global type declarations
+│   ├── json.d.ts           # JSON type declarations
+│   └── next-auth.d.ts      # NextAuth type declarations
+├── prisma/                 # Prisma ORM configuration
+│   └── schema.prisma       # Database schema
+├── public/                 # Static assets
+├── Dockerfile              # Docker configuration
+├── docker-compose.yml      # Docker Compose configuration
+└── cloudbuild.yaml         # Google Cloud Build configuration
+```
+
+### 2. Environment Setup and Configuration
+
+#### Prerequisites
 - Node.js 18.0.0 or later
 - PostgreSQL 13 or later
 - npm or yarn package manager
 - Docker and Docker Compose (optional, for containerized deployment)
-- Google Cloud account (optional, for cloud deployment)
+- Google Cloud account (for cloud storage and deployment)
 
-## Getting Started
+#### Installation Steps
 
 1. Clone the repository:
-
 ```bash
 git clone https://github.com/ryan-tao-ic/ece1724_react_project.git
 cd event-hub
 ```
 
 2. Install dependencies:
-
 ```bash
 npm install
 ```
 
 3. Set up environment variables:
-
-add this to your .env.local and replace the user name and password
-
+Create a `.env.local` file in the root directory with the following variables:
 ```bash
+# Database Configuration
 DATABASE_URL="postgresql://yourdatabase:yourpassword@localhost:5432/event_hub?schema=public"
+
+# Authentication
+NEXTAUTH_SECRET="your-secret-key"
+NEXTAUTH_URL="http://localhost:3000"
+
+# Email Configuration
+EMAIL_SERVER_HOST="smtp.example.com"
+EMAIL_SERVER_PORT=587
+EMAIL_SERVER_USER="your-email@example.com"
+EMAIL_SERVER_PASSWORD="your-email-password"
+EMAIL_FROM="noreply@example.com"
+
+# Google Cloud Storage
+GOOGLE_CLOUD_PROJECT_ID="your-project-id"
+GOOGLE_CLOUD_BUCKET_NAME="your-bucket-name"
+GOOGLE_CLOUD_CLIENT_EMAIL="your-service-account-email"
+GOOGLE_CLOUD_PRIVATE_KEY="your-private-key"
+
+# Google Calendar API
+GOOGLE_CALENDAR_CLIENT_ID="your-client-id"
+GOOGLE_CALENDAR_CLIENT_SECRET="your-client-secret"
 ```
 
-4. Initialize the database:
+### 3. Database Initialization
 
-Make sure your PostgreSQL database is running, and then:
-
+1. Create the database:
 ```bash
 createdb event_hub
+```
+
+2. Run Prisma migrations:
+```bash
 npx prisma migrate dev
 ```
 
-5. Run the development server:
+3. Generate Prisma client:
+```bash
+npx prisma generate
+```
 
+4. Seed the database with initial data:
+```bash
+npm run prisma:seed
+```
+
+### 4. Cloud Storage Configuration
+
+1. Set up Google Cloud Storage:
+   - Create a new project in Google Cloud Console
+   - Enable Cloud Storage API
+   - Create a new bucket
+   - Create a service account with Storage Admin role
+   - Download the service account key file
+
+2. Configure the application:
+   - Place the service account key file in a secure location
+   - Update the environment variables with your Google Cloud credentials
+   - Test file upload functionality
+
+### 5. Local Development and Testing
+
+1. Start the development server:
 ```bash
 npm run dev
 ```
 
-6. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+2. Access the application:
+   - Open [http://localhost:3000](http://localhost:3000) in your browser
+   - The application should be running in development mode
 
-## Project Structure
+3. Run tests:
+```bash
+# Run unit tests
+npm test
 
-```
-event-hub/
-├── app/                      # Next.js app router
-│   ├── (auth)/               # Authentication routes (login, register)
-│   ├── dashboard/            # User dashboard pages
-│   ├── events/               # Event pages
-│   ├── globals.css           # Global styles
-│   ├── layout.tsx            # Root layout
-│   ├── page.tsx              # Home page
-│   └── providers.tsx         # React context providers
-├── components/               # React components
-│   ├── layout/               # Layout components
-│   └── ui/                   # UI components from shadcn/ui
-│       └── index.ts          # Barrel file for component exports
-├── lib/                      # Utility functions and shared code
-│   ├── auth/                 # Authentication utilities (simplified placeholders)
-│   ├── db/                   # Database utilities
-│   ├── i18n/                 # Internationalization utilities
-│   └── theme.ts              # Theme tokens and styling utilities
-├── locales/                  # Internationalization files
-│   └── en/                   # English translations
-├── prisma/                   # Prisma ORM schema and migrations
-│   └── schema.prisma         # Database schema
-├── public/                   # Static assets
-├── Dockerfile                # Docker configuration
-├── docker-compose.yml        # Docker Compose configuration
-└── cloudbuild.yaml           # Google Cloud Build configuration
+# Run end-to-end tests
+npm run test:e2e
+
+# Run linting
+npm run lint
+
+# Format code
+npm run format
 ```
 
-## Development Guidelines
+4. Development Workflow:
+   - Use feature branches for development
+   - Follow the project's code style guidelines
+   - Write tests for new features
+   - Update documentation as needed
+   - Submit pull requests for review
 
-### Code Style
+5. Debugging:
+   - Use browser developer tools for frontend debugging
+   - Check server logs in the terminal
+   - Use Prisma Studio for database inspection:
+     ```bash
+     npx prisma studio
+     ```
 
+### 6. Implementation Best Practices
+
+#### Code Style
 This project uses ESLint and Prettier for code formatting. You can run the linter with:
-
 ```bash
 npm run lint
 ```
 
 For formatting, use:
-
 ```bash
 npm run format
 ```
 
-### Database Schema Changes
-
+#### Database Schema Changes
 After modifying the Prisma schema, run the following commands to update the database:
-
 ```bash
 # Generate Prisma client (optional)
 npm run prisma:generate
@@ -127,12 +411,11 @@ npm run prisma:generate
 # Apply schema changes to the database
 npm run prisma:migrate
 
-# add seed to the database
+# Add seed to the database
 npm run prisma:seed
 ```
 
-### Component Development
-
+#### Component Development
 - Use shadcn/ui components when possible for consistency
 - Import components from the barrel file: `import { Button, Card } from '@/components/ui'`
 - Use theme tokens from `@/lib/theme` for consistent styling
@@ -140,20 +423,17 @@ npm run prisma:seed
 - Create reusable components in the `components` directory
 - Use TypeScript for type safety
 
-## Internationalization (i18n)
+### 7. Internationalization (i18n)
 
 The project uses a simple i18n solution with JSON-based locale files:
 
-### Structure
-
+#### Structure
 - Locale files are stored in the `locales/{language}` directory
 - The main English locale file is at `locales/en/common.json`
 - Text strings are organized in a nested structure by component/page
 
-### Usage
-
+#### Usage
 To use translations in your components:
-
 ```tsx
 import t from '@/lib/i18n';
 
@@ -164,39 +444,30 @@ import t from '@/lib/i18n';
 <p>{t('footer.copyright', { year: 2023 })}</p>
 ```
 
-### Adding New Translations
-
+#### Adding New Translations
 1. Add new strings to the `locales/en/common.json` file in the appropriate section
 2. Use nested keys that reflect the component hierarchy
 3. Use the `t()` function in your components to reference these keys
 
-For supporting additional languages in the future, you would add new locale directories (e.g., `locales/fr`, `locales/es`) with the same structure.
+### 8. UI Component Organization
 
-## UI Component Organization
-
-### Shadcn/UI Components
-
+#### Shadcn/UI Components
 The project uses shadcn/ui as its component library, which provides a set of accessible, customizable components. These components are imported directly into the project, allowing for full customization.
 
-### Barrel Exports
-
+#### Barrel Exports
 To simplify imports, UI components are re-exported from a central barrel file:
-
 ```tsx
 // Import multiple components in a single import
 import { Button, Card, Input, Form } from "@/components/ui";
 ```
 
-### Theming
-
+#### Theming
 The application uses a consistent theming approach:
-
 1. **Tailwind CSS** for styling with utility classes
 2. **next-themes** for light/dark mode support
 3. **Theme tokens** in `lib/theme.ts` for consistent spacing, typography, and colors
 
 Example usage of theme tokens:
-
 ```tsx
 import { text, spacing, radius } from "@/lib/theme";
 
@@ -206,16 +477,12 @@ import { text, spacing, radius } from "@/lib/theme";
 </div>;
 ```
 
-This approach ensures visual consistency throughout the application.
-
-## Data Fetching Architecture
+### 9. Data Fetching Architecture
 
 The project follows Next.js 13+ App Router best practices for data management:
 
-### Server Components (Recommended Approach)
-
+#### Server Components (Recommended Approach)
 For initial page loads and static/dynamic data that doesn't require user interaction:
-
 ```tsx
 // In a Server Component (app/events/page.tsx)
 import { getEvents } from "@/lib/db/events";
@@ -228,10 +495,8 @@ export default async function EventsPage() {
 }
 ```
 
-### Server Actions
-
+#### Server Actions
 For data mutations and form submissions:
-
 ```tsx
 // Import the server action
 import { createEvent } from "@/app/actions";
@@ -244,10 +509,8 @@ import { createEvent } from "@/app/actions";
 </form>;
 ```
 
-### Client Components
-
+#### Client Components
 For client-side interactive features:
-
 ```tsx
 "use client";
 
@@ -284,20 +547,18 @@ export function EventForm() {
 }
 ```
 
-This approach leverages the performance benefits of Server Components while providing a smooth user experience.
+### 10. Authentication System
 
-## Authentication (Simplified Placeholder)
-
-This starter project includes a simplified placeholder authentication system:
+The project implements a robust authentication system:
 
 ```typescript
-// Check if user is authenticated (always returns false in this starter)
+// Check if user is authenticated
 const isLoggedIn = isAuthenticated();
 
-// Attempt to login (always fails in this starter)
+// Attempt to login
 const result = await login(email, password);
 
-// Placeholder for user registration
+// User registration
 await register({
   email,
   password,
@@ -306,151 +567,82 @@ await register({
 });
 ```
 
-In a real implementation, this would be replaced with a more robust authentication system like NextAuth.js or a custom JWT solution.
+The authentication system includes:
+- Email verification
+- Password reset functionality
+- Role-based access control
+- Session management
+- Secure token handling
 
-## Deployment
+## Individual Contributions
 
-### Local Development Build
+### Ruoming Ren
 
-To build the application for production locally, run:
 
-```bash
-npm run build
-# or
-yarn build
-```
+### Zhaoyi Cheng
 
-You can then start the production server with:
 
-```bash
-npm start
-# or
-yarn start
-```
+### Ruoxi Yu
 
-## Docker Deployment
 
-The application can be run using Docker and Docker Compose.
+### Yige Tao
 
-### Prerequisites
 
-- Docker and Docker Compose installed on your system
-- No other services running on ports 3000 (app) and 5432 (PostgreSQL)
+## Lessons Learned and Concluding Remarks
 
-### Running with Docker Compose
+### Technical Insights
+1. **Next.js App Router**
+   - Learned the benefits of server components for performance optimization
+   - Gained experience with server actions for form handling
+   - Implemented efficient data fetching strategies
 
-1. Start the application and database:
+2. **Real-time Features**
+   - Successfully implemented WebSocket-based communication
+   - Learned to handle concurrent connections efficiently
+   - Developed strategies for real-time data synchronization
 
-```bash
-docker-compose up -d
-```
+3. **Database Management**
+   - Gained experience with Prisma ORM and PostgreSQL
+   - Implemented efficient database schemas
+   - Learned to handle complex relationships and queries
 
-This will:
+4. **Cloud Integration**
+   - Successfully integrated multiple Google Cloud services
+   - Learned to manage cloud resources efficiently
+   - Implemented secure file storage solutions
 
-- Build the Next.js application
-- Pull and run PostgreSQL
-- Set up the database with the correct schema
-- Start the application on port 3000
+### Project Management Lessons
+1. **Team Collaboration**
+   - Effective use of Git for version control
+   - Regular code reviews improved code quality
+   - Clear communication channels enhanced productivity
 
-2. Access the application at [http://localhost:3000](http://localhost:3000)
+2. **Development Process**
+   - Agile methodology proved effective for feature development
+   - Continuous integration improved code stability
+   - Regular testing prevented major issues
 
-### Stopping the Application
+3. **Documentation**
+   - Comprehensive documentation aided onboarding
+   - Clear guidelines improved code consistency
+   - Regular updates maintained documentation relevance
 
-To stop the application:
+### Future Improvements
+1. **Technical Enhancements**
+   - Implement more advanced caching strategies
+   - Add more comprehensive testing coverage
+   - Enhance real-time features with additional functionality
 
-```bash
-docker-compose down
-```
+2. **User Experience**
+   - Add more customization options
+   - Implement advanced analytics
+   - Enhance mobile responsiveness
 
-To stop the application and remove all data (including the database volume):
+3. **Infrastructure**
+   - Implement more robust monitoring
+   - Add automated scaling capabilities
+   - Enhance security measures
 
-```bash
-docker-compose down -v
-```
+### Final Thoughts
+The EventHub project has been a valuable learning experience, combining modern web technologies with practical event management solutions. The team successfully implemented a comprehensive platform that addresses the challenges of academic event management. The project demonstrates the effectiveness of using Next.js, Prisma, and modern web technologies to create scalable, maintainable applications. The lessons learned during development will continue to inform future projects and improvements to the platform.
 
-### Development with Docker
-
-For development, you may want to use the normal development setup instead of Docker. However, you can use Docker just for the PostgreSQL database:
-
-```bash
-docker-compose up -d db
-```
-
-Then update your `.env.local` file to point to the Docker PostgreSQL instance:
-
-```
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/eventhub?schema=public"
-```
-
-## Google Cloud Deployment
-
-The application is set up for deployment on Google Cloud Run with Cloud SQL for PostgreSQL.
-
-### Prerequisites
-
-- Google Cloud account with a project created
-- Google Cloud SDK installed locally
-- Cloud Run and Cloud SQL APIs enabled
-
-### Setting Up Cloud SQL
-
-1. Create a Cloud SQL instance:
-
-   - Navigate to Cloud SQL in the Google Cloud Console
-   - Create a PostgreSQL instance named "eventhub-dev"
-   - Configure basic settings (region, machine type)
-   - Create a database named "eventhub"
-
-2. Set up credentials:
-   - Create a user (e.g., "postgres") with a password
-
-### Deploying with Cloud Build
-
-The project includes a `cloudbuild.yaml` file for automating deployment:
-
-1. Push your changes to GitHub:
-
-   ```bash
-   git add .
-   git commit -m "Your commit message"
-   git push
-   ```
-
-2. Set up a Cloud Build trigger pointing to your GitHub repository:
-
-   - Navigate to Cloud Build in the Google Cloud Console
-   - Connect to your GitHub repository
-   - Create a trigger that runs on push to your main branch
-
-3. The build will:
-   - Build a Docker container from your code
-   - Deploy it to Cloud Run
-   - Connect it to your Cloud SQL instance
-   - Apply database migrations
-
-### Configuring Access Control
-
-By default, the Cloud Run service can be configured to:
-
-1. Allow unauthenticated access (public):
-
-   - In the Cloud Run console, go to your service
-   - Under "Security", select "Allow unauthenticated invocations"
-
-2. Require authentication:
-   - In the Cloud Run console, go to your service
-   - Under "Security", select "Require authentication"
-   - Add users by their email address with the "Cloud Run Invoker" role
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- [Next.js](https://nextjs.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [shadcn/ui](https://ui.shadcn.com/)
-- [Prisma](https://www.prisma.io/)
-- [Socket.io](https://socket.io/)
-- [Google Cloud Platform](https://cloud.google.com/)
