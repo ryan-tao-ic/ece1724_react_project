@@ -9,10 +9,9 @@
 - **Ruoxi Yu** - Student Number: 1010110201 - Email: ruoxi.yu@mail.utoronto.ca
 - **Yige Tao** - Student Number: 1000741094 - Email: yige.tao@mail.utoronto.ca
 
-
 ## Video Demo
-Below is the Video demo for our project: https://youtu.be/PDvRscMN_tI
 
+Below is the Video demo for our project: https://youtu.be/PDvRscMN_tI
 
 ## Motivation
 
@@ -29,6 +28,7 @@ While tools like Google Forms and email invites offer some basic support, they f
 The primary objectives of EventHub are:
 
 1. **Streamlined Event Management**
+
    - Create a unified platform for academic event organization
    - Implement role-based access control for different user types
    - Provide efficient event creation and management tools
@@ -37,6 +37,7 @@ The primary objectives of EventHub are:
    - Implement a comprehensive event cancellation workflow
 
 2. **Enhanced User Experience**
+
    - Simplify the registration process for attendees
    - Implement a QR code-based check-in system
    - Enable real-time interaction through virtual lounges
@@ -45,7 +46,8 @@ The primary objectives of EventHub are:
    - Implement waitlist management with automatic notifications
 
 3. **Improved Administrative Efficiency**
-   - Automate attendance tracking
+
+   - Automate attendance tracking via real-time check-ins
    - Implement waitlist management
    - Provide secure document storage for event materials
    - Enable real-time Q&A sessions during events
@@ -108,7 +110,7 @@ EventHub offers a comprehensive set of features designed to streamline academic 
    - WebSocket-based real-time communication
    - Live Q&A sessions
    - Real-time attendance visibility based on user check-ins
-   - Participant tracking and logging
+   - Participant tracking based on check-in logs
    - Automatic lounge closure
 
 ![lounge](public/docs/lounge.png)
@@ -137,7 +139,9 @@ EventHub offers a comprehensive set of features designed to streamline academic 
 ### Authentication and Account Management
 
 #### Registration Process
+
 1. **Initial Sign Up**
+
    - Click the "Sign Up" button in the top right corner
    - Fill in your details:
      - Email address
@@ -146,11 +150,13 @@ EventHub offers a comprehensive set of features designed to streamline academic 
    - Click "Create Account", and the system will send you an email verification.
 
 2. **Email Verification**
+
    - Check your email for a verification link
    - Click the verification link to activate your account
    - You'll be redirected to the login page
 
 3. **Login**
+
    - Enter your email and password
    - Click "Sign In"
    - Upon successful login, you'll be redirected to your dashboard
@@ -167,12 +173,14 @@ EventHub offers a comprehensive set of features designed to streamline academic 
 The dashboard provides a centralized view of your events and activities based on your role:
 
 1. **For Regular Users**
+
    - View upcoming events you've registered for
    - Access past event history
    - View event details and materials
    - Manage your registrations
 
 2. **For Lecturers**
+
    - Create and manage your events
    - Track event status (Draft, Pending Review, Approved, Published)
    - Edit unpublished events
@@ -192,11 +200,13 @@ The dashboard provides a centralized view of your events and activities based on
 ![profile](public/docs/profile.png)
 
 1. **Accessing Your Profile**
+
    - Click your name in the top right corner
    - Select "Profile" from the dropdown menu
    - View and edit your personal information
 
 2. **Profile Information**
+
    - Basic Information:
      - First Name
      - Last Name
@@ -219,24 +229,30 @@ The dashboard provides a centralized view of your events and activities based on
 
 ### Event Management
 
-#### For Event Organizers 
+#### For Event Organizers
+
 1. **Event Creation**
+
    - `Lecturer` and `Staff` can create events.
    - Events can be saved as **DRAFT**. This will only show in the Creators' dashboard.
 
 2. **Submission for Review**
+
    - Creator submits DRAFT → Status becomes **PENDING_REVIEW** and will show in `Staff`'s dashboard.
 
 3. **Event Review (Staff Only)**
+
    - Staff can **approve** → Status becomes **APPROVED**.
    - Staff can **reject** → Event is sent back to **DRAFT** with comments.
 
 4. **Pre-Publish Edits**
+
    - While in **DRAFT**, **PENDING_REVIEW**, or **APPROVED**, the Creators can:
      - Edit the event.
      - Delete the event (only if it's not published or cancelled).
 
 5. **Publication**
+
    - Only `Staff` can **publish** → Status becomes **PUBLISHED**.
    - After publishing, event information is **read-only** and **cannot be deleted or edited**. The Creators can still upload materials.
 
@@ -245,7 +261,9 @@ The dashboard provides a centralized view of your events and activities based on
    - Only the **assigned Staff or Lecturer** can cancel the event. The status becomes **CANCELLED**, and registered users will be notified via email.
 
 #### For Attendees
+
 1. **Event Registration**
+
    - Browse available events
    - Click "Register" on the desired event
    - Fill in the registration form
@@ -261,10 +279,12 @@ The dashboard provides a centralized view of your events and activities based on
 ### Virtual Lounge System
 
 1. **Accessing the Lounge**
+
    - Staff and lecturers could enter 1 hour before the start time via event management
    - Attendees can enter after QR code check-in
 
 2. **Lounge Features**
+
    - Real-time list of checked-in participants
    - Role-based visibility
    - Q&A functionality
@@ -279,6 +299,7 @@ The dashboard provides a centralized view of your events and activities based on
 ### File Management
 
 1. **Uploading Materials**
+
    - Navigate to event management
    - Click "Upload Materials"
    - Select files (PDF, DOC, PPT supported)
@@ -294,6 +315,7 @@ The dashboard provides a centralized view of your events and activities based on
 ### Calendar Integration
 
 1. **Syncing with Calendar**
+
    - Click "Add to Calendar" on the event page
    - Confirm event details
    - Save to calendar
@@ -306,11 +328,13 @@ The dashboard provides a centralized view of your events and activities based on
 ### Role-Specific Features
 
 #### For Staff Members
+
 - Event approval workflow
 - User role management
 - Check-in system access
 
 #### For Lecturers
+
 - Material upload and management
 - Q&A moderation
 - Automate attendance tracking by recording check-ins
@@ -412,8 +436,8 @@ event-hub/
 │   └── utils.ts            # General utilities
 ├── locales/                # Internationalization files
 │   └── en/                 # English translations
-├── pages/                  
-│   └── api/                
+├── pages/
+│   └── api/
 │       └── socket.ts       # Socket.io API endpoint
 ├── prisma/                 # Prisma ORM configuration
 │   └── schema.prisma       # Database schema
@@ -443,6 +467,7 @@ event-hub/
 ### 2. Environment Setup and Configuration
 
 #### Prerequisites
+
 - Node.js 18.0.0 or later
 - PostgreSQL 13 or later
 - npm or yarn package manager
@@ -451,17 +476,20 @@ event-hub/
 #### Installation Steps
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/ryan-tao-ic/ece1724_react_project.git
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Set up environment variables:
-Create a `.env.local` file in the root directory with the following variables:
+   Create a `.env.local` file in the root directory with the following variables:
+
 ```bash
 # Database Configuration
 DATABASE_URL="postgresql://yourdatabase:yourpassword@localhost:5432/event_hub?schema=public"
@@ -470,16 +498,19 @@ DATABASE_URL="postgresql://yourdatabase:yourpassword@localhost:5432/event_hub?sc
 ### 3. Database Initialization
 
 1. Create the database:
+
 ```bash
 createdb event_hub
 ```
 
 2. Run Prisma migrations:
+
 ```bash
 npx prisma migrate dev
 ```
 
 3. Seed the database with initial data:
+
 ```bash
 npm run prisma:seed
 ```
@@ -487,6 +518,7 @@ npm run prisma:seed
 ### 4. Cloud Storage Configuration
 
 1. Set up Google Cloud Storage:
+
    - Create a new project in Google Cloud Console
    - Enable Cloud Storage API
    - Create a new bucket
@@ -501,15 +533,18 @@ npm run prisma:seed
 ### 5. Local Development and Testing
 
 1. Start the development server:
+
 ```bash
 npm run dev
 ```
 
 2. Access the application:
+
    - Open [http://localhost:3000](http://localhost:3000) in your browser
    - The application should be running in development mode
 
 3. Development Workflow:
+
    - Use feature branches for development
    - Follow the project's code style guidelines
    - Write tests for new features
@@ -527,18 +562,23 @@ npm run dev
 ### 6. Implementation Best Practices
 
 #### Code Style
+
 This project uses ESLint and Prettier for code formatting. You can run the linter with:
+
 ```bash
 npm run lint
 ```
 
 For formatting, use:
+
 ```bash
 npm run format
 ```
 
 #### Database Schema Changes
+
 After modifying the Prisma schema, run the following commands to update the database:
+
 ```bash
 
 # Apply schema changes to the database
@@ -549,6 +589,7 @@ npm run prisma:seed
 ```
 
 #### Component Development
+
 - Use shadcn/ui components when possible for consistency
 - Import components from the barrel file: `import { Button, Card } from '@/components/ui'`
 - Use theme tokens from `@/lib/theme` for consistent styling
@@ -577,6 +618,7 @@ await register({
 ```
 
 The authentication system includes:
+
 - Email verification
 - Password reset functionality
 - Role-based access control
@@ -586,24 +628,27 @@ The authentication system includes:
 ## Individual Contributions
 
 ### Ruoming Ren
+
 - Backend of the Authentication System
 - Link Between QR Code Check-in and Virtual Lounge Room
 - Virtual Lounge Room
 
-
 ### Zhaoyi Cheng
+
 - Frontend of the Authentication System
 - Email Verification
 - User Role management
 - User Profile and editing
 
 ### Ruoxi Yu
+
 - Event Creation Workflow
 - Event Review Workflow
 - QR Code Check-In System
 - Calendar Integration
 
 ### Yige Tao
+
 - Page base layout setup
 - File management in cloud and preview
 - LLM Profile Enhancement
@@ -611,15 +656,19 @@ The authentication system includes:
 ## Lessons Learned and Concluding Remarks
 
 ### Technical Journey
-Building EventHub has been a crash course in modern web development. Next.js App Router unlocked powerful server components and streamlined data fetching. Server actions made form handling much smoother, and we saw real performance gains from these choices. Real-time features pushed us to level up. WebSocket implementation took work—especially managing concurrent connections—but it now powers live attendance tracking and Q&A seamlessly. On the backend, Prisma and PostgreSQL taught us a lot about data modeling and optimization. Our schema evolved significantly as the project grew, and the lessons we learned will stick with us. We also got hands-on with Google Cloud, from secure file storage to resource management. It gave us a much clearer picture of how to build and maintain scalable cloud infrastructure.
+
+Building EventHub has been a crash course in modern web development. Next.js App Router unlocked powerful server components and streamlined data fetching. Server actions made form handling much smoother, and we saw real performance gains from these choices. Real-time features pushed us to level up. WebSocket implementation took work—especially managing concurrent connections—but it now powers live check-in-based attendance tracking and Q&A seamlessly. On the backend, Prisma and PostgreSQL taught us a lot about data modeling and optimization. Our schema evolved significantly as the project grew, and the lessons we learned will stick with us. We also got hands-on with Google Cloud, from secure file storage to resource management. It gave us a much clearer picture of how to build and maintain scalable cloud infrastructure.
 
 ### Team Experience
+
 Teamwork was central to everything. We kept development smooth with Git workflows, regular code reviews, and open communication. These habits helped us ship features fast without sacrificing code quality. Documentation played a crucial role in our project's success. We created comprehensive documentation that helped new team members get up to speed quickly, established clear guidelines that maintained code consistency, and kept our documentation updated to reflect the project's evolution. This attention to documentation proved invaluable for both development and maintenance.
 
 ### Looking Ahead
+
 We're proud of how far we've come, but there's still plenty of room to grow. Our next step is to deploy EventHub. While we didn't have enough time to complete deployment within the course timeline, it's something we're excited to explore further—it'll be a valuable opportunity to learn real-world deployment workflows. We're also looking into better caching, broader test coverage, and enhanced real-time features. On the UX side, more customization, deeper analytics, and improved mobile responsiveness are on our roadmap. Infrastructure-wise, we're considering better monitoring, autoscaling, and security enhancements to keep EventHub ready for the future.
 
 ### Final Thoughts
+
 Building EventHub has been an intense but incredibly rewarding experience for all four of us. With only a short amount of time, we came together, learned fast, and built a fully functional platform from scratch using a modern, production-ready tech stack. It wasn't always easy—juggling real-time features, cloud integration, and a growing codebase—but every challenge pushed us to grow as developers and teammates.
 
 This project gave us a chance to apply what we've learned in a real-world setting, and more importantly, to collaborate, adapt, and ship something we're genuinely proud of. It's been a great opportunity to explore cutting-edge tools like Next.js App Router, Prisma, PostgreSQL, and Google Cloud, all while learning how to build scalable, maintainable, and user-friendly software.
@@ -629,4 +678,3 @@ We're really grateful for the chance to work on this as a team. Even as this pro
 ## License
 
 This project is licensed under the [MIT License](LICENSE) - see the [LICENSE](LICENSE) file for details.
-
