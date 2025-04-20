@@ -107,7 +107,7 @@ EventHub offers a comprehensive set of features designed to streamline academic 
 4. **Virtual Lounge and Real-time Features**
    - WebSocket-based real-time communication
    - Live Q&A sessions
-   - Real-time attendance monitoring
+   - Real-time attendance visibility based on user check-ins
    - Participant tracking and logging
    - Automatic lounge closure
 
@@ -265,7 +265,7 @@ The dashboard provides a centralized view of your events and activities based on
    - Attendees can enter after QR code check-in
 
 2. **Lounge Features**
-   - Real-time participant list
+   - Real-time list of checked-in participants
    - Role-based visibility
    - Q&A functionality
    - Chat system
@@ -274,7 +274,7 @@ The dashboard provides a centralized view of your events and activities based on
    - Present the QR code to the staff
    - Staff scans code using the app
    - Automatic lounge access granted
-   - Attendance recorded in the system
+   - Check-in recorded in the system as a confirmation of attendance
 
 ### File Management
 
@@ -313,7 +313,7 @@ The dashboard provides a centralized view of your events and activities based on
 #### For Lecturers
 - Material upload and management
 - Q&A moderation
-- Attendance tracking
+- Automate attendance tracking by recording check-ins
 - Event feedback collection
 
 ## Development Guide
