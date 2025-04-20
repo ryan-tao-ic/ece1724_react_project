@@ -1,10 +1,12 @@
 # EventHub - Academic Event Management Platform
 
+![home page](public/docs/home.png)
+
 ## Team Information
 
 - **Ruoming Ren** - Student Number: 1005889013 - Email: luke.ren@mail.utoronto.ca
 - **Zhaoyi Cheng** - Student Number: 1005727411 - Email: zhaoyi.cheng@mail.utoronto.ca
-- **Ruoxi Yu** - Student Number: 1010110201 - ruoxi.yu@mail.utoronto.ca
+- **Ruoxi Yu** - Student Number: 1010110201 - Email: ruoxi.yu@mail.utoronto.ca
 - **Yige Tao** - Student Number: 1000741094 - Email: yige.tao@mail.utoronto.ca
 
 
@@ -14,11 +16,11 @@ Below is the Video demo for our project: https://youtu.be/PDvRscMN_tI
 
 ## Motivation
 
-Organizing academic events—like Master’s and PhD defences, seminars, guest lectures, and conferences—can be surprisingly tedious. Most institutions still rely on email signups or generic forms, which quickly become hard to manage as events scale. There’s often no unified way to track attendance, manage roles, or handle real-time changes, and that creates extra work for organizers and a disjointed experience for participants.
+Organizing academic events—like Master's and PhD defences, seminars, guest lectures, and conferences—can be surprisingly tedious. Most institutions still rely on email signups or generic forms, which quickly become hard to manage as events scale. There's often no unified way to track attendance, manage roles, or handle real-time changes, and that creates extra work for organizers and a disjointed experience for participants.
 
-We built EventHub to solve this. It’s a web application designed specifically for academic event management, with tools that simplify everything from registration to real-time check-in. With features like automated ticket generation, QR code-based entry, and role-based access control, our platform streamlines the entire workflow—saving organizers time and making the experience smoother for attendees.
+We built EventHub to solve this. It's a web application designed specifically for academic event management, with tools that simplify everything from registration to real-time check-in. With features like automated ticket generation, QR code-based entry, and role-based access control, our platform streamlines the entire workflow—saving organizers time and making the experience smoother for attendees.
 
-What makes this project worth pursuing is the opportunity to bring all the scattered, manual processes into one cohesive system. It’s tailored for the needs of academic staff, lecturers, and admin teams, while also improving the experience for students, faculty, and guests. Instead of juggling spreadsheets, inboxes, and last-minute updates, organizers can focus on what matters: hosting meaningful, well-run events.
+What makes this project worth pursuing is the opportunity to bring all the scattered, manual processes into one cohesive system. It's tailored for the needs of academic staff, lecturers, and admin teams, while also improving the experience for students, faculty, and guests. Instead of juggling spreadsheets, inboxes, and last-minute updates, organizers can focus on what matters: hosting meaningful, well-run events.
 
 While tools like Google Forms and email invites offer some basic support, they fall short when it comes to integrated event management. EventHub fills that gap—with features designed specifically for the academic environment, from real-time check-ins to archival tools for event records.
 
@@ -81,6 +83,8 @@ EventHub offers a comprehensive set of features designed to streamline academic 
    - Password reset functionality with secure email links
    - Staff invitation system for privileged access
 
+![login](public/docs/login.png)
+
 2. **Event Management System**
    - Event creation and approval workflow
    - Detailed event information management
@@ -89,6 +93,8 @@ EventHub offers a comprehensive set of features designed to streamline academic 
    - Material upload and management
    - Calendar integration with iCalendar (ICS) standard, supporting multiple calendar systems
 
+![eventManagement](public/docs/eventManagement.png)
+
 3. **Registration and Check-in**
    - Customizable registration forms
    - Waitlist management
@@ -96,12 +102,16 @@ EventHub offers a comprehensive set of features designed to streamline academic 
    - Automatic email confirmations
    - Calendar event integration
 
+![eventDetail](public/docs/eventDetail.png)
+
 4. **Virtual Lounge and Real-time Features**
    - WebSocket-based real-time communication
    - Live Q&A sessions
    - Real-time attendance monitoring
    - Participant tracking and logging
    - Automatic lounge closure
+
+![lounge](public/docs/lounge.png)
 
 5. **User Dashboard**
    - Centralized event management for organizers
@@ -111,12 +121,16 @@ EventHub offers a comprehensive set of features designed to streamline academic 
    - Event lounge access
    - Role-specific privileges
 
+![userDash](public/docs/userDashboard.png)
+
 6. **File Management**
    - Secure document storage
    - Material upload and download
    - PDF viewing capabilities
    - File type validation
    - Access control for materials
+
+![fileManagement](public/docs/fileManagement.png)
 
 ## User Guide
 
@@ -175,6 +189,8 @@ The dashboard provides a centralized view of your events and activities based on
 
 ### Profile Management
 
+![profile](public/docs/profile.png)
+
 1. **Accessing Your Profile**
    - Click your name in the top right corner
    - Select "Profile" from the dropdown menu
@@ -218,7 +234,7 @@ The dashboard provides a centralized view of your events and activities based on
 4. **Pre-Publish Edits**
    - While in **DRAFT**, **PENDING_REVIEW**, or **APPROVED**, the Creators can:
      - Edit the event.
-     - Delete the event (only if it’s not published or cancelled).
+     - Delete the event (only if it's not published or cancelled).
 
 5. **Publication**
    - Only `Staff` can **publish** → Status becomes **PUBLISHED**.
@@ -567,7 +583,9 @@ The authentication system includes:
 - Calendar Integration
 
 ### Yige Tao
-
+- Page base layout setup
+- File management in cloud and preview
+- LLM Profile Enhancement
 
 ## Lessons Learned and Concluding Remarks
 
@@ -578,7 +596,7 @@ Building EventHub has been a crash course in modern web development. Next.js App
 Teamwork was central to everything. We kept development smooth with Git workflows, regular code reviews, and open communication. These habits helped us ship features fast without sacrificing code quality. Documentation played a crucial role in our project's success. We created comprehensive documentation that helped new team members get up to speed quickly, established clear guidelines that maintained code consistency, and kept our documentation updated to reflect the project's evolution. This attention to documentation proved invaluable for both development and maintenance.
 
 ### Looking Ahead
-We’re proud of how far we’ve come, but there’s still plenty of room to grow. Our next step is to deploy EventHub. While we didn’t have enough time to complete deployment within the course timeline, it’s something we’re excited to explore further—it’ll be a valuable opportunity to learn real-world deployment workflows. We're also looking into better caching, broader test coverage, and enhanced real-time features. On the UX side, more customization, deeper analytics, and improved mobile responsiveness are on our roadmap. Infrastructure-wise, we're considering better monitoring, autoscaling, and security enhancements to keep EventHub ready for the future.
+We're proud of how far we've come, but there's still plenty of room to grow. Our next step is to deploy EventHub. While we didn't have enough time to complete deployment within the course timeline, it's something we're excited to explore further—it'll be a valuable opportunity to learn real-world deployment workflows. We're also looking into better caching, broader test coverage, and enhanced real-time features. On the UX side, more customization, deeper analytics, and improved mobile responsiveness are on our roadmap. Infrastructure-wise, we're considering better monitoring, autoscaling, and security enhancements to keep EventHub ready for the future.
 
 ### Final Thoughts
 Building EventHub has been an intense but incredibly rewarding experience for all four of us. With only a short amount of time, we came together, learned fast, and built a fully functional platform from scratch using a modern, production-ready tech stack. It wasn't always easy—juggling real-time features, cloud integration, and a growing codebase—but every challenge pushed us to grow as developers and teammates.
@@ -586,3 +604,7 @@ Building EventHub has been an intense but incredibly rewarding experience for al
 This project gave us a chance to apply what we've learned in a real-world setting, and more importantly, to collaborate, adapt, and ship something we're genuinely proud of. It's been a great opportunity to explore cutting-edge tools like Next.js App Router, Prisma, PostgreSQL, and Google Cloud, all while learning how to build scalable, maintainable, and user-friendly software.
 
 We're really grateful for the chance to work on this as a team. Even as this project is wrapping up, the lessons and memories we've gained will stay with us long after. And who knows? This might just be the beginning for EventHub.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE) - see the [LICENSE](LICENSE) file for details.
