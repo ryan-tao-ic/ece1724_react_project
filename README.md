@@ -110,7 +110,6 @@ EventHub offers a comprehensive set of features designed to streamline academic 
    - WebSocket-based real-time communication
    - Live Q&A sessions
    - Real-time attendance visibility based on user check-ins
-   - Participant tracking based on check-in logs
    - Automatic lounge closure
 
 ![lounge](public/docs/lounge.png)
