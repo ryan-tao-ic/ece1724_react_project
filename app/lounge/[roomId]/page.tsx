@@ -103,9 +103,8 @@ export default function LoungeRoom() {
         </h1>
 
         <div className="flex gap-6 mb-6 h-[60vh]">
-          {/* Users in Room */}
           <div className="w-1/3 border rounded-lg shadow-sm p-4 overflow-y-auto">
-            <h2 className="text-lg font-semibold mb-4 text-gray-800">Users in Room</h2>
+            <h2 className="text-lg font-semibold mb-4 text-gray-800">Checked-In Participants</h2>
             <div className="space-y-3">
               {joinedUsers.map((u) => (
                 <div
