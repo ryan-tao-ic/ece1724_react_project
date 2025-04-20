@@ -63,7 +63,7 @@ The primary objectives of EventHub are:
 
 ## Technical Stack
 
-- **Frontend**: React with Next.js 13+, styled using Tailwind CSS and shadcn/ui
+- **Frontend**: React with Next.js 15, styled using Tailwind CSS and shadcn/ui
 - **Backend**: Next.js Server Components, API Routes, and Server Actions
 - **Database**: PostgreSQL with Prisma ORM
 - **Real-time Communication**: Socket.io
@@ -330,19 +330,14 @@ event-hub/
 │   ├── checkin/             # QR code check-in functionality
 │   ├── contact/             # Contact page
 │   ├── dashboard/           # User dashboard
-│   │   └── page.tsx         # Dashboard main page
 │   ├── events/              # Event management
-│   │   ├── create/          # Event creation
-│   │   ├── [id]/           # Dynamic event routes
-│   │   ├── page.tsx        # Events listing
-│   │   └── events-client.tsx # Client-side event components
 │   ├── lounge/              # Virtual lounge for events
 │   ├── not-authorized/      # Access denied page
 │   ├── profile/             # User profile management
 │   ├── resetPassword/       # Password reset functionality
 │   ├── roleManagement/      # Role management pages
 │   ├── verifyEmail/         # Email verification
-│   ├── actions.ts          # Server actions (496 lines)
+│   ├── actions.ts          # Server actions
 │   ├── globals.css         # Global styles
 │   ├── layout.tsx          # Root layout
 │   ├── page.tsx            # Home page
@@ -372,6 +367,8 @@ event-hub/
 │   │   ├── scroll-area.tsx # Scroll area component
 │   │   ├── sonner.tsx      # Toast notifications
 │   │   └── textarea.tsx    # Textarea component
+│   ├── events/             # Event-related components
+│   │   └── lounge-access-button.tsx # Lounge access button component
 │   ├── cancelled-redirect.tsx # Cancellation redirect
 │   ├── event-materials-upload.tsx # Event materials upload
 │   └── qr-code.tsx         # QR code generation
@@ -381,6 +378,11 @@ event-hub/
 │   ├── auth/               # Authentication utilities
 │   │   └── auth.ts         # Auth implementation
 │   ├── db/                 # Database utilities
+│   │   ├── registration.ts # Registration database operations
+│   │   ├── users.ts        # User database operations
+│   │   ├── materials.ts    # Material database operations
+│   │   ├── prisma.ts       # Prisma client configuration
+│   │   └── events.ts       # Event database operations
 │   ├── email/              # Email functionality
 │   │   ├── sendConfirmationEmail.ts # Event confirmation
 │   │   ├── sendCancelNoticeEmails.ts # Cancellation notices
@@ -389,11 +391,18 @@ event-hub/
 │   │   ├── verificationEmailTemplate.ts # Email verification
 │   │   └── resetPasswordEmailTemplate.ts # Password reset
 │   ├── events/             # Event-related utilities
+│   │   └── fetchEvent.ts   # Event fetching utility
 │   ├── file-storage/       # File storage utilities
+│   │   ├── errors.ts       # Storage error handling
+│   │   ├── index.ts        # Storage interface
+│   │   └── service.ts      # Storage service implementation
 │   ├── i18n/               # Internationalization
 │   │   └── index.ts        # i18n configuration
 │   ├── profile/            # Profile management utilities
+│   │   ├── profile.ts      # Profile operations
+│   │   └── update.ts       # Profile update utilities
 │   ├── users/              # User management utilities
+│   │   └── users.ts        # User operations
 │   ├── utils/              # General utilities
 │   │   └── verificationToken.ts # Token management
 │   ├── init.ts             # Application initialization
@@ -403,20 +412,32 @@ event-hub/
 │   └── utils.ts            # General utilities
 ├── locales/                # Internationalization files
 │   └── en/                 # English translations
-├── pages/                  # Legacy pages directory
-│   └── api/                # Legacy API routes
+├── pages/                  
+│   └── api/                
+│       └── socket.ts       # Socket.io API endpoint
+├── prisma/                 # Prisma ORM configuration
+│   └── schema.prisma       # Database schema
+├── public/                 # Static assets
 ├── scripts/                # Utility scripts
 │   └── seed-events.js      # Database seeding script
 ├── types/                  # TypeScript type definitions
 │   ├── global.d.ts         # Global type declarations
 │   ├── json.d.ts           # JSON type declarations
 │   └── next-auth.d.ts      # NextAuth type declarations
-├── prisma/                 # Prisma ORM configuration
-│   └── schema.prisma       # Database schema
-├── public/                 # Static assets
-├── Dockerfile              # Docker configuration
-├── docker-compose.yml      # Docker Compose configuration
-└── cloudbuild.yaml         # Google Cloud Build configuration
+├── .vscode/               # VS Code configuration
+├── auth.config.ts         # Auth configuration
+├── auth.ts                # Auth utilities
+├── components.json        # shadcn/ui components configuration
+├── docker-compose.yml     # Docker Compose configuration
+├── Dockerfile             # Docker configuration
+├── docker-entrypoint.sh   # Docker entrypoint script
+├── eslint.config.mjs      # ESLint configuration
+├── middleware.ts          # Next.js middleware
+├── next.config.ts         # Next.js configuration
+├── postcss.config.mjs     # PostCSS configuration
+├── prisma.ts              # Prisma client configuration
+├── server.js              # Server configuration
+└── tsconfig.json          # TypeScript configuration
 ```
 
 ### 2. Environment Setup and Configuration
@@ -608,3 +629,4 @@ We're really grateful for the chance to work on this as a team. Even as this pro
 ## License
 
 This project is licensed under the [MIT License](LICENSE) - see the [LICENSE](LICENSE) file for details.
+
