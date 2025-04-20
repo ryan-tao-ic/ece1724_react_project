@@ -1,10 +1,12 @@
 # EventHub - Academic Event Management Platform
 
+![home page](public/docs/home.png)
+
 ## Team Information
 
 - **Ruoming Ren** - Student Number: 1005889013 - Email: luke.ren@mail.utoronto.ca
 - **Zhaoyi Cheng** - Student Number: 1005727411 - Email: zhaoyi.cheng@mail.utoronto.ca
-- **Ruoxi Yu** - Student Number: 1010110201 - ruoxi.yu@mail.utoronto.ca
+- **Ruoxi Yu** - Student Number: 1010110201 - Email: ruoxi.yu@mail.utoronto.ca
 - **Yige Tao** - Student Number: 1000741094 - Email: yige.tao@mail.utoronto.ca
 
 
@@ -81,6 +83,8 @@ EventHub offers a comprehensive set of features designed to streamline academic 
    - Password reset functionality with secure email links
    - Staff invitation system for privileged access
 
+![login](public/docs/login.png)
+
 2. **Event Management System**
    - Event creation and approval workflow
    - Detailed event information management
@@ -89,6 +93,8 @@ EventHub offers a comprehensive set of features designed to streamline academic 
    - Material upload and management
    - Calendar integration with iCalendar (ICS) standard, supporting multiple calendar systems
 
+![eventManagement](public/docs/eventManagement.png)
+
 3. **Registration and Check-in**
    - Customizable registration forms
    - Waitlist management
@@ -96,12 +102,16 @@ EventHub offers a comprehensive set of features designed to streamline academic 
    - Automatic email confirmations
    - Calendar event integration
 
+![eventDetail](public/docs/eventDetail.png)
+
 4. **Virtual Lounge and Real-time Features**
    - WebSocket-based real-time communication
    - Live Q&A sessions
    - Real-time attendance monitoring
    - Participant tracking and logging
    - Automatic lounge closure
+
+![lounge](public/docs/lounge.png)
 
 5. **User Dashboard**
    - Centralized event management for organizers
@@ -111,12 +121,16 @@ EventHub offers a comprehensive set of features designed to streamline academic 
    - Event lounge access
    - Role-specific privileges
 
+![userDash](public/docs/userDashboard.png)
+
 6. **File Management**
    - Secure document storage
    - Material upload and download
    - PDF viewing capabilities
    - File type validation
    - Access control for materials
+
+![fileManagement](public/docs/fileManagement.png)
 
 ## User Guide
 
@@ -174,6 +188,8 @@ The dashboard provides a centralized view of your events and activities based on
    - View event analytics
 
 ### Profile Management
+
+![profile](public/docs/profile.png)
 
 1. **Accessing Your Profile**
    - Click your name in the top right corner
@@ -588,7 +604,9 @@ The authentication system includes:
 - Calendar Integration
 
 ### Yige Tao
-
+- Page base layout setup
+- File management in cloud and preview
+- LLM Profile Enhancement
 
 ## Lessons Learned and Concluding Remarks
 
@@ -607,4 +625,8 @@ Building EventHub has been an intense but incredibly rewarding experience for al
 This project gave us a chance to apply what we've learned in a real-world setting, and more importantly, to collaborate, adapt, and ship something we're genuinely proud of. It's been a great opportunity to explore cutting-edge tools like Next.js App Router, Prisma, PostgreSQL, and Google Cloud, all while learning how to build scalable, maintainable, and user-friendly software.
 
 We're really grateful for the chance to work on this as a team. Even as this project is wrapping up, the lessons and memories we've gained will stay with us long after. And who knows? This might just be the beginning for EventHub.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE) - see the [LICENSE](LICENSE) file for details.
 
