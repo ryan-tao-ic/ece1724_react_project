@@ -285,7 +285,6 @@ The dashboard provides a centralized view of your events and activities based on
 2. **Lounge Features**
 
    - Real-time list of checked-in participants
-   - Role-based visibility
    - Q&A functionality
    - Chat system
 
